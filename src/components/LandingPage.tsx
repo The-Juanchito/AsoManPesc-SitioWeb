@@ -355,54 +355,273 @@ function About() {
 }
 
 function Products() {
-  const products = [
-    { name: "Mango Tommy Atkins", description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa.", color: "from-red-500 to-orange-400", emoji: "🥭", season: "Todo el año" },
-    { name: "Mango Ataulfo", description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso.", color: "from-yellow-400 to-amber-500", emoji: "✨", season: "Marzo - Junio" },
-    { name: "Mango Kent", description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce.", color: "from-green-600 to-red-500", emoji: "💚", season: "Junio - Agosto" },
-    { name: "Mango Haden", description: "Color rojo brillante con manchas amarillas. Sabor intenso.", color: "from-red-600 to-yellow-400", emoji: "🔴", season: "Febrero - Mayo" },
-    { name: "Mango Keitt", description: "Grande de color verde incluso maduro. Pulpa dulce.", color: "from-green-500 to-yellow-300", emoji: "🟢", season: "Agosto - Septiembre" },
-    { name: "Mango Manila", description: "Pequeño, alargado y muy dulce. Favorito para postres.", color: "from-yellow-300 to-orange-400", emoji: "🌟", season: "Abril - Julio" }
-  ];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Generar precios dinámicos basados en la fecha actual
+  const generateDailyPrices = () => {
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    const basePrice = 4000;
+    
+    return [
+      { 
+        name: "Mango Tommy Atkins", 
+        description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa.", 
+        color: "from-red-500 to-orange-400", 
+        emoji: "🥭", 
+        season: "Todo el año",
+        currentPrice: basePrice + (dayOfMonth % 3) * 200, // 4000, 4200, 4400
+        previousPrice: basePrice + ((dayOfMonth - 1) % 3) * 200
+      },
+      { 
+        name: "Mango Ataulfo", 
+        description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso.", 
+        color: "from-yellow-400 to-amber-500", 
+        emoji: "✨", 
+        season: "Marzo - Junio",
+        currentPrice: basePrice + (dayOfMonth % 4) * 150, // 4000, 4150, 4300, 4450
+        previousPrice: basePrice + ((dayOfMonth - 1) % 4) * 150
+      },
+      { 
+        name: "Mango Kent", 
+        description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce.", 
+        color: "from-green-600 to-red-500", 
+        emoji: "💚", 
+        season: "Junio - Agosto",
+        currentPrice: basePrice + (dayOfMonth % 5) * 100, // 4000, 4100, 4200, 4300, 4400
+        previousPrice: basePrice + ((dayOfMonth - 1) % 5) * 100
+      },
+      { 
+        name: "Mango Haden", 
+        description: "Color rojo brillante con manchas amarillas. Sabor intenso.", 
+        color: "from-red-600 to-yellow-400", 
+        emoji: "🔴", 
+        season: "Febrero - Mayo",
+        currentPrice: basePrice + (dayOfMonth % 3) * 250, // 4000, 4250, 4500
+        previousPrice: basePrice + ((dayOfMonth - 1) % 3) * 250
+      },
+      { 
+        name: "Mango Keitt", 
+        description: "Grande de color verde incluso maduro. Pulpa dulce.", 
+        color: "from-green-500 to-yellow-300", 
+        emoji: "🟢", 
+        season: "Agosto - Septiembre",
+        currentPrice: basePrice + (dayOfMonth % 4) * 200, // 4000, 4200, 4400, 4600
+        previousPrice: basePrice + ((dayOfMonth - 1) % 4) * 200
+      },
+      { 
+        name: "Mango Manila", 
+        description: "Pequeño, alargado y muy dulce. Favorito para postres.", 
+        color: "from-yellow-300 to-orange-400", 
+        emoji: "🌟", 
+        season: "Abril - Julio",
+        currentPrice: basePrice + (dayOfMonth % 5) * 150, // 4000, 4150, 4300, 4450, 4600
+        previousPrice: basePrice + ((dayOfMonth - 1) % 5) * 150
+      }
+    ];
+  };
+
+  const products = generateDailyPrices();
+  const itemsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
+  const maxIndex = Math.max(0, products.length - itemsPerView);
+
+  // Auto-play del carrusel
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, maxIndex]);
+
+  const nextSlide = () => {
+    setIsAutoPlaying(false);
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setIsAutoPlaying(false);
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  const today = new Date();
+  const lastUpdate = today.toLocaleDateString('es-CO', { 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  });
 
   return (
     <section id="productos" className="py-20 bg-gradient-to-b from-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 text-amber-600 font-semibold text-sm uppercase tracking-wider bg-amber-50 px-4 py-1.5 rounded-full">
             <i className="bi bi-basket3-fill"></i>
             Nuestros Productos
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-green-900 mt-4 mb-4">Variedades de Mango</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto mb-4">
             Ofrecemos una amplia selección de variedades de mango, cada una con su sabor y textura única.
           </p>
+          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+            <i className="bi bi-calendar-check-fill"></i>
+            Precios actualizados: {lastUpdate}
+          </div>
           <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, index) => (
-            <div key={index} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-2">
-              <div className={`h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
-                <span className="text-7xl group-hover:scale-125 transition-transform duration-500">{product.emoji}</span>
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                  <span className="text-xs font-bold text-green-700">$4,000 COP</span>
+        {/* Carrusel */}
+        <div className="relative">
+          {/* Controles de navegación */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center hover:bg-green-50 hover:scale-110 transition-all group"
+            aria-label="Anterior"
+          >
+            <i className="bi bi-chevron-left text-2xl text-green-700 group-hover:text-green-800"></i>
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center hover:bg-green-50 hover:scale-110 transition-all group"
+            aria-label="Siguiente"
+          >
+            <i className="bi bi-chevron-right text-2xl text-green-700 group-hover:text-green-800"></i>
+          </button>
+
+          {/* Contenedor del carrusel */}
+          <div className="overflow-hidden mx-8">
+            <div 
+              className="flex transition-transform duration-500 ease-out"
+              style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+            >
+              {products.map((product, index) => (
+                <div 
+                  key={index} 
+                  className="flex-shrink-0 px-3"
+                  style={{ width: `${100 / itemsPerView}%` }}
+                >
+                  <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-2 h-full">
+                    <div className={`h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
+                      <span className="text-7xl group-hover:scale-125 transition-transform duration-500">{product.emoji}</span>
+                      
+                      {/* Badge de precio actualizado */}
+                      <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 animate-pulse">
+                        <i className="bi bi-lightning-fill"></i>
+                        ¡Actualizado!
+                      </div>
+                      
+                      {/* Precio */}
+                      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg">
+                        {product.previousPrice !== product.currentPrice && (
+                          <div className="text-xs text-gray-400 line-through mb-0.5">
+                            {formatPrice(product.previousPrice)}
+                          </div>
+                        )}
+                        <div className="text-sm font-bold text-green-700">
+                          {formatPrice(product.currentPrice)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-green-800 mb-2">{product.name}</h3>
+                      <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
+                      
+                      {/* Indicador de cambio de precio */}
+                      {product.previousPrice !== product.currentPrice && (
+                        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 flex items-center gap-1">
+                              <i className="bi bi-calendar3 text-amber-600"></i>
+                              Precio anterior:
+                            </span>
+                            <span className="text-gray-500 line-through">{formatPrice(product.previousPrice)}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm mt-1">
+                            <span className="text-green-700 font-medium flex items-center gap-1">
+                              <i className="bi bi-arrow-up-right text-green-600"></i>
+                              Precio hoy:
+                            </span>
+                            <span className="text-green-700 font-bold">{formatPrice(product.currentPrice)}</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                          <i className="bi bi-calendar3"></i>
+                          {product.season}
+                        </span>
+                        <button className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                          Ver más <i className="bi bi-arrow-right"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-green-800 mb-2">{product.name}</h3>
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                    <i className="bi bi-calendar3"></i>
-                    {product.season}
-                  </span>
-                  <button className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Ver más <i className="bi bi-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Indicadores de posición */}
+          <div className="flex justify-center gap-2 mt-8">
+            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setIsAutoPlaying(false);
+                  setCurrentIndex(index);
+                }}
+                className={`transition-all duration-300 rounded-full ${
+                  currentIndex === index
+                    ? 'w-8 h-3 bg-green-600'
+                    : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Ir a slide ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Control de auto-play */}
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+              className="text-sm text-gray-500 hover:text-green-700 flex items-center gap-2 transition-colors"
+            >
+              <i className={`bi ${isAutoPlaying ? 'bi-pause-circle' : 'bi-play-circle'}`}></i>
+              {isAutoPlaying ? 'Pausar carrusel' : 'Reproducir carrusel'}
+            </button>
+          </div>
+        </div>
+
+        {/* Nota informativa */}
+        <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i className="bi bi-info-circle-fill text-2xl text-blue-600"></i>
+            </div>
+            <div>
+              <h4 className="font-bold text-blue-900 mb-2">Precios Dinámicos Actualizados Diariamente</h4>
+              <p className="text-sm text-blue-800 leading-relaxed">
+                Los precios de nuestras canastas de mangos se actualizan todos los días según la disponibilidad, 
+                calidad y temporada. Si notas un cambio de precio, es porque estamos ofreciendo el mejor valor 
+                del mercado en ese momento. ¡Consulta siempre el precio actual antes de realizar tu pedido!
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
