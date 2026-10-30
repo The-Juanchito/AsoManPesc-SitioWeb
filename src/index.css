@@ -131,31 +131,18 @@ body {
   animation: bounce-slow 2s infinite;
 }
 
-/* Sidebar responsive */
-@media (max-width: 1024px) {
-  aside {
-    width: 5rem !important;
-  }
-  aside .ml-64 {
-    margin-left: 5rem !important;
-  }
+/* Sidebar animations */
+.sidebar-overlay {
+  transition: opacity 0.3s ease-in-out;
 }
 
-@media (max-width: 768px) {
-  aside {
-    transform: translateX(-100%);
-  }
-  aside:not(.collapsed) {
-    transform: translateX(0);
-  }
-  .ml-64 {
-    margin-left: 0 !important;
-  }
+.sidebar-panel {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Scrollbar personalizado para sidebar */
 aside nav::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 aside nav::-webkit-scrollbar-track {
@@ -164,9 +151,41 @@ aside nav::-webkit-scrollbar-track {
 
 aside nav::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.2);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 aside nav::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.4);
 }
+
+/* Botón menú flotante */
+.menu-toggle-btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-toggle-btn:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Efecto de entrada para items del menú */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+aside[style*="translate-x-0"] nav button {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+aside[style*="translate-x-0"] nav button:nth-child(1) { animation-delay: 0.05s; }
+aside[style*="translate-x-0"] nav button:nth-child(2) { animation-delay: 0.1s; }
+aside[style*="translate-x-0"] nav button:nth-child(3) { animation-delay: 0.15s; }
+aside[style*="translate-x-0"] nav button:nth-child(4) { animation-delay: 0.2s; }
+aside[style*="translate-x-0"] nav button:nth-child(5) { animation-delay: 0.25s; }
+aside[style*="translate-x-0"] nav button:nth-child(6) { animation-delay: 0.3s; }

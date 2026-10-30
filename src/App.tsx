@@ -20,6 +20,7 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [showLogin, setShowLogin] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Inicializar base de datos al cargar
   useEffect(() => {
@@ -34,6 +35,7 @@ function AppContent() {
         logout();
         setShowLanding(true);
         setShowLogin(false);
+        setSidebarOpen(false);
       };
 
       const renderAdminContent = () => {
@@ -45,13 +47,13 @@ function AppContent() {
           case 'canastas':
             return <CanastasPage />;
           case 'produccion':
-            return <AdminDashboard />; // Reutiliza dashboard con gráficas
+            return <AdminDashboard />;
           case 'usuarios':
-            return <AdminDashboard />; // Reutiliza dashboard con usuarios
+            return <AdminDashboard />;
           case 'pedidos':
-            return <AdminDashboard />; // Reutiliza dashboard con pedidos
+            return <AdminDashboard />;
           case 'colaboraciones':
-            return <AdminDashboard />; // Reutiliza dashboard con colaboraciones
+            return <AdminDashboard />;
           case 'basededatos':
             return <BaseDatosPage />;
           case 'reportes':
@@ -68,14 +70,30 @@ function AppContent() {
             onNavigate={setCurrentPage}
             onGoHome={handleGoHome}
             onLogout={logout}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
           />
-          <div className={`transition-all duration-300 ${true ? 'ml-64' : 'ml-20'}`}>
+          
+          {/* Botón flotante para abrir el menú */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className={`fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-br from-green-700 to-green-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110 ${
+              sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            title="Abrir menú"
+          >
+            <i className="bi bi-list text-2xl"></i>
+          </button>
+
+          {/* Contenido principal */}
+          <div className="min-h-screen bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               <main>
                 {renderAdminContent()}
               </main>
             </div>
           </div>
+          
           <Chatbot />
         </>
       );
