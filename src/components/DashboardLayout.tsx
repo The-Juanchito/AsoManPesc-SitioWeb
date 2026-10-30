@@ -26,26 +26,34 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
     }
   };
 
+  const getRoleIcon = (role: UserRole) => {
+    switch(role) {
+      case 'admin': return 'bi-shield-fill-check';
+      case 'asociado': return 'bi-person-badge-fill';
+      case 'cliente': return 'bi-person-fill';
+    }
+  };
+
   const getNavItems = () => {
     switch(user?.role) {
       case 'admin':
         return [
-          { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-          { id: 'canastas', label: 'Canastas', icon: '🧺' },
-          { id: 'usuarios', label: 'Usuarios', icon: '👥' },
-          { id: 'colaboraciones', label: 'Aliados', icon: '🤝' },
+          { id: 'dashboard', label: 'Dashboard', icon: 'bi-speedometer2' },
+          { id: 'canastas', label: 'Canastas', icon: 'bi-basket3-fill' },
+          { id: 'usuarios', label: 'Usuarios', icon: 'bi-people-fill' },
+          { id: 'colaboraciones', label: 'Aliados', icon: 'bi-handshake' },
         ];
       case 'asociado':
         return [
-          { id: 'dashboard', label: 'Mi Panel', icon: '📊' },
-          { id: 'produccion', label: 'Producción', icon: '📝' },
-          { id: 'canastas', label: 'Mis Canastas', icon: '🧺' },
+          { id: 'dashboard', label: 'Mi Panel', icon: 'bi-speedometer2' },
+          { id: 'produccion', label: 'Producción', icon: 'bi-pencil-square' },
+          { id: 'canastas', label: 'Mis Canastas', icon: 'bi-basket3-fill' },
         ];
       case 'cliente':
         return [
-          { id: 'dashboard', label: 'Inicio', icon: '🏠' },
-          { id: 'productos', label: 'Productos', icon: '🥭' },
-          { id: 'pedidos', label: 'Mis Pedidos', icon: '🛒' },
+          { id: 'dashboard', label: 'Inicio', icon: 'bi-house-fill' },
+          { id: 'productos', label: 'Productos', icon: 'bi-fruit-cart' },
+          { id: 'pedidos', label: 'Mis Pedidos', icon: 'bi-bag-fill' },
         ];
       default:
         return [];
@@ -62,7 +70,9 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
               <span className="text-2xl">🥭</span>
               <div>
                 <h1 className="text-lg font-bold text-green-800">AsoManPesc</h1>
-                <p className="text-xs text-gray-400 -mt-0.5">Sistema de Gestión</p>
+                <p className="text-xs text-gray-400 -mt-0.5">
+                  <i className="bi bi-database-fill me-1"></i>MySQL + SQL Server
+                </p>
               </div>
             </div>
 
@@ -73,16 +83,18 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-800">{user?.name}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${getRoleColor(user!.role)}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${getRoleColor(user!.role)}`}>
+                    <i className={`bi ${getRoleIcon(user!.role)}`}></i>
                     {getRoleLabel(user!.role)}
                   </span>
                 </div>
               </div>
               <button
                 onClick={logout}
-                className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-100 transition-colors"
+                className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-red-100 transition-colors flex items-center gap-1"
               >
-                Cerrar Sesión
+                <i className="bi bi-box-arrow-right"></i>
+                <span className="hidden sm:inline">Salir</span>
               </button>
             </div>
           </div>
@@ -102,7 +114,7 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
                   : 'bg-white text-gray-600 hover:bg-green-50 hover:text-green-700 border border-gray-200'
               }`}
             >
-              <span>{item.icon}</span>
+              <i className={`bi ${item.icon}`}></i>
               {item.label}
             </button>
           ))}

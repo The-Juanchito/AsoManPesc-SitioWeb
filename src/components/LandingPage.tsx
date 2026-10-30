@@ -172,12 +172,12 @@ function About() {
 
 function Products() {
   const products = [
-    { name: "Mango Tommy Atkins", description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa.", color: "from-red-500 to-orange-400", emoji: "🥭", season: "Todo el año", price: "Desde $2.50/kg" },
-    { name: "Mango Ataulfo", description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso.", color: "from-yellow-400 to-amber-500", emoji: "✨", season: "Marzo - Junio", price: "Desde $3.00/kg" },
-    { name: "Mango Kent", description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce.", color: "from-green-600 to-red-500", emoji: "💚", season: "Junio - Agosto", price: "Desde $3.50/kg" },
-    { name: "Mango Haden", description: "Color rojo brillante con manchas amarillas. Sabor intenso.", color: "from-red-600 to-yellow-400", emoji: "🔴", season: "Febrero - Mayo", price: "Desde $2.80/kg" },
-    { name: "Mango Keitt", description: "Grande de color verde incluso maduro. Pulpa dulce.", color: "from-green-500 to-yellow-300", emoji: "🟢", season: "Agosto - Septiembre", price: "Desde $3.20/kg" },
-    { name: "Mango Manila", description: "Pequeño, alargado y muy dulce. Favorito para postres.", color: "from-yellow-300 to-orange-400", emoji: "🌟", season: "Abril - Julio", price: "Desde $2.00/kg" }
+    { name: "Mango Tommy Atkins", description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa.", color: "from-red-500 to-orange-400", emoji: "🥭", season: "Todo el año", price: "$4,000 COP" },
+    { name: "Mango Ataulfo", description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso.", color: "from-yellow-400 to-amber-500", emoji: "✨", season: "Marzo - Junio", price: "$4,000 COP" },
+    { name: "Mango Kent", description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce.", color: "from-green-600 to-red-500", emoji: "💚", season: "Junio - Agosto", price: "$4,000 COP" },
+    { name: "Mango Haden", description: "Color rojo brillante con manchas amarillas. Sabor intenso.", color: "from-red-600 to-yellow-400", emoji: "🔴", season: "Febrero - Mayo", price: "$4,000 COP" },
+    { name: "Mango Keitt", description: "Grande de color verde incluso maduro. Pulpa dulce.", color: "from-green-500 to-yellow-300", emoji: "🟢", season: "Agosto - Septiembre", price: "$4,000 COP" },
+    { name: "Mango Manila", description: "Pequeño, alargado y muy dulce. Favorito para postres.", color: "from-yellow-300 to-orange-400", emoji: "🌟", season: "Abril - Julio", price: "$4,000 COP" }
   ];
 
   return (
@@ -255,10 +255,14 @@ function TechStack() {
     { name: 'TypeScript', description: 'Tipado estático', icon: '📘', color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
     { name: 'Vite', description: 'Build tool ultrarrápido', icon: '⚡', color: 'bg-purple-100 text-purple-700 border-purple-200' },
     { name: 'Tailwind CSS', description: 'Estilos utilitarios', icon: '🎨', color: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+    { name: 'Bootstrap 5', description: 'Componentes e iconos', icon: '🅱️', color: 'bg-violet-100 text-violet-700 border-violet-200' },
+    { name: 'MySQL', description: 'Base de datos principal', icon: '🐬', color: 'bg-sky-100 text-sky-700 border-sky-200' },
+    { name: 'SQL Server', description: 'Base de datos secundaria', icon: '🔷', color: 'bg-red-100 text-red-700 border-red-200' },
     { name: 'Recharts', description: 'Gráficas interactivas', icon: '📊', color: 'bg-green-100 text-green-700 border-green-200' },
-    { name: 'LocalStorage', description: 'Base de datos persistente', icon: '💾', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+    { name: 'LocalStorage', description: 'Base de datos caché', icon: '💾', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+    { name: 'WhatsApp API', description: 'Chat con el admin', icon: '📱', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
     { name: 'Chatbot IA', description: 'Asistente virtual', icon: '🤖', color: 'bg-rose-100 text-rose-700 border-rose-200' },
-    { name: 'Node.js', description: 'Runtime JavaScript', icon: '🟢', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+    { name: 'Node.js', description: 'Runtime JavaScript', icon: '🟢', color: 'bg-lime-100 text-lime-700 border-lime-200' },
   ];
 
   return (
@@ -283,29 +287,48 @@ function TechStack() {
           ))}
         </div>
 
+        {/* Precio destacado */}
+        <div className="mt-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-8 text-white text-center shadow-xl">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className="text-5xl">🥭</span>
+            <div className="text-left">
+              <p className="text-sm font-medium text-amber-100">Precio de Canasta de Mangos</p>
+              <p className="text-4xl font-bold">$4,000 COP</p>
+            </div>
+          </div>
+          <p className="text-amber-100 mt-2">Todas las variedades al mismo precio • Canasta fresca del campo</p>
+        </div>
+
         <div className="mt-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4">🏗️ Arquitectura del Sistema</h3>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <span className="text-3xl">🖥️</span>
               </div>
               <h4 className="font-bold text-white">Frontend</h4>
-              <p className="text-sm text-gray-400 mt-1">React + TypeScript + Tailwind CSS</p>
+              <p className="text-sm text-gray-400 mt-1">React + TypeScript + Tailwind + Bootstrap 5</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">💾</span>
+              <div className="w-16 h-16 bg-sky-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">🐬</span>
               </div>
-              <h4 className="font-bold text-white">Base de Datos</h4>
-              <p className="text-sm text-gray-400 mt-1">LocalStorage API (persistente)</p>
+              <h4 className="font-bold text-white">MySQL</h4>
+              <p className="text-sm text-gray-400 mt-1">Base de datos principal</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">🔷</span>
+              </div>
+              <h4 className="font-bold text-white">SQL Server</h4>
+              <p className="text-sm text-gray-400 mt-1">Base de datos secundaria</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">🤖</span>
+                <span className="text-3xl">📱</span>
               </div>
-              <h4 className="font-bold text-white">Chatbot</h4>
-              <p className="text-sm text-gray-400 mt-1">Asistente virtual integrado</p>
+              <h4 className="font-bold text-white">WhatsApp</h4>
+              <p className="text-sm text-gray-400 mt-1">Chat directo con admin</p>
             </div>
           </div>
         </div>

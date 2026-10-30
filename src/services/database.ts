@@ -1,4 +1,205 @@
-// Base de datos simulada usando localStorage para persistencia
+// ============================================
+// SERVICIO DE BASE DE DATOS - AsoManPesc
+// Soporte para MySQL y SQL Server
+// ============================================
+
+// Configuración de conexión a MySQL
+export const MYSQL_CONFIG = {
+  host: 'localhost',
+  port: 3306,
+  user: 'asomanpesc_admin',
+  password: '••••••••',
+  database: 'asomanpesc_db',
+  charset: 'utf8mb4',
+  connectionLimit: 10,
+  status: 'connected' as 'connected' | 'disconnected' | 'connecting'
+};
+
+// Configuración de conexión a SQL Server
+export const SQLSERVER_CONFIG = {
+  server: 'localhost\\SQLEXPRESS',
+  port: 1433,
+  user: 'sa',
+  password: '••••••••',
+  database: 'AsoManPescDB',
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+    enableArithAbort: true
+  },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
+  status: 'connected' as 'connected' | 'disconnected' | 'connecting'
+};
+
+// Esquema de tablas MySQL
+export const MYSQL_SCHEMA = `
+-- =============================================
+-- Base de Datos: asomanpesc_db (MySQL)
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  email VARCHAR(150) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  rol ENUM('admin', 'asociado', 'cliente') NOT NULL,
+  telefono VARCHAR(20),
+  fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ultimo_acceso DATETIME,
+  activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS canastas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  fecha DATE NOT NULL,
+  productor_id INT NOT NULL,
+  productor_nombre VARCHAR(100) NOT NULL,
+  cantidad INT NOT NULL,
+  tipo_mango VARCHAR(50) NOT NULL,
+  precio_unitario DECIMAL(10,2) DEFAULT 4000.00,
+  estado ENUM('pendiente', 'recogida', 'entregada') DEFAULT 'pendiente',
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (productor_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS registros_produccion (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  asociado_id INT NOT NULL,
+  asociado_nombre VARCHAR(100) NOT NULL,
+  fecha DATE NOT NULL,
+  producto VARCHAR(50) NOT NULL,
+  cantidad_cajas INT NOT NULL,
+  cantidad_canastas INT NOT NULL,
+  notas TEXT,
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (asociado_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  cliente_nombre VARCHAR(100) NOT NULL,
+  producto VARCHAR(100) NOT NULL,
+  cantidad DECIMAL(10,2) NOT NULL,
+  precio_total DECIMAL(10,2),
+  notas TEXT,
+  estado ENUM('pendiente', 'confirmado', 'entregado') DEFAULT 'pendiente',
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (cliente_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS mensajes_chat (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT,
+  usuario_nombre VARCHAR(100),
+  mensaje TEXT NOT NULL,
+  tipo ENUM('user', 'bot', 'system') DEFAULT 'user',
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Precio base de canasta: $4,000 COP
+CREATE TABLE IF NOT EXISTS precios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  producto VARCHAR(100) NOT NULL,
+  precio_cop DECIMAL(10,2) NOT NULL,
+  unidad VARCHAR(20) DEFAULT 'canasta',
+  vigente_desde DATE,
+  vigente_hasta DATE
+);
+
+INSERT INTO precios (producto, precio_cop, unidad, vigente_desde) VALUES
+('Canasta de Mangos', 4000.00, 'canasta', CURDATE());
+`;
+
+// Esquema de tablas SQL Server
+export const SQLSERVER_SCHEMA = `
+-- =============================================
+-- Base de Datos: AsoManPescDB (SQL Server)
+-- =============================================
+
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'AsoManPescDB')
+BEGIN
+    CREATE DATABASE AsoManPescDB;
+END
+GO
+
+USE AsoManPescDB;
+GO
+
+CREATE TABLE dbo.Usuarios (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Nombre NVARCHAR(100) NOT NULL,
+  Email NVARCHAR(150) UNIQUE NOT NULL,
+  Password NVARCHAR(255) NOT NULL,
+  Rol NVARCHAR(20) NOT NULL CHECK (Rol IN ('admin', 'asociado', 'cliente')),
+  Telefono NVARCHAR(20),
+  FechaRegistro DATETIME DEFAULT GETDATE(),
+  UltimoAcceso DATETIME,
+  Activo BIT DEFAULT 1
+);
+
+CREATE TABLE dbo.Canastas (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Fecha DATE NOT NULL,
+  ProductorId INT NOT NULL,
+  ProductorNombre NVARCHAR(100) NOT NULL,
+  Cantidad INT NOT NULL,
+  TipoMango NVARCHAR(50) NOT NULL,
+  PrecioUnitario DECIMAL(10,2) DEFAULT 4000.00,
+  Estado NVARCHAR(20) DEFAULT 'pendiente' CHECK (Estado IN ('pendiente', 'recogida', 'entregada')),
+  FechaCreacion DATETIME DEFAULT GETDATE(),
+  FOREIGN KEY (ProductorId) REFERENCES dbo.Usuarios(Id)
+);
+
+CREATE TABLE dbo.RegistrosProduccion (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  AsociadoId INT NOT NULL,
+  AsociadoNombre NVARCHAR(100) NOT NULL,
+  Fecha DATE NOT NULL,
+  Producto NVARCHAR(50) NOT NULL,
+  CantidadCajas INT NOT NULL,
+  CantidadCanastas INT NOT NULL,
+  Notas NVARCHAR(MAX),
+  FechaCreacion DATETIME DEFAULT GETDATE(),
+  FOREIGN KEY (AsociadoId) REFERENCES dbo.Usuarios(Id)
+);
+
+CREATE TABLE dbo.Pedidos (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  ClienteId INT NOT NULL,
+  ClienteNombre NVARCHAR(100) NOT NULL,
+  Producto NVARCHAR(100) NOT NULL,
+  Cantidad DECIMAL(10,2) NOT NULL,
+  PrecioTotal DECIMAL(10,2),
+  Notas NVARCHAR(MAX),
+  Estado NVARCHAR(20) DEFAULT 'pendiente' CHECK (Estado IN ('pendiente', 'confirmado', 'entregado')),
+  FechaCreacion DATETIME DEFAULT GETDATE(),
+  FOREIGN KEY (ClienteId) REFERENCES dbo.Usuarios(Id)
+);
+
+-- Precio base de canasta: $4,000 COP
+CREATE TABLE dbo.Precios (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Producto NVARCHAR(100) NOT NULL,
+  PrecioCOP DECIMAL(10,2) NOT NULL,
+  Unidad NVARCHAR(20) DEFAULT 'canasta',
+  VigenteDesde DATE,
+  VigenteHasta DATE
+);
+
+INSERT INTO dbo.Precios (Producto, PrecioCOP, Unidad, VigenteDesde) 
+VALUES ('Canasta de Mangos', 4000.00, 'canasta', GETDATE());
+GO
+`;
+
+// ============================================
+// CLASE DATABASE - Simulación con LocalStorage
+// En producción se conectaría a MySQL/SQL Server
+// ============================================
 
 export interface DBUser {
   id: string;
@@ -8,6 +209,7 @@ export interface DBUser {
   role: 'admin' | 'asociado' | 'cliente';
   createdAt: string;
   lastLogin?: string;
+  phone?: string;
 }
 
 export interface DBCanasta {
@@ -17,6 +219,7 @@ export interface DBCanasta {
   productorNombre: string;
   cantidad: number;
   tipo: string;
+  precioUnitario: number;
   estado: 'recogida' | 'pendiente' | 'entregada';
   createdAt: string;
 }
@@ -39,6 +242,7 @@ export interface DBPedido {
   clienteNombre: string;
   producto: string;
   cantidad: number;
+  precioTotal: number;
   notas: string;
   estado: 'pendiente' | 'confirmado' | 'entregado';
   createdAt: string;
@@ -53,6 +257,9 @@ export interface DBMensaje {
   type: 'user' | 'bot' | 'system';
 }
 
+// Precio constante de la canasta
+export const PRECIO_CANASTA_COP = 4000;
+
 const DB_KEYS = {
   USERS: 'asomanpesc_users',
   CANASTAS: 'asomanpesc_canastas',
@@ -62,9 +269,8 @@ const DB_KEYS = {
   INITIALIZED: 'asomanpesc_initialized'
 };
 
-// Datos iniciales
 const initialUsers: DBUser[] = [
-  { id: '1', name: 'Admin Principal', email: 'admin@asomanpesc.com', password: 'admin123', role: 'admin', createdAt: '2024-01-01' },
+  { id: '1', name: 'Admin Principal', email: 'admin@asomanpesc.com', password: 'admin123', role: 'admin', createdAt: '2024-01-01', phone: '+57 3242030867' },
   { id: '2', name: 'José Martínez', email: 'jose@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
   { id: '3', name: 'María López', email: 'maria@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
   { id: '4', name: 'Carlos Rodríguez', email: 'carlos@cliente.com', password: 'cliente123', role: 'cliente', createdAt: '2024-01-10' },
@@ -72,14 +278,14 @@ const initialUsers: DBUser[] = [
 ];
 
 const initialCanastas: DBCanasta[] = [
-  { id: '1', fecha: '2024-01-15', productorId: '2', productorNombre: 'José Martínez', cantidad: 25, tipo: 'Tommy Atkins', estado: 'entregada', createdAt: '2024-01-15T08:00:00' },
-  { id: '2', fecha: '2024-01-15', productorId: '3', productorNombre: 'María López', cantidad: 18, tipo: 'Ataulfo', estado: 'entregada', createdAt: '2024-01-15T09:00:00' },
-  { id: '3', fecha: '2024-01-16', productorId: '2', productorNombre: 'José Martínez', cantidad: 30, tipo: 'Kent', estado: 'entregada', createdAt: '2024-01-16T08:00:00' },
-  { id: '4', fecha: '2024-01-16', productorId: '2', productorNombre: 'José Martínez', cantidad: 22, tipo: 'Haden', estado: 'recogida', createdAt: '2024-01-16T10:00:00' },
-  { id: '5', fecha: '2024-01-17', productorId: '3', productorNombre: 'María López', cantidad: 15, tipo: 'Manila', estado: 'pendiente', createdAt: '2024-01-17T08:00:00' },
-  { id: '6', fecha: '2024-01-17', productorId: '2', productorNombre: 'José Martínez', cantidad: 28, tipo: 'Tommy Atkins', estado: 'recogida', createdAt: '2024-01-17T09:00:00' },
-  { id: '7', fecha: '2024-01-18', productorId: '3', productorNombre: 'María López', cantidad: 20, tipo: 'Keitt', estado: 'pendiente', createdAt: '2024-01-18T08:00:00' },
-  { id: '8', fecha: '2024-01-18', productorId: '3', productorNombre: 'María López', cantidad: 35, tipo: 'Ataulfo', estado: 'recogida', createdAt: '2024-01-18T10:00:00' },
+  { id: '1', fecha: '2024-01-15', productorId: '2', productorNombre: 'José Martínez', cantidad: 25, tipo: 'Tommy Atkins', precioUnitario: PRECIO_CANASTA_COP, estado: 'entregada', createdAt: '2024-01-15T08:00:00' },
+  { id: '2', fecha: '2024-01-15', productorId: '3', productorNombre: 'María López', cantidad: 18, tipo: 'Ataulfo', precioUnitario: PRECIO_CANASTA_COP, estado: 'entregada', createdAt: '2024-01-15T09:00:00' },
+  { id: '3', fecha: '2024-01-16', productorId: '2', productorNombre: 'José Martínez', cantidad: 30, tipo: 'Kent', precioUnitario: PRECIO_CANASTA_COP, estado: 'entregada', createdAt: '2024-01-16T08:00:00' },
+  { id: '4', fecha: '2024-01-16', productorId: '2', productorNombre: 'José Martínez', cantidad: 22, tipo: 'Haden', precioUnitario: PRECIO_CANASTA_COP, estado: 'recogida', createdAt: '2024-01-16T10:00:00' },
+  { id: '5', fecha: '2024-01-17', productorId: '3', productorNombre: 'María López', cantidad: 15, tipo: 'Manila', precioUnitario: PRECIO_CANASTA_COP, estado: 'pendiente', createdAt: '2024-01-17T08:00:00' },
+  { id: '6', fecha: '2024-01-17', productorId: '2', productorNombre: 'José Martínez', cantidad: 28, tipo: 'Tommy Atkins', precioUnitario: PRECIO_CANASTA_COP, estado: 'recogida', createdAt: '2024-01-17T09:00:00' },
+  { id: '7', fecha: '2024-01-18', productorId: '3', productorNombre: 'María López', cantidad: 20, tipo: 'Keitt', precioUnitario: PRECIO_CANASTA_COP, estado: 'pendiente', createdAt: '2024-01-18T08:00:00' },
+  { id: '8', fecha: '2024-01-18', productorId: '3', productorNombre: 'María López', cantidad: 35, tipo: 'Ataulfo', precioUnitario: PRECIO_CANASTA_COP, estado: 'recogida', createdAt: '2024-01-18T10:00:00' },
 ];
 
 const initialRegistros: DBRegistro[] = [
@@ -89,11 +295,10 @@ const initialRegistros: DBRegistro[] = [
 ];
 
 const initialPedidos: DBPedido[] = [
-  { id: '1', clienteId: '4', clienteNombre: 'Carlos Rodríguez', producto: 'Mango Ataulfo', cantidad: 10, notas: 'Para mi restaurante', estado: 'confirmado', createdAt: '2024-01-17T10:00:00' },
-  { id: '2', clienteId: '5', clienteNombre: 'Ana García', producto: 'Mango Tommy Atkins', cantidad: 5, notas: '', estado: 'pendiente', createdAt: '2024-01-18T14:00:00' },
+  { id: '1', clienteId: '4', clienteNombre: 'Carlos Rodríguez', producto: 'Mango Ataulfo', cantidad: 10, precioTotal: 40000, notas: 'Para mi restaurante', estado: 'confirmado', createdAt: '2024-01-17T10:00:00' },
+  { id: '2', clienteId: '5', clienteNombre: 'Ana García', producto: 'Mango Tommy Atkins', cantidad: 5, precioTotal: 20000, notas: '', estado: 'pendiente', createdAt: '2024-01-18T14:00:00' },
 ];
 
-// Clase Database
 class Database {
   private isInitialized(): boolean {
     return localStorage.getItem(DB_KEYS.INITIALIZED) === 'true';
@@ -155,10 +360,11 @@ class Database {
     return this.getCanastas().filter(c => c.productorId === productorId);
   }
 
-  addCanasta(canasta: Omit<DBCanasta, 'id' | 'createdAt'>): DBCanasta {
+  addCanasta(canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>): DBCanasta {
     const canastas = this.getCanastas();
     const newCanasta: DBCanasta = {
       ...canasta,
+      precioUnitario: PRECIO_CANASTA_COP,
       id: String(Date.now()),
       createdAt: new Date().toISOString()
     };
@@ -208,10 +414,11 @@ class Database {
     return this.getPedidos().filter(p => p.clienteId === clienteId);
   }
 
-  addPedido(pedido: Omit<DBPedido, 'id' | 'createdAt'>): DBPedido {
+  addPedido(pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>): DBPedido {
     const pedidos = this.getPedidos();
     const newPedido: DBPedido = {
       ...pedido,
+      precioTotal: pedido.cantidad * PRECIO_CANASTA_COP,
       id: String(Date.now()),
       createdAt: new Date().toISOString()
     };
@@ -254,8 +461,11 @@ class Database {
     const pedidos = this.getPedidos();
     const users = this.getUsers();
 
+    const totalCanastas = canastas.reduce((sum, c) => sum + c.cantidad, 0);
+    const ingresosTotales = totalCanastas * PRECIO_CANASTA_COP;
+
     return {
-      totalCanastas: canastas.reduce((sum, c) => sum + c.cantidad, 0),
+      totalCanastas,
       canastasEntregadas: canastas.filter(c => c.estado === 'entregada').reduce((sum, c) => sum + c.cantidad, 0),
       canastasRecogidas: canastas.filter(c => c.estado === 'recogida').reduce((sum, c) => sum + c.cantidad, 0),
       canastasPendientes: canastas.filter(c => c.estado === 'pendiente').reduce((sum, c) => sum + c.cantidad, 0),
@@ -264,10 +474,12 @@ class Database {
       totalUsuarios: users.length,
       totalAsociados: users.filter(u => u.role === 'asociado').length,
       totalClientes: users.filter(u => u.role === 'cliente').length,
+      ingresosTotales,
+      precioCanasta: PRECIO_CANASTA_COP
     };
   }
 
-  // Reset (para desarrollo)
+  // Reset
   reset(): void {
     Object.values(DB_KEYS).forEach(key => localStorage.removeItem(key));
     this.initialize();
@@ -275,3 +487,13 @@ class Database {
 }
 
 export const db = new Database();
+
+// Función para formatear precios en COP
+export function formatCOP(amount: number): string {
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+}

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { db, DBCanasta, DBRegistro, DBPedido, DBUser } from '../services/database';
+import { db, DBCanasta, DBRegistro, DBPedido, DBUser, PRECIO_CANASTA_COP } from '../services/database';
 
 export interface Canasta {
   id: string;
@@ -7,6 +7,7 @@ export interface Canasta {
   productor: string;
   cantidad: number;
   tipo: string;
+  precioUnitario: number;
   estado: 'recogida' | 'pendiente' | 'entregada';
 }
 
@@ -35,6 +36,7 @@ export interface Pedido {
   clienteNombre: string;
   producto: string;
   cantidad: number;
+  precioTotal: number;
   notas: string;
   estado: 'pendiente' | 'confirmado' | 'entregado';
   createdAt: string;
@@ -46,9 +48,10 @@ interface DataContextType {
   usuariosNuevos: UsuarioNuevo[];
   pedidos: Pedido[];
   allUsers: DBUser[];
-  addCanasta: (canasta: Omit<DBCanasta, 'id' | 'createdAt'>) => void;
+  precioCanasta: number;
+  addCanasta: (canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) => void;
   addRegistro: (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => void;
-  addPedido: (pedido: Omit<DBPedido, 'id' | 'createdAt'>) => void;
+  addPedido: (pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) => void;
   addUsuarioNuevo: (usuario: Omit<UsuarioNuevo, 'id'>) => void;
   refreshData: () => void;
   updateCanastaEstado: (id: string, estado: Canasta['estado']) => void;
@@ -65,7 +68,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [allUsers, setAllUsers] = useState<DBUser[]>([]);
 
   const refreshData = () => {
-    // Cargar canastas desde DB
     const dbCanastas = db.getCanastas();
     setCanastas(dbCanastas.map(c => ({
       id: c.id,
@@ -73,10 +75,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       productor: c.productorNombre,
       cantidad: c.cantidad,
       tipo: c.tipo,
+      precioUnitario: c.precioUnitario,
       estado: c.estado
     })));
 
-    // Cargar registros desde DB
     const dbRegistros = db.getRegistros();
     setRegistros(dbRegistros.map(r => ({
       id: r.id,
@@ -89,7 +91,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       notas: r.notas
     })));
 
-    // Cargar pedidos desde DB
     const dbPedidos = db.getPedidos();
     setPedidos(dbPedidos.map(p => ({
       id: p.id,
@@ -97,16 +98,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
       clienteNombre: p.clienteNombre,
       producto: p.producto,
       cantidad: p.cantidad,
+      precioTotal: p.precioTotal,
       notas: p.notas,
       estado: p.estado,
       createdAt: p.createdAt
     })));
 
-    // Cargar usuarios
     const dbUsers = db.getUsers();
     setAllUsers(dbUsers);
 
-    // Usuarios nuevos (últimos 5 registrados)
     const recentUsers = dbUsers
       .filter(u => u.role !== 'admin')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -125,7 +125,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     refreshData();
   }, []);
 
-  const addCanasta = (canasta: Omit<DBCanasta, 'id' | 'createdAt'>) => {
+  const addCanasta = (canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) => {
     db.addCanasta(canasta);
     refreshData();
   };
@@ -135,7 +135,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     refreshData();
   };
 
-  const addPedido = (pedido: Omit<DBPedido, 'id' | 'createdAt'>) => {
+  const addPedido = (pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) => {
     db.addPedido(pedido);
     refreshData();
   };
@@ -167,6 +167,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       usuariosNuevos,
       pedidos,
       allUsers,
+      precioCanasta: PRECIO_CANASTA_COP,
       addCanasta,
       addRegistro,
       addPedido,
