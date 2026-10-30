@@ -182,9 +182,9 @@ function Hero({ onLogin }: { onLogin: () => void }) {
               <p className="text-sm text-white/70">Clientes satisfechos</p>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white mt-8">
-              <i className="bi bi-cash-stack text-3xl text-amber-400 mb-2"></i>
-              <p className="text-3xl font-bold">$4,000</p>
-              <p className="text-sm text-white/70">COP por canasta</p>
+              <i className="bi bi-arrow-repeat text-3xl text-amber-400 mb-2"></i>
+              <p className="text-2xl font-bold">Precio</p>
+              <p className="text-sm text-white/70">Variable diario</p>
             </div>
           </div>
         </div>
@@ -358,71 +358,57 @@ function Products() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Generar precios dinámicos basados en la fecha actual
-  const generateDailyPrices = () => {
-    const today = new Date();
-    const dayOfMonth = today.getDate();
-    const basePrice = 4000;
-    
-    return [
-      { 
-        name: "Mango Tommy Atkins", 
-        description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa.", 
-        color: "from-red-500 to-orange-400", 
-        emoji: "🥭", 
-        season: "Todo el año",
-        currentPrice: basePrice + (dayOfMonth % 3) * 200, // 4000, 4200, 4400
-        previousPrice: basePrice + ((dayOfMonth - 1) % 3) * 200
-      },
-      { 
-        name: "Mango Ataulfo", 
-        description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso.", 
-        color: "from-yellow-400 to-amber-500", 
-        emoji: "✨", 
-        season: "Marzo - Junio",
-        currentPrice: basePrice + (dayOfMonth % 4) * 150, // 4000, 4150, 4300, 4450
-        previousPrice: basePrice + ((dayOfMonth - 1) % 4) * 150
-      },
-      { 
-        name: "Mango Kent", 
-        description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce.", 
-        color: "from-green-600 to-red-500", 
-        emoji: "💚", 
-        season: "Junio - Agosto",
-        currentPrice: basePrice + (dayOfMonth % 5) * 100, // 4000, 4100, 4200, 4300, 4400
-        previousPrice: basePrice + ((dayOfMonth - 1) % 5) * 100
-      },
-      { 
-        name: "Mango Haden", 
-        description: "Color rojo brillante con manchas amarillas. Sabor intenso.", 
-        color: "from-red-600 to-yellow-400", 
-        emoji: "🔴", 
-        season: "Febrero - Mayo",
-        currentPrice: basePrice + (dayOfMonth % 3) * 250, // 4000, 4250, 4500
-        previousPrice: basePrice + ((dayOfMonth - 1) % 3) * 250
-      },
-      { 
-        name: "Mango Keitt", 
-        description: "Grande de color verde incluso maduro. Pulpa dulce.", 
-        color: "from-green-500 to-yellow-300", 
-        emoji: "🟢", 
-        season: "Agosto - Septiembre",
-        currentPrice: basePrice + (dayOfMonth % 4) * 200, // 4000, 4200, 4400, 4600
-        previousPrice: basePrice + ((dayOfMonth - 1) % 4) * 200
-      },
-      { 
-        name: "Mango Manila", 
-        description: "Pequeño, alargado y muy dulce. Favorito para postres.", 
-        color: "from-yellow-300 to-orange-400", 
-        emoji: "🌟", 
-        season: "Abril - Julio",
-        currentPrice: basePrice + (dayOfMonth % 5) * 150, // 4000, 4150, 4300, 4450, 4600
-        previousPrice: basePrice + ((dayOfMonth - 1) % 5) * 150
-      }
-    ];
-  };
+  const products = [
+    { 
+      name: "Mango Tommy Atkins", 
+      description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa, ideal para exportación.", 
+      color: "from-red-500 to-orange-400", 
+      emoji: "🥭", 
+      season: "Todo el año",
+      characteristics: ["Firme", "Poco fibroso", "Grande"]
+    },
+    { 
+      name: "Mango Ataulfo", 
+      description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso y aromático.", 
+      color: "from-yellow-400 to-amber-500", 
+      emoji: "✨", 
+      season: "Marzo - Junio",
+      characteristics: ["Cremoso", "Sin fibra", "Aromático"]
+    },
+    { 
+      name: "Mango Kent", 
+      description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce y textura suave.", 
+      color: "from-green-600 to-red-500", 
+      emoji: "💚", 
+      season: "Junio - Agosto",
+      characteristics: ["Jugoso", "Suave", "Dulce"]
+    },
+    { 
+      name: "Mango Haden", 
+      description: "Color rojo brillante con manchas amarillas. Sabor intenso y aromático.", 
+      color: "from-red-600 to-yellow-400", 
+      emoji: "🔴", 
+      season: "Febrero - Mayo",
+      characteristics: ["Intenso", "Aromático", "Colorido"]
+    },
+    { 
+      name: "Mango Keitt", 
+      description: "Mango grande de color verde incluso maduro. Pulpa dulce sin fibra.", 
+      color: "from-green-500 to-yellow-300", 
+      emoji: "🟢", 
+      season: "Agosto - Septiembre",
+      characteristics: ["Grande", "Sin fibra", "Verde"]
+    },
+    { 
+      name: "Mango Manila", 
+      description: "Pequeño, alargado y muy dulce. Favorito para consumir fresco y en postres.", 
+      color: "from-yellow-300 to-orange-400", 
+      emoji: "🌟", 
+      season: "Abril - Julio",
+      characteristics: ["Dulce", "Pequeño", "Alargado"]
+    }
+  ];
 
-  const products = generateDailyPrices();
   const itemsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
   const maxIndex = Math.max(0, products.length - itemsPerView);
 
@@ -447,22 +433,6 @@ function Products() {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
-  };
-
-  const today = new Date();
-  const lastUpdate = today.toLocaleDateString('es-CO', { 
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric' 
-  });
-
   return (
     <section id="productos" className="py-20 bg-gradient-to-b from-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -475,9 +445,9 @@ function Products() {
           <p className="text-gray-600 max-w-2xl mx-auto mb-4">
             Ofrecemos una amplia selección de variedades de mango, cada una con su sabor y textura única.
           </p>
-          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
-            <i className="bi bi-calendar-check-fill"></i>
-            Precios actualizados: {lastUpdate}
+          <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium">
+            <i className="bi bi-tag-fill"></i>
+            Precios variables según disponibilidad y temporada
           </div>
           <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
         </div>
@@ -517,21 +487,11 @@ function Products() {
                     <div className={`h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
                       <span className="text-7xl group-hover:scale-125 transition-transform duration-500">{product.emoji}</span>
                       
-                      {/* Badge de precio actualizado */}
-                      <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 animate-pulse">
-                        <i className="bi bi-lightning-fill"></i>
-                        ¡Actualizado!
-                      </div>
-                      
-                      {/* Precio */}
+                      {/* Badge de precio variable */}
                       <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg">
-                        {product.previousPrice !== product.currentPrice && (
-                          <div className="text-xs text-gray-400 line-through mb-0.5">
-                            {formatPrice(product.previousPrice)}
-                          </div>
-                        )}
-                        <div className="text-sm font-bold text-green-700">
-                          {formatPrice(product.currentPrice)}
+                        <div className="text-xs font-bold text-amber-600 flex items-center gap-1">
+                          <i className="bi bi-arrow-repeat"></i>
+                          Precio Variable
                         </div>
                       </div>
                     </div>
@@ -540,34 +500,30 @@ function Products() {
                       <h3 className="text-xl font-bold text-green-800 mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
                       
-                      {/* Indicador de cambio de precio */}
-                      {product.previousPrice !== product.currentPrice && (
-                        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600 flex items-center gap-1">
-                              <i className="bi bi-calendar3 text-amber-600"></i>
-                              Precio anterior:
-                            </span>
-                            <span className="text-gray-500 line-through">{formatPrice(product.previousPrice)}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm mt-1">
-                            <span className="text-green-700 font-medium flex items-center gap-1">
-                              <i className="bi bi-arrow-up-right text-green-600"></i>
-                              Precio hoy:
-                            </span>
-                            <span className="text-green-700 font-bold">{formatPrice(product.currentPrice)}</span>
-                          </div>
-                        </div>
-                      )}
+                      {/* Características */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {product.characteristics.map((char, i) => (
+                          <span key={i} className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-100">
+                            {char}
+                          </span>
+                        ))}
+                      </div>
                       
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
+                      {/* Información de temporada */}
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
                           <i className="bi bi-calendar3"></i>
                           {product.season}
                         </span>
-                        <button className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                          Ver más <i className="bi bi-arrow-right"></i>
-                        </button>
+                        <a 
+                          href="https://wa.me/573242030867?text=Hola, me interesa conocer el precio actual de los mangos"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all"
+                        >
+                          <i className="bi bi-whatsapp text-green-600"></i>
+                          Consultar
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -608,17 +564,23 @@ function Products() {
         </div>
 
         {/* Nota informativa */}
-        <div className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+        <div className="mt-12 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <i className="bi bi-info-circle-fill text-2xl text-blue-600"></i>
+            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i className="bi bi-info-circle-fill text-2xl text-amber-600"></i>
             </div>
             <div>
-              <h4 className="font-bold text-blue-900 mb-2">Precios Dinámicos Actualizados Diariamente</h4>
-              <p className="text-sm text-blue-800 leading-relaxed">
-                Los precios de nuestras canastas de mangos se actualizan todos los días según la disponibilidad, 
-                calidad y temporada. Si notas un cambio de precio, es porque estamos ofreciendo el mejor valor 
-                del mercado en ese momento. ¡Consulta siempre el precio actual antes de realizar tu pedido!
+              <h4 className="font-bold text-amber-900 mb-2">Precios Variables Según Disponibilidad</h4>
+              <p className="text-sm text-amber-800 leading-relaxed mb-3">
+                Los precios de nuestras canastas de mangos varían diariamente según la disponibilidad, 
+                calidad, temporada y demanda del mercado. No tenemos precios fijos publicados.
+              </p>
+              <p className="text-sm text-amber-800 leading-relaxed">
+                <strong>¿Cómo conocer el precio actual?</strong> Contáctanos directamente por WhatsApp al 
+                <a href="https://wa.me/573242030867" target="_blank" rel="noopener noreferrer" className="text-green-700 font-bold hover:underline mx-1">
+                  +57 324 203 0867
+                </a>
+                y con gusto te informaremos el precio del día.
               </p>
             </div>
           </div>
@@ -760,9 +722,9 @@ function TechStack() {
           <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
             <span className="text-6xl">🥭</span>
             <div className="text-center sm:text-left">
-              <p className="text-sm font-medium text-amber-100">Precio de Canasta de Mangos</p>
-              <p className="text-4xl sm:text-5xl font-bold">$4,000 <span className="text-2xl">COP</span></p>
-              <p className="text-amber-100 mt-1 text-sm">Todas las variedades • Canasta fresca del campo</p>
+              <p className="text-sm font-medium text-amber-100">Canasta de Mangos Frescos</p>
+              <p className="text-3xl sm:text-4xl font-bold">Precio Variable</p>
+              <p className="text-amber-100 mt-1 text-sm">Según disponibilidad y temporada • Consulta por WhatsApp</p>
             </div>
           </div>
         </div>

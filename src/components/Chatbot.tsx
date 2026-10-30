@@ -14,19 +14,19 @@ interface Message {
 const botResponses: { keywords: string[]; response: string }[] = [
   {
     keywords: ['hola', 'buenos', 'buenas', 'hey', 'saludos'],
-    response: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc. ¿En qué puedo ayudarte hoy?\n\n📌 Puedo ayudarte con:\n• Info sobre mangos y precios\n• Hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma'
+    response: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc. ¿En qué puedo ayudarte hoy?\n\n📌 Puedo ayudarte con:\n• Info sobre mangos\n• Hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma'
   },
   {
     keywords: ['mango', 'mangos', 'fruta', 'variedad', 'producto', 'productos'],
-    response: '🥭 ¡Tenemos 6 variedades de mango!\n\n• Tommy Atkins - $4,000 COP/canasta\n• Ataulfo - $4,000 COP/canasta\n• Kent - $4,000 COP/canasta\n• Haden - $4,000 COP/canasta\n• Keitt - $4,000 COP/canasta\n• Manila - $4,000 COP/canasta\n\n💰 Todas las canastas a $4,000 COP'
+    response: '🥭 ¡Tenemos 6 variedades de mango!\n\n• Tommy Atkins\n• Ataulfo (Mango de Oro)\n• Kent\n• Haden\n• Keitt\n• Manila\n\n💰 Los precios varían diariamente según disponibilidad y temporada. ¡Consulta el precio actual por WhatsApp!'
   },
   {
     keywords: ['precio', 'costo', 'cuanto', 'cuánto', 'vale', 'cuesta', 'canasta'],
-    response: '💰 Nuestro precio por canasta es:\n\n🥭 $4,000 COP por canasta\n\n¡Si compras más de 10 canastas tienes descuento especial! Contacta al admin para más info.'
+    response: '💰 Nuestros precios son variables:\n\n🥭 Los precios cambian diariamente según:\n• Disponibilidad\n• Temporada\n• Calidad\n• Demanda del mercado\n\n📱 Para conocer el precio actual, contacta al admin por WhatsApp:\n+57 324 203 0867'
   },
   {
     keywords: ['pedido', 'pedir', 'comprar', 'ordenar', 'orden'],
-    response: '🛒 Para hacer un pedido:\n\n1️⃣ Inicia sesión como cliente\n2️⃣ Ve a "Productos"\n3️⃣ Haz clic en "Hacer Pedido"\n4️⃣ Selecciona el mango y la cantidad\n\n💰 Precio: $4,000 COP por canasta\n\n¿Necesitas ayuda? ¡Escríbele al admin por WhatsApp!'
+    response: '🛒 Para hacer un pedido:\n\n1️⃣ Inicia sesión como cliente\n2️⃣ Ve a "Productos"\n3️⃣ Haz clic en "Hacer Pedido"\n4️⃣ Selecciona el mango y la cantidad\n\n💰 Los precios varían diariamente\n\n¿Necesitas ayuda? ¡Escríbele al admin por WhatsApp!'
   },
   {
     keywords: ['whatsapp', 'admin', 'administrador', 'contactar', 'hablar', 'mensaje', 'comunicar'],
@@ -34,7 +34,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['asociado', 'productor', 'cosecha', 'cultivo', 'cajas', 'canastas'],
-    response: '🧺 Como asociado puedes:\n\n✅ Registrar tu producción (cajas y canastillas)\n✅ Llevar el conteo de canastas recogidas\n✅ Ver tu historial y gráficas\n✅ Precio por canasta: $4,000 COP\n\n¡Todo para que no se pierda la cuenta!'
+    response: '🧺 Como asociado puedes:\n\n✅ Registrar tu producción (cajas y canastillas)\n✅ Llevar el conteo de canastas recogidas\n✅ Ver tu historial y gráficas\n✅ Registrar precios variables del día\n\n¡Todo para que no se pierda la cuenta!'
   },
   {
     keywords: ['login', 'ingresar', 'sesión', 'sesion', 'entrar', 'acceder', 'contraseña', 'password'],
@@ -54,23 +54,23 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['nosotros', 'historia', 'quienes', 'quiénes', 'asociacion', 'asociación'],
-    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Canasta de mangos: $4,000 COP\n🌱 100% Natural y fresco del campo'
+    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 100% Natural y fresco del campo'
   },
   {
     keywords: ['envio', 'envío', 'entrega', 'delivery', 'domicilio'],
-    response: '🚚 Entregas directas del campo a tu mesa.\n\n⏰ Pedidos procesados en 24-48 horas\n💰 $4,000 COP por canasta\n📱 Coordina con el admin: +57 324 203 0867'
+    response: '🚚 Entregas directas del campo a tu mesa.\n\n⏰ Pedidos procesados en 24-48 horas\n💰 Precios variables según temporada\n📱 Coordina con el admin: +57 324 203 0867'
   },
   {
     keywords: ['grafica', 'gráfica', 'grafico', 'gráfico', 'estadistica', 'estadística', 'dashboard'],
-    response: '📈 En el panel de administrador encontrarás:\n\n📊 Gráficas de canastas por día\n🥭 Producción por asociado\n📈 Tendencia de producción\n💰 Ingresos totales ($4,000 COP/canasta)\n👥 Usuarios registrados'
+    response: '📈 En el panel de administrador encontrarás:\n\n📊 Gráficas de canastas por día\n🥭 Producción por asociado\n📈 Tendencia de producción\n💰 Registro de precios variables\n👥 Usuarios registrados'
   },
   {
     keywords: ['base de datos', 'database', 'mysql', 'sql', 'datos'],
-    response: '💾 Nuestro sistema usa:\n\n🐬 MySQL - Base de datos principal\n🔷 SQL Server - Base de datos secundaria\n💾 LocalStorage - Caché en navegador\n\nEl administrador puede ver la configuración de conexión en el panel.'
+    response: '💾 Nuestro sistema usa:\n\n🐬 MySQL - Base de datos principal\n💾 LocalStorage - Caché en navegador\n\nEl administrador puede ver la configuración de conexión en el panel.'
   },
   {
     keywords: ['ayuda', 'help', 'como', 'cómo', 'no entiendo', 'no se', 'no sé', 'explica'],
-    response: '¡Estoy aquí para ayudarte! 🤗\n\nPuedo ayudarte con:\n• 🥭 Info sobre mangos y precios ($4,000 COP/canasta)\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp\n• 🔐 Uso del sistema\n• 📊 Gráficas y reportes\n\n¿Sobre qué necesitas info?'
+    response: '¡Estoy aquí para ayudarte! 🤗\n\nPuedo ayudarte con:\n• 🥭 Info sobre mangos\n• 💰 Consultar precios actuales\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp\n• 🔐 Uso del sistema\n• 📊 Gráficas y reportes\n\n¿Sobre qué necesitas info?'
   },
   {
     keywords: ['gracias', 'thanks', 'thank'],
@@ -78,7 +78,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['beneficio', 'ventajas', 'por que', 'por qué', 'elegir'],
-    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 100% Natural sin pesticidas\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios justos: $4,000 COP/canasta\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
+    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 100% Natural sin pesticidas\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios competitivos y justos\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
   }
 ];
 
@@ -93,7 +93,7 @@ function getBotResponse(message: string): string {
     if (hasKeyword) return item.response;
   }
   
-  return '🤔 No estoy seguro de entender tu pregunta. Puedo ayudarte con:\n\n• 🥭 Mangos y precios ($4,000 COP/canasta)\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp (+57 324 203 0867)\n• 🔐 Uso del sistema\n• 💾 Base de datos (MySQL/SQL Server)\n\n¿Sobre qué tema necesitas info?';
+  return '🤔 No estoy seguro de entender tu pregunta. Puedo ayudarte con:\n\n• 🥭 Variedades de mangos\n• 💰 Precios actuales (variables)\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp (+57 324 203 0867)\n• 🔐 Uso del sistema\n• 💾 Base de datos (MySQL)\n\n¿Sobre qué tema necesitas info?';
 }
 
 export default function Chatbot() {
@@ -101,7 +101,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc.\n\n¿En qué puedo ayudarte?\n\n💬 Pregúntame sobre:\n• Mangos y precios ($4,000 COP/canasta)\n• Cómo hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma',
+      text: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc.\n\n¿En qué puedo ayudarte?\n\n💬 Pregúntame sobre:\n• Variedades de mangos\n• Precios actuales (variables)\n• Cómo hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma',
       sender: 'bot',
       timestamp: new Date()
     }
