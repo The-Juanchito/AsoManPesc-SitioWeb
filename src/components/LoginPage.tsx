@@ -54,11 +54,7 @@ export default function LoginPage({ onBack }: LoginPageProps) {
             <div className="flex justify-center gap-2 mt-3">
               <span className="db-status connected text-xs">
                 <span className="pulse"></span>
-                <i className="bi bi-database-fill-check"></i> MySQL
-              </span>
-              <span className="db-status connected text-xs">
-                <span className="pulse"></span>
-                <i className="bi bi-database-fill-check"></i> SQL Server
+                <i className="bi bi-database-fill-check"></i> MySQL Conectado
               </span>
             </div>
           </div>

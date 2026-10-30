@@ -15,25 +15,8 @@ export const MYSQL_CONFIG = {
   status: 'connected' as 'connected' | 'disconnected' | 'connecting'
 };
 
-// Configuración de conexión a SQL Server
-export const SQLSERVER_CONFIG = {
-  server: 'localhost\\SQLEXPRESS',
-  port: 1433,
-  user: 'sa',
-  password: '••••••••',
-  database: 'AsoManPescDB',
-  options: {
-    encrypt: true,
-    trustServerCertificate: true,
-    enableArithAbort: true
-  },
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
-  },
-  status: 'connected' as 'connected' | 'disconnected' | 'connecting'
-};
+// Nota: SQL Server fue reemplazado por MySQL como única base de datos
+// export const SQLSERVER_CONFIG = { ... }; // Eliminado
 
 // Esquema de tablas MySQL
 export const MYSQL_SCHEMA = `

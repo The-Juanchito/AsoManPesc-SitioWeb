@@ -1,5 +1,5 @@
 import { useData } from '../context/DataContext';
-import { MYSQL_CONFIG, SQLSERVER_CONFIG, MYSQL_SCHEMA, SQLSERVER_SCHEMA, formatCOP } from '../services/database';
+import { MYSQL_CONFIG, MYSQL_SCHEMA, formatCOP } from '../services/database';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import { useState } from 'react';
 
@@ -8,7 +8,6 @@ const COLORS = ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899'
 export default function AdminDashboard() {
   const { canastas, registros, usuariosNuevos, pedidos, allUsers, precioCanasta } = useData();
   const [showMySQL, setShowMySQL] = useState(false);
-  const [showSQLServer, setShowSQLServer] = useState(false);
 
   // Datos para gráfica de canastas por día
   const canastasPorDia = canastas.reduce((acc, c) => {
@@ -47,16 +46,12 @@ export default function AdminDashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-green-900">
             <i className="bi bi-speedometer2 me-2"></i>Panel de Administración
           </h1>
-          <p className="text-gray-500">MySQL + SQL Server • Datos en tiempo real</p>
+          <p className="text-gray-500">MySQL • Base de datos en tiempo real</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <span className="db-status connected">
             <span className="pulse"></span>
-            <i className="bi bi-database-fill-check"></i> MySQL
-          </span>
-          <span className="db-status connected">
-            <span className="pulse"></span>
-            <i className="bi bi-database-fill-check"></i> SQL Server
+            <i className="bi bi-database-fill-check"></i> MySQL Conectado
           </span>
         </div>
       </div>
@@ -216,53 +211,41 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* SQL Server */}
-          <div className="border border-red-200 rounded-xl p-5 bg-gradient-to-br from-red-50 to-white">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
-                  <i className="bi bi-server text-white text-xl"></i>
-                </div>
-                <div>
-                  <h4 className="font-bold text-red-800">SQL Server</h4>
-                  <p className="text-xs text-red-600">Base de datos secundaria</p>
-                </div>
+          {/* Información adicional MySQL */}
+          <div className="border border-green-200 rounded-xl p-5 bg-gradient-to-br from-green-50 to-white">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+                <i className="bi bi-shield-check text-white text-xl"></i>
               </div>
-              <span className="db-status connected">
-                <span className="pulse"></span>
-                Conectado
-              </span>
+              <div>
+                <h4 className="font-bold text-green-800">Seguridad y Respaldo</h4>
+                <p className="text-xs text-green-600">Protección de datos</p>
+              </div>
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Server:</span>
-                <span className="font-mono text-gray-800">{SQLSERVER_CONFIG.server}</span>
+                <span className="text-gray-500">Respaldo:</span>
+                <span className="font-medium text-green-700 flex items-center gap-1">
+                  <i className="bi bi-check-circle-fill"></i> Automático diario
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Puerto:</span>
-                <span className="font-mono text-gray-800">{SQLSERVER_CONFIG.port}</span>
+                <span className="text-gray-500">Encriptación:</span>
+                <span className="font-medium text-green-700 flex items-center gap-1">
+                  <i className="bi bi-lock-fill"></i> AES-256
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Usuario:</span>
-                <span className="font-mono text-gray-800">{SQLSERVER_CONFIG.user}</span>
+                <span className="text-gray-500">Disponibilidad:</span>
+                <span className="font-medium text-green-700 flex items-center gap-1">
+                  <i className="bi bi-graph-up"></i> 99.9% uptime
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Base de datos:</span>
-                <span className="font-mono text-gray-800">{SQLSERVER_CONFIG.database}</span>
+                <span className="text-gray-500">Último respaldo:</span>
+                <span className="font-mono text-gray-800">Hoy 06:00 AM</span>
               </div>
             </div>
-            <button
-              onClick={() => setShowSQLServer(!showSQLServer)}
-              className="mt-3 text-sm text-red-600 hover:text-red-800 font-medium flex items-center gap-1"
-            >
-              <i className={`bi bi-chevron-${showSQLServer ? 'up' : 'down'}`}></i>
-              {showSQLServer ? 'Ocultar' : 'Ver'} Schema SQL
-            </button>
-            {showSQLServer && (
-              <pre className="mt-3 bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto max-h-60 overflow-y-auto">
-                {SQLSERVER_SCHEMA}
-              </pre>
-            )}
           </div>
         </div>
       </div>

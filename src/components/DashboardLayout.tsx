@@ -71,7 +71,7 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
               <div>
                 <h1 className="text-lg font-bold text-green-800">AsoManPesc</h1>
                 <p className="text-xs text-gray-400 -mt-0.5">
-                  <i className="bi bi-database-fill me-1"></i>MySQL + SQL Server
+                  <i className="bi bi-database-fill me-1"></i>MySQL Database
                 </p>
               </div>
             </div>
