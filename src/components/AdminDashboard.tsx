@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const COLORS = ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export default function AdminDashboard() {
-  const { canastas, registros, usuariosNuevos } = useData();
+  const { canastas, registros, usuariosNuevos, pedidos, allUsers } = useData();
 
   // Datos para gráfica de canastas por día
   const canastasPorDia = canastas.reduce((acc, c) => {
@@ -15,7 +15,7 @@ export default function AdminDashboard() {
       acc.push({ dia: c.fecha, canastas: c.cantidad });
     }
     return acc;
-  }, [] as { dia: string; canastas: number }[]);
+  }, [] as { dia: string; canastas: number }[]).sort((a, b) => a.dia.localeCompare(b.dia));
 
   // Datos para gráfica de productores
   const productoresData = canastas.reduce((acc, c) => {
@@ -40,10 +40,13 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-green-900">Panel de Administración</h1>
-          <p className="text-gray-500">Bienvenido, aquí tienes el resumen general de AsoManPesc</p>
+          <p className="text-gray-500">Base de datos activa • Datos en tiempo real</p>
         </div>
         <div className="flex gap-2">
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">🔴 En vivo</span>
+          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            DB Conectada
+          </span>
         </div>
       </div>
 
@@ -84,7 +87,7 @@ export default function AdminDashboard() {
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               />
-              <Bar dataKey="canastas" fill="#16a34a" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="canastas" fill="#16a34a" radius={[8, 8, 0, 0]} name="Canastas" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -102,7 +105,7 @@ export default function AdminDashboard() {
                 outerRadius={90}
                 paddingAngle={5}
                 dataKey="value"
-                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                label={({ name, percent }) => `${name.split(' ')[0]} (${(percent * 100).toFixed(0)}%)`}
               >
                 {productoresData.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -124,7 +127,7 @@ export default function AdminDashboard() {
             <YAxis tick={{ fontSize: 11 }} />
             <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
             <Legend />
-            <Line type="monotone" dataKey="canastas" stroke="#16a34a" strokeWidth={3} dot={{ fill: '#16a34a', r: 5 }} />
+            <Line type="monotone" dataKey="canastas" stroke="#16a34a" strokeWidth={3} dot={{ fill: '#16a34a', r: 5 }} name="Canastas" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -165,11 +168,11 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Usuarios Nuevos */}
+      {/* Usuarios Registrados en la DB */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-green-800">👥 Usuarios Nuevos Registrados</h3>
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">{usuariosNuevos.length} registros</span>
+          <h3 className="text-lg font-bold text-green-800">👥 Usuarios en la Base de Datos</h3>
+          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">{allUsers.length} usuarios</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -178,29 +181,34 @@ export default function AdminDashboard() {
                 <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Nombre</th>
                 <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Email</th>
                 <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Rol</th>
-                <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Fecha</th>
+                <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Registro</th>
+                <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Último Acceso</th>
               </tr>
             </thead>
             <tbody>
-              {usuariosNuevos.map((u) => (
+              {allUsers.map((u) => (
                 <tr key={u.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm">
-                        {u.nombre.charAt(0)}
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-bold text-green-700">
+                        {u.name.charAt(0)}
                       </div>
-                      <span className="font-medium text-gray-800 text-sm">{u.nombre}</span>
+                      <span className="font-medium text-gray-800 text-sm">{u.name}</span>
                     </div>
                   </td>
                   <td className="py-3 px-2 text-sm text-gray-600">{u.email}</td>
                   <td className="py-3 px-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      u.rol === 'asociado' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                      u.role === 'admin' ? 'bg-red-100 text-red-700' :
+                      u.role === 'asociado' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
                     }`}>
-                      {u.rol}
+                      {u.role}
                     </span>
                   </td>
-                  <td className="py-3 px-2 text-sm text-gray-500">{u.fechaRegistro}</td>
+                  <td className="py-3 px-2 text-sm text-gray-500">{u.createdAt}</td>
+                  <td className="py-3 px-2 text-sm text-gray-500">
+                    {u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : '—'}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -208,10 +216,54 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Pedidos */}
+      <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-green-800">🛒 Pedidos de Clientes</h3>
+          <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">{pedidos.length} pedidos</span>
+        </div>
+        {pedidos.length === 0 ? (
+          <p className="text-gray-400 text-center py-4">No hay pedidos registrados</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Cliente</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Producto</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Cantidad</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Estado</th>
+                  <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pedidos.map((p) => (
+                  <tr key={p.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
+                    <td className="py-3 px-2 text-sm font-medium text-gray-800">{p.clienteNombre}</td>
+                    <td className="py-3 px-2 text-sm text-gray-600">{p.producto}</td>
+                    <td className="py-3 px-2 text-sm text-gray-600">{p.cantidad} kg</td>
+                    <td className="py-3 px-2">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        p.estado === 'entregado' ? 'bg-green-100 text-green-700' :
+                        p.estado === 'confirmado' ? 'bg-blue-100 text-blue-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {p.estado}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-sm text-gray-500">{new Date(p.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       {/* Detalle de canastas - Quién produjo */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-green-800">📋 Registro Detallado de Canastas</h3>
+          <h3 className="text-lg font-bold text-green-800">📋 Registro Detallado de Canastas (Quién Produjo)</h3>
           <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-medium">{canastas.length} registros</span>
         </div>
         <div className="overflow-x-auto">
@@ -253,6 +305,29 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Info de la base de datos */}
+      <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-6 rounded-2xl">
+        <h3 className="text-lg font-bold mb-3">💾 Información de la Base de Datos</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div className="bg-white/10 p-3 rounded-xl">
+            <p className="text-gray-300">Registros en DB</p>
+            <p className="text-xl font-bold">{canastas.length + registros.length + pedidos.length + allUsers.length}</p>
+          </div>
+          <div className="bg-white/10 p-3 rounded-xl">
+            <p className="text-gray-300">Tipo de DB</p>
+            <p className="text-xl font-bold">LocalStorage</p>
+          </div>
+          <div className="bg-white/10 p-3 rounded-xl">
+            <p className="text-gray-300">Tablas</p>
+            <p className="text-xl font-bold">5</p>
+          </div>
+          <div className="bg-white/10 p-3 rounded-xl">
+            <p className="text-gray-300">Persistencia</p>
+            <p className="text-xl font-bold">✅ Activa</p>
+          </div>
         </div>
       </div>
     </div>

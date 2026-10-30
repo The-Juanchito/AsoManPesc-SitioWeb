@@ -61,7 +61,8 @@ export default function AsociadoDashboard() {
     
     addCanasta({
       fecha: new Date().toISOString().split('T')[0],
-      productor: user!.name,
+      productorId: user!.id,
+      productorNombre: user!.name,
       cantidad: Number(canastaForm.cantidad),
       tipo: canastaForm.tipo,
       estado: canastaForm.estado

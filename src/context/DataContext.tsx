@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { db, DBCanasta, DBRegistro, DBPedido, DBUser } from '../services/database';
 
 export interface Canasta {
   id: string;
@@ -28,61 +29,152 @@ export interface UsuarioNuevo {
   fechaRegistro: string;
 }
 
+export interface Pedido {
+  id: string;
+  clienteId: string;
+  clienteNombre: string;
+  producto: string;
+  cantidad: number;
+  notas: string;
+  estado: 'pendiente' | 'confirmado' | 'entregado';
+  createdAt: string;
+}
+
 interface DataContextType {
   canastas: Canasta[];
   registros: RegistroAsociado[];
   usuariosNuevos: UsuarioNuevo[];
-  addCanasta: (canasta: Omit<Canasta, 'id'>) => void;
-  addRegistro: (registro: Omit<RegistroAsociado, 'id'>) => void;
+  pedidos: Pedido[];
+  allUsers: DBUser[];
+  addCanasta: (canasta: Omit<DBCanasta, 'id' | 'createdAt'>) => void;
+  addRegistro: (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => void;
+  addPedido: (pedido: Omit<DBPedido, 'id' | 'createdAt'>) => void;
   addUsuarioNuevo: (usuario: Omit<UsuarioNuevo, 'id'>) => void;
+  refreshData: () => void;
+  updateCanastaEstado: (id: string, estado: Canasta['estado']) => void;
+  updatePedidoEstado: (id: string, estado: Pedido['estado']) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-const initialCanastas: Canasta[] = [
-  { id: '1', fecha: '2024-01-15', productor: 'José Martínez', cantidad: 25, tipo: 'Tommy Atkins', estado: 'entregada' },
-  { id: '2', fecha: '2024-01-15', productor: 'María López', cantidad: 18, tipo: 'Ataulfo', estado: 'entregada' },
-  { id: '3', fecha: '2024-01-16', productor: 'José Martínez', cantidad: 30, tipo: 'Kent', estado: 'entregada' },
-  { id: '4', fecha: '2024-01-16', productor: 'Pedro Sánchez', cantidad: 22, tipo: 'Haden', estado: 'recogida' },
-  { id: '5', fecha: '2024-01-17', productor: 'María López', cantidad: 15, tipo: 'Manila', estado: 'pendiente' },
-  { id: '6', fecha: '2024-01-17', productor: 'José Martínez', cantidad: 28, tipo: 'Tommy Atkins', estado: 'recogida' },
-  { id: '7', fecha: '2024-01-18', productor: 'Pedro Sánchez', cantidad: 20, tipo: 'Keitt', estado: 'pendiente' },
-  { id: '8', fecha: '2024-01-18', productor: 'María López', cantidad: 35, tipo: 'Ataulfo', estado: 'recogida' },
-];
-
-const initialRegistros: RegistroAsociado[] = [
-  { id: '1', asociadoId: '2', asociadoNombre: 'José Martínez', fecha: '2024-01-15', producto: 'Tommy Atkins', cantidadCajas: 50, cantidadCanastas: 25, notas: 'Cosecha excelente' },
-  { id: '2', asociadoId: '3', asociadoNombre: 'María López', fecha: '2024-01-15', producto: 'Ataulfo', cantidadCajas: 36, cantidadCanastas: 18, notas: 'Fruta madura lista' },
-  { id: '3', asociadoId: '2', asociadoNombre: 'José Martínez', fecha: '2024-01-16', producto: 'Kent', cantidadCajas: 60, cantidadCanastas: 30, notas: 'Gran producción' },
-];
-
-const initialUsuarios: UsuarioNuevo[] = [
-  { id: '1', nombre: 'Roberto Díaz', email: 'roberto@email.com', rol: 'cliente', fechaRegistro: '2024-01-18' },
-  { id: '2', nombre: 'Laura Fernández', email: 'laura@email.com', rol: 'cliente', fechaRegistro: '2024-01-17' },
-  { id: '3', nombre: 'Miguel Torres', email: 'miguel@email.com', rol: 'asociado', fechaRegistro: '2024-01-16' },
-  { id: '4', nombre: 'Sofía Vargas', email: 'sofia@email.com', rol: 'cliente', fechaRegistro: '2024-01-15' },
-  { id: '5', nombre: 'Andrés Morales', email: 'andres@email.com', rol: 'cliente', fechaRegistro: '2024-01-14' },
-];
-
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [canastas, setCanastas] = useState<Canasta[]>(initialCanastas);
-  const [registros, setRegistros] = useState<RegistroAsociado[]>(initialRegistros);
-  const [usuariosNuevos, setUsuariosNuevos] = useState<UsuarioNuevo[]>(initialUsuarios);
+  const [canastas, setCanastas] = useState<Canasta[]>([]);
+  const [registros, setRegistros] = useState<RegistroAsociado[]>([]);
+  const [usuariosNuevos, setUsuariosNuevos] = useState<UsuarioNuevo[]>([]);
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [allUsers, setAllUsers] = useState<DBUser[]>([]);
 
-  const addCanasta = (canasta: Omit<Canasta, 'id'>) => {
-    setCanastas(prev => [...prev, { ...canasta, id: String(Date.now()) }]);
+  const refreshData = () => {
+    // Cargar canastas desde DB
+    const dbCanastas = db.getCanastas();
+    setCanastas(dbCanastas.map(c => ({
+      id: c.id,
+      fecha: c.fecha,
+      productor: c.productorNombre,
+      cantidad: c.cantidad,
+      tipo: c.tipo,
+      estado: c.estado
+    })));
+
+    // Cargar registros desde DB
+    const dbRegistros = db.getRegistros();
+    setRegistros(dbRegistros.map(r => ({
+      id: r.id,
+      asociadoId: r.asociadoId,
+      asociadoNombre: r.asociadoNombre,
+      fecha: r.fecha,
+      producto: r.producto,
+      cantidadCajas: r.cantidadCajas,
+      cantidadCanastas: r.cantidadCanastas,
+      notas: r.notas
+    })));
+
+    // Cargar pedidos desde DB
+    const dbPedidos = db.getPedidos();
+    setPedidos(dbPedidos.map(p => ({
+      id: p.id,
+      clienteId: p.clienteId,
+      clienteNombre: p.clienteNombre,
+      producto: p.producto,
+      cantidad: p.cantidad,
+      notas: p.notas,
+      estado: p.estado,
+      createdAt: p.createdAt
+    })));
+
+    // Cargar usuarios
+    const dbUsers = db.getUsers();
+    setAllUsers(dbUsers);
+
+    // Usuarios nuevos (últimos 5 registrados)
+    const recentUsers = dbUsers
+      .filter(u => u.role !== 'admin')
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5)
+      .map(u => ({
+        id: u.id,
+        nombre: u.name,
+        email: u.email,
+        rol: u.role,
+        fechaRegistro: u.createdAt
+      }));
+    setUsuariosNuevos(recentUsers);
   };
 
-  const addRegistro = (registro: Omit<RegistroAsociado, 'id'>) => {
-    setRegistros(prev => [...prev, { ...registro, id: String(Date.now()) }]);
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+  const addCanasta = (canasta: Omit<DBCanasta, 'id' | 'createdAt'>) => {
+    db.addCanasta(canasta);
+    refreshData();
+  };
+
+  const addRegistro = (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => {
+    db.addRegistro(registro);
+    refreshData();
+  };
+
+  const addPedido = (pedido: Omit<DBPedido, 'id' | 'createdAt'>) => {
+    db.addPedido(pedido);
+    refreshData();
   };
 
   const addUsuarioNuevo = (usuario: Omit<UsuarioNuevo, 'id'>) => {
-    setUsuariosNuevos(prev => [...prev, { ...usuario, id: String(Date.now()) }]);
+    db.addUser({
+      name: usuario.nombre,
+      email: usuario.email,
+      password: 'default123',
+      role: usuario.rol as 'cliente' | 'asociado'
+    });
+    refreshData();
+  };
+
+  const updateCanastaEstado = (id: string, estado: Canasta['estado']) => {
+    db.updateCanastaEstado(id, estado);
+    refreshData();
+  };
+
+  const updatePedidoEstado = (id: string, estado: Pedido['estado']) => {
+    db.updatePedidoEstado(id, estado);
+    refreshData();
   };
 
   return (
-    <DataContext.Provider value={{ canastas, registros, usuariosNuevos, addCanasta, addRegistro, addUsuarioNuevo }}>
+    <DataContext.Provider value={{
+      canastas,
+      registros,
+      usuariosNuevos,
+      pedidos,
+      allUsers,
+      addCanasta,
+      addRegistro,
+      addPedido,
+      addUsuarioNuevo,
+      refreshData,
+      updateCanastaEstado,
+      updatePedidoEstado
+    }}>
       {children}
     </DataContext.Provider>
   );

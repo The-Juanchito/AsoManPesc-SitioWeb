@@ -249,6 +249,71 @@ function Benefits() {
   );
 }
 
+function TechStack() {
+  const technologies = [
+    { name: 'React 18', description: 'Framework de interfaces', icon: '⚛️', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+    { name: 'TypeScript', description: 'Tipado estático', icon: '📘', color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
+    { name: 'Vite', description: 'Build tool ultrarrápido', icon: '⚡', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+    { name: 'Tailwind CSS', description: 'Estilos utilitarios', icon: '🎨', color: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+    { name: 'Recharts', description: 'Gráficas interactivas', icon: '📊', color: 'bg-green-100 text-green-700 border-green-200' },
+    { name: 'LocalStorage', description: 'Base de datos persistente', icon: '💾', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+    { name: 'Chatbot IA', description: 'Asistente virtual', icon: '🤖', color: 'bg-rose-100 text-rose-700 border-rose-200' },
+    { name: 'Node.js', description: 'Runtime JavaScript', icon: '🟢', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  ];
+
+  return (
+    <section className="py-20 bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <span className="text-amber-400 font-semibold text-sm uppercase tracking-wider">Tecnología</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mt-2 mb-4">¿Qué Programas Utilizamos?</h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Nuestro sistema está construido con las mejores tecnologías modernas para garantizar rendimiento, seguridad y escalabilidad.
+          </p>
+          <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {technologies.map((tech, i) => (
+            <div key={i} className={`p-5 rounded-2xl border ${tech.color} text-center hover:scale-105 transition-transform duration-300`}>
+              <span className="text-4xl block mb-2">{tech.icon}</span>
+              <h4 className="font-bold text-sm">{tech.name}</h4>
+              <p className="text-xs opacity-70 mt-1">{tech.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-white mb-4">🏗️ Arquitectura del Sistema</h3>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">🖥️</span>
+              </div>
+              <h4 className="font-bold text-white">Frontend</h4>
+              <p className="text-sm text-gray-400 mt-1">React + TypeScript + Tailwind CSS</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">💾</span>
+              </div>
+              <h4 className="font-bold text-white">Base de Datos</h4>
+              <p className="text-sm text-gray-400 mt-1">LocalStorage API (persistente)</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl">🤖</span>
+              </div>
+              <h4 className="font-bold text-white">Chatbot</h4>
+              <p className="text-sm text-gray-400 mt-1">Asistente virtual integrado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer({ onLogin }: { onLogin: () => void }) {
   return (
     <footer className="bg-green-900 text-white py-12">
@@ -314,6 +379,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
       <About />
       <Products />
       <Benefits />
+      <TechStack />
       <Footer onLogin={onLogin} />
     </div>
   );
