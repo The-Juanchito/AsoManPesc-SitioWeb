@@ -130,3 +130,43 @@ body {
 .bounce-slow {
   animation: bounce-slow 2s infinite;
 }
+
+/* Sidebar responsive */
+@media (max-width: 1024px) {
+  aside {
+    width: 5rem !important;
+  }
+  aside .ml-64 {
+    margin-left: 5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  aside {
+    transform: translateX(-100%);
+  }
+  aside:not(.collapsed) {
+    transform: translateX(0);
+  }
+  .ml-64 {
+    margin-left: 0 !important;
+  }
+}
+
+/* Scrollbar personalizado para sidebar */
+aside nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+aside nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside nav::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}
+
+aside nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.4);
+}
