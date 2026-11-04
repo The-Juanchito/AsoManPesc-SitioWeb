@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { formatCOP, PRECIO_CANASTA_COP } from '../services/database';
+import { VARIEDADES } from '../data/variedades';
 
 export default function ClienteDashboard() {
   const { user } = useAuth();
@@ -16,14 +17,12 @@ export default function ClienteDashboard() {
 
   const misPedidos = pedidos.filter(p => p.clienteId === user?.id);
 
-  const productos = [
-    { name: 'Mango Tommy Atkins', description: 'Grande, pulpa firme y poco fibrosa', stock: 'Disponible', emoji: '🥭' },
-    { name: 'Mango Ataulfo', description: 'Dulce, cremoso y sin fibra', stock: 'Disponible', emoji: '✨' },
-    { name: 'Mango Kent', description: 'Jugoso, sabor dulce y suave', stock: 'Disponible', emoji: '💚' },
-    { name: 'Mango Haden', description: 'Sabor intenso y aromático', stock: 'Limitado', emoji: '🔴' },
-    { name: 'Mango Keitt', description: 'Grande, dulce sin fibra', stock: 'Disponible', emoji: '🟢' },
-    { name: 'Mango Manila', description: 'Pequeño, muy dulce', stock: 'Disponible', emoji: '🌟' },
-  ];
+  const productos = VARIEDADES.map((v, i) => ({
+    name: v.name.toLowerCase().startsWith('mango') ? v.name : `Mango ${v.name}`,
+    description: v.description,
+    stock: v.name === 'Haden' ? 'Limitado' : 'Disponible',
+    emoji: v.emoji,
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

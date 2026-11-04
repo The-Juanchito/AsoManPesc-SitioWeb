@@ -307,6 +307,9 @@ export default function AdminDashboard() {
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">
+                  <i className="bi bi-card-text me-1"></i>ID (cédula)
+                </th>
+                <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">
                   <i className="bi bi-person me-1"></i>Nombre
                 </th>
                 <th className="text-left py-3 px-2 text-sm font-medium text-gray-500">
@@ -326,6 +329,7 @@ export default function AdminDashboard() {
             <tbody>
               {allUsers.map((u) => (
                 <tr key={u.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
+                  <td className="py-3 px-2 text-sm font-mono text-gray-700">{u.cedula || '—'}</td>
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-bold text-green-700">

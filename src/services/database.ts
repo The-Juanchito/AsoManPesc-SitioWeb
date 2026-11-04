@@ -27,6 +27,7 @@ export const MYSQL_SCHEMA = `
 CREATE TABLE IF NOT EXISTS usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
+  cedula VARCHAR(20) UNIQUE,
   email VARCHAR(150) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   rol ENUM('admin', 'asociado', 'cliente') NOT NULL,
@@ -116,6 +117,7 @@ GO
 CREATE TABLE dbo.Usuarios (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   Nombre NVARCHAR(100) NOT NULL,
+  Cedula NVARCHAR(20) UNIQUE,
   Email NVARCHAR(150) UNIQUE NOT NULL,
   Password NVARCHAR(255) NOT NULL,
   Rol NVARCHAR(20) NOT NULL CHECK (Rol IN ('admin', 'asociado', 'cliente')),
@@ -193,6 +195,7 @@ export interface DBUser {
   createdAt: string;
   lastLogin?: string;
   phone?: string;
+  cedula?: string;
 }
 
 export interface DBCanasta {
@@ -253,11 +256,11 @@ const DB_KEYS = {
 };
 
 const initialUsers: DBUser[] = [
-  { id: '1', name: 'Admin Principal', email: 'admin@asomanpesc.com', password: 'admin123', role: 'admin', createdAt: '2024-01-01', phone: '+57 3242030867' },
-  { id: '2', name: 'José Martínez', email: 'jose@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
-  { id: '3', name: 'María López', email: 'maria@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
-  { id: '4', name: 'Carlos Rodríguez', email: 'carlos@cliente.com', password: 'cliente123', role: 'cliente', createdAt: '2024-01-10' },
-  { id: '5', name: 'Ana García', email: 'ana@cliente.com', password: 'cliente123', role: 'cliente', createdAt: '2024-01-10' },
+  { id: '1', cedula: '1000000001', name: 'Admin Principal', email: 'admin@asomanpesc.com', password: 'admin123', role: 'admin', createdAt: '2024-01-01', phone: '+57 3242030867' },
+  { id: '2', cedula: '1000000002', name: 'José Martínez', email: 'jose@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
+  { id: '3', cedula: '1000000003', name: 'María López', email: 'maria@asomanpesc.com', password: 'asociado123', role: 'asociado', createdAt: '2024-01-05' },
+  { id: '4', cedula: '1000000004', name: 'Carlos Rodríguez', email: 'carlos@cliente.com', password: 'cliente123', role: 'cliente', createdAt: '2024-01-10' },
+  { id: '5', cedula: '1000000005', name: 'Ana García', email: 'ana@cliente.com', password: 'cliente123', role: 'cliente', createdAt: '2024-01-10' },
 ];
 
 const initialCanastas: DBCanasta[] = [
@@ -288,6 +291,14 @@ class Database {
   }
 
   initialize(): void {
+    // Migración: usuarios guardados antes de existir el campo cédula
+    if (this.isInitialized()) {
+      const users = this.getUsers();
+      if (users.length && users.every(u => u.cedula === undefined)) {
+        const byId = new Map(initialUsers.map(u => [u.id, u.cedula]));
+        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users.map(u => ({ ...u, cedula: byId.get(u.id) ?? u.cedula }))));
+      }
+    }
     if (!this.isInitialized()) {
       localStorage.setItem(DB_KEYS.USERS, JSON.stringify(initialUsers));
       localStorage.setItem(DB_KEYS.CANASTAS, JSON.stringify(initialCanastas));
@@ -322,6 +333,43 @@ class Database {
     users.push(newUser);
     localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
     return newUser;
+  }
+
+  getUserByCedula(cedula: string): DBUser | undefined {
+    return this.getUsers().find(u => u.cedula && u.cedula === cedula);
+  }
+
+  updateUser(id: string, changes: Partial<Omit<DBUser, 'id' | 'createdAt'>>): { ok: boolean; error?: string } {
+    const users = this.getUsers();
+    const index = users.findIndex(u => u.id === id);
+    if (index === -1) return { ok: false, error: 'Usuario no encontrado' };
+
+    if (changes.email && users.some(u => u.id !== id && u.email.toLowerCase() === changes.email!.toLowerCase())) {
+      return { ok: false, error: 'Ya existe un usuario con ese correo' };
+    }
+    if (changes.cedula && users.some(u => u.id !== id && u.cedula === changes.cedula)) {
+      return { ok: false, error: 'Ya existe un usuario con esa cédula' };
+    }
+    // No dejar el sistema sin administradores
+    if (changes.role && changes.role !== 'admin' && users[index].role === 'admin'
+        && users.filter(u => u.role === 'admin').length <= 1) {
+      return { ok: false, error: 'Debe existir al menos un administrador' };
+    }
+
+    users[index] = { ...users[index], ...changes };
+    localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+    return { ok: true };
+  }
+
+  deleteUser(id: string): { ok: boolean; error?: string } {
+    const users = this.getUsers();
+    const target = users.find(u => u.id === id);
+    if (!target) return { ok: false, error: 'Usuario no encontrado' };
+    if (target.role === 'admin' && users.filter(u => u.role === 'admin').length <= 1) {
+      return { ok: false, error: 'No se puede eliminar al único administrador' };
+    }
+    localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users.filter(u => u.id !== id)));
+    return { ok: true };
   }
 
   updateUserLastLogin(id: string): void {
