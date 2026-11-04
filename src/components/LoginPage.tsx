@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { LOGO_URL } from '../data/variedades';
 
 interface LoginPageProps {
   onBack: () => void;
@@ -48,7 +49,7 @@ export default function LoginPage({ onBack }: LoginPageProps) {
 
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-3">🥭</div>
+            <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-28 h-28 rounded-full object-cover mx-auto mb-3 shadow-lg ring-4 ring-amber-400" />
             <h1 className="text-2xl font-bold text-green-800">AsoManPesc</h1>
             <p className="text-gray-500 text-sm mt-1">Inicia sesión en tu cuenta</p>
             <div className="flex justify-center gap-2 mt-3">

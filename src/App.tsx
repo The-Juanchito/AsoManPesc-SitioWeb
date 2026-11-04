@@ -13,6 +13,7 @@ import InicioPage from './components/admin/InicioPage';
 import CanastasPage from './components/admin/CanastasPage';
 import BaseDatosPage from './components/admin/BaseDatosPage';
 import ReportesPage from './components/admin/ReportesPage';
+import UsuariosPage from './components/admin/UsuariosPage';
 import { db } from './services/database';
 
 function AppContent() {
@@ -49,7 +50,7 @@ function AppContent() {
           case 'produccion':
             return <AdminDashboard />;
           case 'usuarios':
-            return <AdminDashboard />;
+            return <UsuariosPage />;
           case 'pedidos':
             return <AdminDashboard />;
           case 'colaboraciones':
@@ -87,7 +88,7 @@ function AppContent() {
 
           {/* Contenido principal */}
           <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
               <main>
                 {renderAdminContent()}
               </main>

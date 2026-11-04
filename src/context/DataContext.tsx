@@ -56,6 +56,9 @@ interface DataContextType {
   refreshData: () => void;
   updateCanastaEstado: (id: string, estado: Canasta['estado']) => void;
   updatePedidoEstado: (id: string, estado: Pedido['estado']) => void;
+  addUser: (user: Omit<DBUser, 'id' | 'createdAt'>) => { ok: boolean; error?: string };
+  updateUser: (id: string, changes: Partial<Omit<DBUser, 'id' | 'createdAt'>>) => { ok: boolean; error?: string };
+  deleteUser: (id: string) => { ok: boolean; error?: string };
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -160,6 +163,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
     refreshData();
   };
 
+  const addUser = (user: Omit<DBUser, 'id' | 'createdAt'>) => {
+    if (db.getUserByEmail(user.email)) return { ok: false, error: 'Ya existe un usuario con ese correo' };
+    if (user.cedula && db.getUserByCedula(user.cedula)) return { ok: false, error: 'Ya existe un usuario con esa cédula' };
+    db.addUser(user);
+    refreshData();
+    return { ok: true };
+  };
+
+  const updateUser = (id: string, changes: Partial<Omit<DBUser, 'id' | 'createdAt'>>) => {
+    const result = db.updateUser(id, changes);
+    if (result.ok) refreshData();
+    return result;
+  };
+
+  const deleteUser = (id: string) => {
+    const result = db.deleteUser(id);
+    if (result.ok) refreshData();
+    return result;
+  };
+
   return (
     <DataContext.Provider value={{
       canastas,
@@ -174,7 +197,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       addUsuarioNuevo,
       refreshData,
       updateCanastaEstado,
-      updatePedidoEstado
+      updatePedidoEstado,
+      addUser,
+      updateUser,
+      deleteUser
     }}>
       {children}
     </DataContext.Provider>

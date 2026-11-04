@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { formatCOP } from '../services/database';
+import { NOMBRES_VARIEDADES } from '../data/variedades';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function AsociadoDashboard() {
@@ -157,12 +158,7 @@ export default function AsociadoDashboard() {
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
               >
                 <option value="">Seleccionar...</option>
-                <option value="Tommy Atkins">Tommy Atkins</option>
-                <option value="Ataulfo">Ataulfo (Mango de Oro)</option>
-                <option value="Kent">Kent</option>
-                <option value="Haden">Haden</option>
-                <option value="Keitt">Keitt</option>
-                <option value="Manila">Manila</option>
+                {NOMBRES_VARIEDADES.map(n => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
             <div>
@@ -232,12 +228,7 @@ export default function AsociadoDashboard() {
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none"
               >
                 <option value="">Seleccionar...</option>
-                <option value="Tommy Atkins">Tommy Atkins</option>
-                <option value="Ataulfo">Ataulfo</option>
-                <option value="Kent">Kent</option>
-                <option value="Haden">Haden</option>
-                <option value="Keitt">Keitt</option>
-                <option value="Manila">Manila</option>
+                {NOMBRES_VARIEDADES.map(n => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
             <div>

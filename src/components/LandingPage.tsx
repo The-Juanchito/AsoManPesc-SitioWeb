@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { VARIEDADES, LOGO_URL } from '../data/variedades';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -35,17 +36,17 @@ function Navbar({ onLogin }: { onLogin: () => void }) {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <a href="#inicio" className="flex items-center gap-3 group">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg group-hover:scale-110 group-hover:rotate-3 ${
-              scrolled ? 'bg-gradient-to-br from-green-600 to-green-800' : 'bg-white/20 backdrop-blur-sm border border-white/30'
-            }`}>
-              <span className="text-2xl">🥭</span>
-            </div>
+            <img
+              src={LOGO_URL}
+              alt="Logo AsoManPesc"
+              className="w-14 h-14 rounded-full object-cover shadow-lg ring-2 ring-amber-400 transition-all duration-300 group-hover:scale-110"
+            />
             <div className="hidden sm:block">
               <h1 className={`text-xl font-bold transition-colors ${scrolled ? 'text-green-800' : 'text-white'}`}>
                 AsoManPesc
               </h1>
               <p className={`text-[10px] font-medium transition-colors ${scrolled ? 'text-amber-600' : 'text-amber-200'}`}>
-                Asociación de Venta de Mangos
+                Asociación de Productores de Mango de Pescadero
               </p>
             </div>
           </a>
@@ -130,12 +131,9 @@ function Hero({ onLogin }: { onLogin: () => void }) {
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
-        <img 
-          src="https://image.qwenlm.ai/generated-images/84e3bd8d-c0e0-4192-8d50-1681f143eb81/_result.png" 
-          alt="Mangos frescos" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-green-900/90 via-green-800/70 to-amber-900/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-green-950 via-green-800 to-amber-700"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-green-400/20 rounded-full blur-3xl"></div>
       </div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left pt-20">
@@ -164,8 +162,14 @@ function Hero({ onLogin }: { onLogin: () => void }) {
             </div>
           </div>
 
+          <div className="hidden lg:flex flex-col items-center gap-6">
+            <img
+              src={LOGO_URL}
+              alt="Logo de la Asociación de Productores de Mango de Pescadero"
+              className="w-64 h-64 rounded-full object-cover shadow-2xl ring-4 ring-amber-400/80"
+            />
           {/* Stats cards */}
-          <div className="hidden lg:grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 w-full">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
               <i className="bi bi-basket3-fill text-3xl text-amber-400 mb-2"></i>
               <p className="text-3xl font-bold">15+</p>
@@ -186,6 +190,7 @@ function Hero({ onLogin }: { onLogin: () => void }) {
               <p className="text-2xl font-bold">Precio</p>
               <p className="text-sm text-white/70">Variable diario</p>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -358,56 +363,7 @@ function Products() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const products = [
-    { 
-      name: "Mango Tommy Atkins", 
-      description: "Grande, de piel roja-verdosa. Pulpa firme y poco fibrosa, ideal para exportación.", 
-      color: "from-red-500 to-orange-400", 
-      emoji: "🥭", 
-      season: "Todo el año",
-      characteristics: ["Firme", "Poco fibroso", "Grande"]
-    },
-    { 
-      name: "Mango Ataulfo", 
-      description: "Pequeño y dulce, color amarillo dorado. Sin fibra, cremoso y aromático.", 
-      color: "from-yellow-400 to-amber-500", 
-      emoji: "✨", 
-      season: "Marzo - Junio",
-      characteristics: ["Cremoso", "Sin fibra", "Aromático"]
-    },
-    { 
-      name: "Mango Kent", 
-      description: "Grande y jugoso con tonos verdes y rojos. Sabor dulce y textura suave.", 
-      color: "from-green-600 to-red-500", 
-      emoji: "💚", 
-      season: "Junio - Agosto",
-      characteristics: ["Jugoso", "Suave", "Dulce"]
-    },
-    { 
-      name: "Mango Haden", 
-      description: "Color rojo brillante con manchas amarillas. Sabor intenso y aromático.", 
-      color: "from-red-600 to-yellow-400", 
-      emoji: "🔴", 
-      season: "Febrero - Mayo",
-      characteristics: ["Intenso", "Aromático", "Colorido"]
-    },
-    { 
-      name: "Mango Keitt", 
-      description: "Mango grande de color verde incluso maduro. Pulpa dulce sin fibra.", 
-      color: "from-green-500 to-yellow-300", 
-      emoji: "🟢", 
-      season: "Agosto - Septiembre",
-      characteristics: ["Grande", "Sin fibra", "Verde"]
-    },
-    { 
-      name: "Mango Manila", 
-      description: "Pequeño, alargado y muy dulce. Favorito para consumir fresco y en postres.", 
-      color: "from-yellow-300 to-orange-400", 
-      emoji: "🌟", 
-      season: "Abril - Julio",
-      characteristics: ["Dulce", "Pequeño", "Alargado"]
-    }
-  ];
+  const products = VARIEDADES.map(v => ({ ...v, name: v.name.toLowerCase().startsWith('mango') ? v.name : `Mango ${v.name}` }));
 
   const itemsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
   const maxIndex = Math.max(0, products.length - itemsPerView);
@@ -724,7 +680,7 @@ function TechStack() {
             <div className="text-center sm:text-left">
               <p className="text-sm font-medium text-amber-100">Canasta de Mangos Frescos</p>
               <p className="text-3xl sm:text-4xl font-bold">Precio Variable</p>
-              <p className="text-amber-100 mt-1 text-sm">Según disponibilidad y temporada • Consulta por WhatsApp</p>
+              <p className="text-amber-100 mt-1 text-sm">Según el mercado • Consulta por WhatsApp</p>
             </div>
           </div>
         </div>
@@ -740,12 +696,10 @@ function Footer({ onLogin }: { onLogin: () => void }) {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-2xl">🥭</span>
-              </div>
+              <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-16 h-16 rounded-full object-cover shadow-lg ring-2 ring-amber-400" />
               <div>
                 <h3 className="text-xl font-bold">AsoManPesc</h3>
-                <p className="text-amber-400 text-xs">Asociación de Venta de Mangos</p>
+                <p className="text-amber-400 text-xs">Asociación de Productores de Mango de Pescadero</p>
               </div>
             </div>
             <p className="text-gray-300 leading-relaxed max-w-md mb-4">
@@ -798,7 +752,7 @@ function Footer({ onLogin }: { onLogin: () => void }) {
 
         <div className="border-t border-green-700 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2024 AsoManPesc - Asociación de Venta de Mangos. Todos los derechos reservados.
+            © 2026 AsoManPesc - Asociación de Productores de Mango de Pescadero. Todos los derechos reservados.
           </p>
           <p className="text-gray-500 text-xs mt-2 flex items-center justify-center gap-2">
             <i className="bi bi-heart-fill text-rose-500"></i>

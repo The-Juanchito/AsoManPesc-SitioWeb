@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import { LOGO_URL } from '../data/variedades';
 
 interface AdminSidebarProps {
   currentPage: string;
@@ -28,10 +29,8 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
 
   const handleNavigate = (page: string) => {
     onNavigate(page);
-    // Cerrar sidebar en móvil después de navegar
-    if (window.innerWidth < 1024) {
-      onClose();
-    }
+    // Cerrar el menú después de navegar (el overlay tapa la página si queda abierto)
+    onClose();
   };
 
   return (
@@ -53,9 +52,7 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
         {/* Header del sidebar */}
         <div className="p-5 border-b border-green-700/50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-xl">🥭</span>
-            </div>
+            <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-11 h-11 rounded-full object-cover shadow-lg ring-2 ring-amber-400" />
             <div>
               <h2 className="font-bold text-base">AsoManPesc</h2>
               <p className="text-[10px] text-green-300 flex items-center gap-1">

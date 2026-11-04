@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { NOMBRES_VARIEDADES } from '../data/variedades';
 
 // Número del administrador para WhatsApp
 const ADMIN_WHATSAPP = '573242030867';
@@ -18,7 +19,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['mango', 'mangos', 'fruta', 'variedad', 'producto', 'productos'],
-    response: '🥭 ¡Tenemos 6 variedades de mango!\n\n• Tommy Atkins\n• Ataulfo (Mango de Oro)\n• Kent\n• Haden\n• Keitt\n• Manila\n\n💰 Los precios varían diariamente según disponibilidad y temporada. ¡Consulta el precio actual por WhatsApp!'
+    response: `🥭 ¡Tenemos ${NOMBRES_VARIEDADES.length} variedades de mango!\n\n${NOMBRES_VARIEDADES.map(n => '• ' + n).join('\n')}\n\n💰 Los precios varían según el mercado. ¡Consulta el precio actual por WhatsApp!`
   },
   {
     keywords: ['precio', 'costo', 'cuanto', 'cuánto', 'vale', 'cuesta', 'canasta'],
@@ -108,6 +109,13 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showHint, setShowHint] = useState(true);
+
+  // El globo de ayuda se oculta solo para no tapar botones de la página
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(false), 8000);
+    return () => clearTimeout(t);
+  }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -196,8 +204,9 @@ export default function Chatbot() {
       </button>
 
       {/* Tooltip del chatbot */}
-      {!isOpen && (
-        <div className="fixed bottom-20 right-6 z-50 bg-white shadow-lg rounded-xl p-3 max-w-[220px] border border-gray-100">
+      {!isOpen && showHint && (
+        <div className="fixed bottom-20 right-6 z-50 bg-white shadow-lg rounded-xl p-3 pr-7 max-w-[220px] border border-gray-100">
+          <button onClick={() => setShowHint(false)} aria-label="Cerrar" className="absolute top-1 right-2 text-gray-400 hover:text-gray-600 text-sm leading-none">×</button>
           <p className="text-xs text-gray-600 font-medium">💬 ¿Necesitas ayuda? Pregúntame o <button onClick={openWhatsApp} className="text-green-600 font-bold underline">escribe al admin</button></p>
         </div>
       )}

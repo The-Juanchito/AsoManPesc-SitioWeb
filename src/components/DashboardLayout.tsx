@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { LOGO_URL } from '../data/variedades';
 import { useAuth, UserRole } from '../context/AuthContext';
 
 interface DashboardLayoutProps {
@@ -67,7 +68,7 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">🥭</span>
+              <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-10 h-10 rounded-full object-cover ring-2 ring-amber-400" />
               <div>
                 <h1 className="text-lg font-bold text-green-800">AsoManPesc</h1>
                 <p className="text-xs text-gray-400 -mt-0.5">
