@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { db } from '../services/database';
+import { api, setToken } from '../services/api';
 
 export type UserRole = 'admin' | 'asociado' | 'cliente';
 
@@ -11,9 +11,11 @@ export interface User {
   avatar?: string;
 }
 
+export type LoginResult = { ok: true } | { ok: false; error: string };
+
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<LoginResult>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -23,21 +25,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (email: string, password: string): boolean => {
-    // Inicializar DB si no está inicializada
-    db.initialize();
-    
-    const found = db.getUserByEmail(email);
-    if (found && found.password === password) {
-      const { password: _, ...userData } = found;
-      setUser(userData);
-      db.updateUserLastLogin(found.id);
-      return true;
+  const login = async (email: string, password: string): Promise<LoginResult> => {
+    try {
+      const { token, user: found } = await api.login(email.trim(), password);
+      setToken(token);
+      setUser(found);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : 'No se pudo iniciar sesión' };
     }
-    return false;
   };
 
   const logout = () => {
+    setToken(null);
     setUser(null);
   };
 
