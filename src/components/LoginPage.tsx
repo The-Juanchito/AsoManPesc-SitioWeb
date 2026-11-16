@@ -11,9 +11,10 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showCredentials, setShowCredentials] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -22,9 +23,11 @@ export default function LoginPage({ onBack }: LoginPageProps) {
       return;
     }
 
-    const success = login(email, password);
-    if (!success) {
-      setError('Correo o contraseña incorrectos');
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
+    if (!result.ok) {
+      setError(result.error);
     }
   };
 
@@ -102,10 +105,11 @@ export default function LoginPage({ onBack }: LoginPageProps) {
 
             <button
               type="submit"
-              className="w-full bg-green-700 text-white py-3 rounded-xl font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full bg-green-700 text-white py-3 rounded-xl font-bold hover:bg-green-800 transition-all shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <i className="bi bi-box-arrow-in-right"></i>
-              Iniciar Sesión
+              <i className={`bi ${loading ? 'bi-hourglass-split' : 'bi-box-arrow-in-right'}`}></i>
+              {loading ? 'Entrando...' : 'Iniciar Sesión'}
             </button>
           </form>
 

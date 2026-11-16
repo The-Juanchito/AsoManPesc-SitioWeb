@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { MYSQL_CONFIG, MYSQL_SCHEMA } from '../../services/database';
+import { useEstadoBD } from '../../services/useEstadoBD';
 
 export default function BaseDatosPage() {
   const [showSchema, setShowSchema] = useState(false);
+  const { estado, conectado, cargando } = useEstadoBD();
   const [activeTab, setActiveTab] = useState<'config' | 'schema' | 'tables'>('config');
 
+  // Cantidad real de filas, leída desde MySQL
+  const filas = (t: string) => estado?.tablas[t] ?? 0;
   const tables = [
-    { name: 'usuarios', icon: 'bi-people-fill', color: 'blue', records: 5, description: 'Admins, asociados y clientes' },
-    { name: 'canastas', icon: 'bi-basket3-fill', color: 'amber', records: 8, description: 'Registro de canastas producidas' },
-    { name: 'registros_produccion', icon: 'bi-clipboard-data-fill', color: 'green', records: 3, description: 'Producción por asociado' },
-    { name: 'pedidos', icon: 'bi-bag-fill', color: 'purple', records: 2, description: 'Pedidos de clientes' },
-    { name: 'mensajes_chat', icon: 'bi-chat-dots-fill', color: 'rose', records: 0, description: 'Mensajes del chatbot' },
-    { name: 'precios', icon: 'bi-tag-fill', color: 'indigo', records: 1, description: 'Precios de productos' },
+    { name: 'usuarios', icon: 'bi-people-fill', color: 'blue', records: filas('usuarios'), description: 'Admins, asociados y clientes' },
+    { name: 'canastas', icon: 'bi-basket3-fill', color: 'amber', records: filas('canastas'), description: 'Registro de canastas producidas' },
+    { name: 'registros_produccion', icon: 'bi-clipboard-data-fill', color: 'green', records: filas('registros_produccion'), description: 'Producción por asociado' },
+    { name: 'pedidos', icon: 'bi-bag-fill', color: 'purple', records: filas('pedidos'), description: 'Pedidos de clientes' },
+    { name: 'precios', icon: 'bi-tag-fill', color: 'indigo', records: filas('precios'), description: 'Precios de productos' },
   ];
 
   return (
@@ -74,9 +77,10 @@ export default function BaseDatosPage() {
                   <p className="text-blue-100 text-sm">Base de datos principal de AsoManPesc</p>
                 </div>
               </div>
-              <span className="db-status connected bg-white/20 text-white">
+              <span className={`db-status ${conectado || cargando ? 'connected' : 'disconnected'} bg-white/20 text-white`}>
                 <span className="pulse"></span>
-                <i className="bi bi-check-circle-fill"></i> Conectado
+                <i className={`bi ${cargando ? 'bi-hourglass-split' : conectado ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}`}></i>
+                {cargando ? ' Comprobando...' : conectado ? ' Conectado' : ' Sin conexión'}
               </span>
             </div>
           </div>
@@ -89,7 +93,7 @@ export default function BaseDatosPage() {
                   <span className="text-sm font-medium text-gray-700">Host</span>
                 </div>
                 <code className="text-sm font-mono bg-white px-3 py-1.5 rounded-lg border border-gray-200 block">
-                  {MYSQL_CONFIG.host}:{MYSQL_CONFIG.port}
+                  {estado?.host ?? MYSQL_CONFIG.host}:{estado?.port ?? MYSQL_CONFIG.port}
                 </code>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
@@ -98,7 +102,7 @@ export default function BaseDatosPage() {
                   <span className="text-sm font-medium text-gray-700">Usuario</span>
                 </div>
                 <code className="text-sm font-mono bg-white px-3 py-1.5 rounded-lg border border-gray-200 block">
-                  {MYSQL_CONFIG.user}
+                  {estado?.user ?? MYSQL_CONFIG.user}
                 </code>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
@@ -107,7 +111,7 @@ export default function BaseDatosPage() {
                   <span className="text-sm font-medium text-gray-700">Base de datos</span>
                 </div>
                 <code className="text-sm font-mono bg-white px-3 py-1.5 rounded-lg border border-gray-200 block">
-                  {MYSQL_CONFIG.database}
+                  {estado?.database ?? MYSQL_CONFIG.database}
                 </code>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
