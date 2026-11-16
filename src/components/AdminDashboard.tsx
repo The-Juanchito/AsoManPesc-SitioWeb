@@ -1,5 +1,6 @@
 import { useData } from '../context/DataContext';
 import { MYSQL_CONFIG, MYSQL_SCHEMA, formatCOP } from '../services/database';
+import { useEstadoBD } from '../services/useEstadoBD';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import { useState } from 'react';
 
@@ -8,6 +9,7 @@ const COLORS = ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899'
 export default function AdminDashboard() {
   const { canastas, registros, usuariosNuevos, pedidos, allUsers, precioCanasta } = useData();
   const [showMySQL, setShowMySQL] = useState(false);
+  const { conectado, cargando } = useEstadoBD();
 
   // Datos para gráfica de canastas por día
   const canastasPorDia = canastas.reduce((acc, c) => {
@@ -49,9 +51,9 @@ export default function AdminDashboard() {
           <p className="text-gray-500">MySQL • Base de datos en tiempo real</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <span className="db-status connected">
+          <span className={`db-status ${conectado || cargando ? 'connected' : 'disconnected'}`}>
             <span className="pulse"></span>
-            <i className="bi bi-database-fill-check"></i> MySQL Conectado
+            <i className="bi bi-database-fill-check"></i> {cargando ? 'MySQL: comprobando...' : conectado ? 'MySQL Conectado' : 'MySQL sin conexión'}
           </span>
         </div>
       </div>
@@ -174,9 +176,9 @@ export default function AdminDashboard() {
                   <p className="text-xs text-blue-600">Base de datos principal</p>
                 </div>
               </div>
-              <span className="db-status connected">
+              <span className={`db-status ${conectado || cargando ? 'connected' : 'disconnected'}`}>
                 <span className="pulse"></span>
-                Conectado
+                {cargando ? 'Comprobando...' : conectado ? 'Conectado' : 'Sin conexión'}
               </span>
             </div>
             <div className="space-y-2 text-sm">

@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { db, DBCanasta, DBRegistro, DBPedido, DBUser, PRECIO_CANASTA_COP } from '../services/database';
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { DBCanasta, DBRegistro, DBPedido, DBUser, PRECIO_CANASTA_COP } from '../services/database';
+import { api } from '../services/api';
+import { useAuth } from './AuthContext';
 
 export interface Canasta {
   id: string;
@@ -42,6 +44,8 @@ export interface Pedido {
   createdAt: string;
 }
 
+export type Resultado = { ok: true } | { ok: false; error: string };
+
 interface DataContextType {
   canastas: Canasta[];
   registros: RegistroAsociado[];
@@ -49,139 +53,149 @@ interface DataContextType {
   pedidos: Pedido[];
   allUsers: DBUser[];
   precioCanasta: number;
-  addCanasta: (canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) => void;
-  addRegistro: (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => void;
-  addPedido: (pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) => void;
-  addUsuarioNuevo: (usuario: Omit<UsuarioNuevo, 'id'>) => void;
-  refreshData: () => void;
-  updateCanastaEstado: (id: string, estado: Canasta['estado']) => void;
-  updatePedidoEstado: (id: string, estado: Pedido['estado']) => void;
-  addUser: (user: Omit<DBUser, 'id' | 'createdAt'>) => { ok: boolean; error?: string };
-  updateUser: (id: string, changes: Partial<Omit<DBUser, 'id' | 'createdAt'>>) => { ok: boolean; error?: string };
-  deleteUser: (id: string) => { ok: boolean; error?: string };
+  loadError: string | null;
+  addCanasta: (canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) => Promise<void>;
+  addRegistro: (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => Promise<void>;
+  addPedido: (pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) => Promise<void>;
+  refreshData: () => Promise<void>;
+  updateCanastaEstado: (id: string, estado: Canasta['estado']) => Promise<void>;
+  updatePedidoEstado: (id: string, estado: Pedido['estado']) => Promise<void>;
+  addUser: (user: Partial<DBUser>) => Promise<Resultado>;
+  updateUser: (id: string, changes: Partial<DBUser>) => Promise<Resultado>;
+  deleteUser: (id: string) => Promise<Resultado>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const mensaje = (e: unknown) => (e instanceof Error ? e.message : 'Ocurrió un error inesperado');
+
 export function DataProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [canastas, setCanastas] = useState<Canasta[]>([]);
   const [registros, setRegistros] = useState<RegistroAsociado[]>([]);
   const [usuariosNuevos, setUsuariosNuevos] = useState<UsuarioNuevo[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [allUsers, setAllUsers] = useState<DBUser[]>([]);
+  const [precioCanasta, setPrecioCanasta] = useState(PRECIO_CANASTA_COP);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const refreshData = () => {
-    const dbCanastas = db.getCanastas();
-    setCanastas(dbCanastas.map(c => ({
-      id: c.id,
-      fecha: c.fecha,
-      productor: c.productorNombre,
-      cantidad: c.cantidad,
-      tipo: c.tipo,
-      precioUnitario: c.precioUnitario,
-      estado: c.estado
-    })));
-
-    const dbRegistros = db.getRegistros();
-    setRegistros(dbRegistros.map(r => ({
-      id: r.id,
-      asociadoId: r.asociadoId,
-      asociadoNombre: r.asociadoNombre,
-      fecha: r.fecha,
-      producto: r.producto,
-      cantidadCajas: r.cantidadCajas,
-      cantidadCanastas: r.cantidadCanastas,
-      notas: r.notas
-    })));
-
-    const dbPedidos = db.getPedidos();
-    setPedidos(dbPedidos.map(p => ({
-      id: p.id,
-      clienteId: p.clienteId,
-      clienteNombre: p.clienteNombre,
-      producto: p.producto,
-      cantidad: p.cantidad,
-      precioTotal: p.precioTotal,
-      notas: p.notas,
-      estado: p.estado,
-      createdAt: p.createdAt
-    })));
-
-    const dbUsers = db.getUsers();
-    setAllUsers(dbUsers);
-
-    const recentUsers = dbUsers
-      .filter(u => u.role !== 'admin')
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 5)
-      .map(u => ({
-        id: u.id,
-        nombre: u.name,
-        email: u.email,
-        rol: u.role,
-        fechaRegistro: u.createdAt
-      }));
-    setUsuariosNuevos(recentUsers);
+  const clearData = () => {
+    setCanastas([]); setRegistros([]); setPedidos([]); setAllUsers([]); setUsuariosNuevos([]);
   };
 
+  // Trae los datos desde MySQL (el servidor ya filtra según el rol de quien entró)
+  const refreshData = useCallback(async () => {
+    if (!user) return;
+    try {
+      const [dbCanastas, dbRegistros, dbPedidos, dbUsers, precio] = await Promise.all([
+        api.getCanastas(),
+        api.getRegistros(),
+        api.getPedidos(),
+        user.role === 'admin' ? api.getUsuarios() : Promise.resolve([] as DBUser[]),
+        api.getPrecio().catch(() => PRECIO_CANASTA_COP),
+      ]);
+
+      setCanastas(dbCanastas.map(c => ({
+        id: c.id,
+        fecha: c.fecha,
+        productor: c.productorNombre,
+        cantidad: c.cantidad,
+        tipo: c.tipo,
+        precioUnitario: c.precioUnitario,
+        estado: c.estado,
+      })));
+
+      setRegistros(dbRegistros.map(r => ({
+        id: r.id,
+        asociadoId: r.asociadoId,
+        asociadoNombre: r.asociadoNombre,
+        fecha: r.fecha,
+        producto: r.producto,
+        cantidadCajas: r.cantidadCajas,
+        cantidadCanastas: r.cantidadCanastas,
+        notas: r.notas,
+      })));
+
+      setPedidos(dbPedidos.map(p => ({
+        id: p.id,
+        clienteId: p.clienteId,
+        clienteNombre: p.clienteNombre,
+        producto: p.producto,
+        cantidad: p.cantidad,
+        precioTotal: p.precioTotal,
+        notas: p.notas,
+        estado: p.estado,
+        createdAt: p.createdAt,
+      })));
+
+      setAllUsers(dbUsers);
+      // El servidor entrega los usuarios del más nuevo al más antiguo
+      setUsuariosNuevos(
+        dbUsers
+          .filter(u => u.role !== 'admin')
+          .slice(0, 5)
+          .map(u => ({
+            id: u.id,
+            nombre: u.name,
+            email: u.email,
+            rol: u.role,
+            fechaRegistro: u.createdAt,
+          }))
+      );
+
+      setPrecioCanasta(precio);
+      setLoadError(null);
+    } catch (e) {
+      setLoadError(mensaje(e));
+    }
+  }, [user]);
+
+  // Al entrar (o salir) un usuario se cargan (o se limpian) los datos
   useEffect(() => {
-    refreshData();
-  }, []);
+    if (user) refreshData();
+    else { clearData(); setLoadError(null); }
+  }, [user, refreshData]);
 
-  const addCanasta = (canasta: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) => {
-    db.addCanasta(canasta);
-    refreshData();
+  // Acciones de canastas / registros / pedidos: guardan en MySQL y recargan.
+  // Si algo falla se avisa al usuario.
+  const accion = async (fn: () => Promise<unknown>) => {
+    try {
+      await fn();
+      await refreshData();
+    } catch (e) {
+      window.alert(mensaje(e));
+    }
   };
 
-  const addRegistro = (registro: Omit<DBRegistro, 'id' | 'createdAt'>) => {
-    db.addRegistro(registro);
-    refreshData();
+  const addCanasta = (c: Omit<DBCanasta, 'id' | 'createdAt' | 'precioUnitario'>) =>
+    accion(() => api.addCanasta(c));
+
+  const addRegistro = (r: Omit<DBRegistro, 'id' | 'createdAt'>) =>
+    accion(() => api.addRegistro(r));
+
+  const addPedido = (p: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) =>
+    accion(() => api.addPedido(p));
+
+  const updateCanastaEstado = (id: string, estado: Canasta['estado']) =>
+    accion(() => api.updateCanastaEstado(id, estado));
+
+  const updatePedidoEstado = (id: string, estado: Pedido['estado']) =>
+    accion(() => api.updatePedidoEstado(id, estado));
+
+  // Acciones de usuarios: devuelven el resultado para mostrar el mensaje en la pantalla
+  const resultado = async (fn: () => Promise<unknown>): Promise<Resultado> => {
+    try {
+      await fn();
+      await refreshData();
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: mensaje(e) };
+    }
   };
 
-  const addPedido = (pedido: Omit<DBPedido, 'id' | 'createdAt' | 'precioTotal'>) => {
-    db.addPedido(pedido);
-    refreshData();
-  };
-
-  const addUsuarioNuevo = (usuario: Omit<UsuarioNuevo, 'id'>) => {
-    db.addUser({
-      name: usuario.nombre,
-      email: usuario.email,
-      password: 'default123',
-      role: usuario.rol as 'cliente' | 'asociado'
-    });
-    refreshData();
-  };
-
-  const updateCanastaEstado = (id: string, estado: Canasta['estado']) => {
-    db.updateCanastaEstado(id, estado);
-    refreshData();
-  };
-
-  const updatePedidoEstado = (id: string, estado: Pedido['estado']) => {
-    db.updatePedidoEstado(id, estado);
-    refreshData();
-  };
-
-  const addUser = (user: Omit<DBUser, 'id' | 'createdAt'>) => {
-    if (db.getUserByEmail(user.email)) return { ok: false, error: 'Ya existe un usuario con ese correo' };
-    if (user.cedula && db.getUserByCedula(user.cedula)) return { ok: false, error: 'Ya existe un usuario con esa cédula' };
-    db.addUser(user);
-    refreshData();
-    return { ok: true };
-  };
-
-  const updateUser = (id: string, changes: Partial<Omit<DBUser, 'id' | 'createdAt'>>) => {
-    const result = db.updateUser(id, changes);
-    if (result.ok) refreshData();
-    return result;
-  };
-
-  const deleteUser = (id: string) => {
-    const result = db.deleteUser(id);
-    if (result.ok) refreshData();
-    return result;
-  };
+  const addUser = (u: Partial<DBUser>) => resultado(() => api.addUsuario(u));
+  const updateUser = (id: string, changes: Partial<DBUser>) => resultado(() => api.updateUsuario(id, changes));
+  const deleteUser = (id: string) => resultado(() => api.deleteUsuario(id));
 
   return (
     <DataContext.Provider value={{
@@ -190,17 +204,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
       usuariosNuevos,
       pedidos,
       allUsers,
-      precioCanasta: PRECIO_CANASTA_COP,
+      precioCanasta,
+      loadError,
       addCanasta,
       addRegistro,
       addPedido,
-      addUsuarioNuevo,
       refreshData,
       updateCanastaEstado,
       updatePedidoEstado,
       addUser,
       updateUser,
-      deleteUser
+      deleteUser,
     }}>
       {children}
     </DataContext.Provider>
