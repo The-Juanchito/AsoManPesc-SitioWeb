@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LoginPage from './components/LoginPage';
@@ -14,7 +14,6 @@ import CanastasPage from './components/admin/CanastasPage';
 import BaseDatosPage from './components/admin/BaseDatosPage';
 import ReportesPage from './components/admin/ReportesPage';
 import UsuariosPage from './components/admin/UsuariosPage';
-import { db } from './services/database';
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -22,11 +21,6 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // Inicializar base de datos al cargar
-  useEffect(() => {
-    db.initialize();
-  }, []);
 
   // Si está autenticado, mostrar el dashboard correspondiente
   if (isAuthenticated && user) {

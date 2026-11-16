@@ -79,7 +79,7 @@ export default function UsuariosPage() {
     setFormError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
@@ -97,31 +97,31 @@ export default function UsuariosPage() {
     }
 
     if (editing) {
-      const changes: Partial<DBUser> = { cedula, name, email, phone: form.phone.trim() || undefined, role: form.role };
+      const changes: Partial<DBUser> = { cedula, name, email, phone: form.phone.trim(), role: form.role };
       if (form.password) changes.password = form.password;
-      const result = updateUser(editing.id, changes);
-      if (!result.ok) { setFormError(result.error ?? 'No se pudo guardar'); return; }
+      const result = await updateUser(editing.id, changes);
+      if (!result.ok) { setFormError(result.error); return; }
       flash('ok', `Usuario "${name}" actualizado`);
     } else {
       if (!form.password) { setFormError('La contraseña es obligatoria para un usuario nuevo'); return; }
-      const result = addUser({ cedula, name, email, phone: form.phone.trim() || undefined, password: form.password, role: form.role });
-      if (!result.ok) { setFormError(result.error ?? 'No se pudo crear'); return; }
+      const result = await addUser({ cedula, name, email, phone: form.phone.trim() || undefined, password: form.password, role: form.role });
+      if (!result.ok) { setFormError(result.error); return; }
       flash('ok', `Usuario "${name}" creado`);
     }
     closeForm();
   };
 
-  const handleRoleChange = (u: DBUser, role: UserRole) => {
-    const result = updateUser(u.id, { role });
+  const handleRoleChange = async (u: DBUser, role: UserRole) => {
+    const result = await updateUser(u.id, { role });
     if (result.ok) flash('ok', `Rol de ${u.name} cambiado a ${ROLES.find(r => r.value === role)?.label}`);
-    else flash('error', result.error ?? 'No se pudo cambiar el rol');
+    else flash('error', result.error);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!toDelete) return;
-    const result = deleteUser(toDelete.id);
+    const result = await deleteUser(toDelete.id);
     if (result.ok) flash('ok', `Usuario "${toDelete.name}" eliminado`);
-    else flash('error', result.error ?? 'No se pudo eliminar');
+    else flash('error', result.error);
     setToDelete(null);
   };
 
