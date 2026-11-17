@@ -86,7 +86,7 @@ export default function PedidosPage() {
                   <tr key={p.id} className="border-b border-gray-50 hover:bg-green-50/50">
                     <td className="py-3 px-2 text-sm font-medium text-gray-800">{p.clienteNombre || 'Cliente eliminado'}</td>
                     <td className="py-3 px-2 text-sm text-gray-600">{p.producto}</td>
-                    <td className="py-3 px-2 text-sm text-gray-600">{p.cantidad} kg</td>
+                    <td className="py-3 px-2 text-sm text-gray-600">{p.cantidad}</td>
                     <td className="py-3 px-2 font-bold text-amber-600">{formatCOP(p.precioTotal)}</td>
                     <td className="py-3 px-2 text-sm text-gray-500 max-w-[200px] truncate" title={p.notas}>{p.notas || '—'}</td>
                     <td className="py-3 px-2">
