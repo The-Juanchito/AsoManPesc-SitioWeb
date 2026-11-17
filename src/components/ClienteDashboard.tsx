@@ -20,7 +20,7 @@ export default function ClienteDashboard() {
   const productos = VARIEDADES.map((v, i) => ({
     name: v.name.toLowerCase().startsWith('mango') ? v.name : `Mango ${v.name}`,
     description: v.description,
-    stock: v.name === 'Haden' ? 'Limitado' : 'Disponible',
+    stock: 'Disponible',
     emoji: v.emoji,
   }));
 
