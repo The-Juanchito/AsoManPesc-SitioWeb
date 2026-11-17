@@ -18,6 +18,8 @@ import ResenasPage from './components/admin/ResenasPage';
 import PedidosPage from './components/admin/PedidosPage';
 import ProduccionPage from './components/admin/ProduccionPage';
 import ColaboracionesPage from './components/admin/ColaboracionesPage';
+import PqrAdminPage from './components/admin/PqrAdminPage';
+import PqrPage from './components/PqrPage';
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -60,6 +62,8 @@ function AppContent() {
             return <ColaboracionesPage />;
           case 'resenas':
             return <ResenasPage />;
+          case 'pqr':
+            return <PqrAdminPage />;
           case 'basededatos':
             return <BaseDatosPage />;
           case 'reportes':
@@ -107,6 +111,7 @@ function AppContent() {
 
     // Para asociado y cliente: mantener layout con tabs
     const renderContent = () => {
+      if (currentPage === 'pqr') return <PqrPage />;
       switch (user.role) {
         case 'asociado':
           return <AsociadoDashboard vista={currentPage} />;

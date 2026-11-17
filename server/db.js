@@ -80,6 +80,18 @@ export const mapResena = (r) => ({
   createdAt: isoDateTime(r.fecha_creacion),
 });
 
+export const mapPqr = (r) => ({
+  id: String(r.id),
+  usuarioId: r.usuario_id == null ? null : String(r.usuario_id),
+  tipo: r.tipo,
+  nombre: r.nombre,
+  fecha: String(r.fecha).slice(0, 10),
+  descripcion: r.descripcion,
+  firma: r.firma,
+  estado: r.estado,
+  createdAt: isoDateTime(r.fecha_creacion),
+});
+
 // Precio vigente de la canasta
 export async function getPrecioCanasta() {
   const [rows] = await pool.query(

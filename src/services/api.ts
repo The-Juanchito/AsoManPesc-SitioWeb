@@ -2,7 +2,7 @@
 // Cliente de la API de AsoManPesc (Express + MySQL)
 // Todas las pantallas hablan con el servidor a través de este archivo.
 // ============================================
-import type { DBUser, DBCanasta, DBRegistro, DBPedido, DBResena } from './database';
+import type { DBUser, DBCanasta, DBRegistro, DBPedido, DBResena, DBPqr } from './database';
 
 // En desarrollo Vite redirige /api -> http://localhost:4000 (ver vite.config.js).
 // Al publicar, define VITE_API_URL con la dirección del servidor.
@@ -82,6 +82,12 @@ export const api = {
   marcarResenaLeida: (id: string, leida: boolean) =>
     request<{ ok: true }>(`/resenas/${id}/leida`, 'PATCH', { leida }),
   deleteResena: (id: string) => request<{ ok: true }>(`/resenas/${id}`, 'DELETE'),
+
+  // PQR: asociados y clientes las envían; el admin las ve todas y cambia su estado
+  getPqr: () => request<DBPqr[]>('/pqr'),
+  addPqr: (p: Pick<DBPqr, 'tipo' | 'nombre' | 'fecha' | 'descripcion' | 'firma'>) => request<DBPqr>('/pqr', 'POST', p),
+  updatePqrEstado: (id: string, estado: DBPqr['estado']) =>
+    request<{ ok: true }>(`/pqr/${id}/estado`, 'PATCH', { estado }),
 
   getPedidos: () => request<DBPedido[]>('/pedidos'),
   addPedido: (p: Partial<DBPedido>) => request<DBPedido>('/pedidos', 'POST', p),
