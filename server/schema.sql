@@ -94,3 +94,17 @@ CREATE TABLE IF NOT EXISTS precios (
 INSERT INTO precios (producto, precio_cop, unidad, vigente_desde)
 SELECT 'Canasta de Mangos', 4000.00, 'canasta', CURDATE() FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM precios);
+
+-- Formato de PQR (Peticiones, Quejas y Reclamos): lo llenan asociados y clientes
+CREATE TABLE IF NOT EXISTS pqr (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id     INT NULL,
+  tipo           ENUM('sugerencia', 'queja', 'reclamo', 'peticion') NOT NULL,
+  nombre         VARCHAR(100) NOT NULL,           -- nombre del asociado o usuario
+  fecha          DATE NOT NULL,
+  descripcion    TEXT NOT NULL,
+  firma          VARCHAR(100) NOT NULL,           -- nombre escrito como firma
+  estado         ENUM('pendiente', 'atendida') DEFAULT 'pendiente',
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);

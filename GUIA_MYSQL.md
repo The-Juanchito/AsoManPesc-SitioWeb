@@ -162,6 +162,14 @@ SELECT AVG(calificacion) AS promedio FROM resenas WHERE calificacion IS NOT NULL
 
 También las puede leer el administrador en **Admin → Reseñas** (con enlace al mapa si la persona compartió su ubicación). Las que tienen ubicación se abren en Google Maps con `https://www.google.com/maps?q=LATITUD,LONGITUD`.
 
+**Solicitudes PQR (Peticiones, Quejas y Reclamos):** los asociados y clientes las llenan en el menú **PQR**; al enviarlas se guardan en MySQL y se descarga el PDF con el formato de la asociación. El administrador las ve en **Admin → PQR** (cambia el estado a *atendida* y descarga el PDF). En Workbench:
+
+```sql
+SELECT tipo, nombre, fecha, estado, descripcion FROM pqr ORDER BY fecha_creacion DESC;
+```
+
+> Si tu base ya existía, ejecuta otra vez `npm run setup` dentro de `server/` para que se cree la tabla `pqr` (no borra nada).
+
 **Cambiar el precio de la canasta** (la página lo toma de aquí):
 
 ```sql

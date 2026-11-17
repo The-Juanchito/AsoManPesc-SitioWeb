@@ -80,6 +80,20 @@ export interface DBResena {
   createdAt?: string;
 }
 
+export type PqrTipo = 'sugerencia' | 'queja' | 'reclamo' | 'peticion';
+
+export interface DBPqr {
+  id: string;
+  usuarioId: string | null;
+  tipo: PqrTipo;
+  nombre: string;
+  fecha: string; // AAAA-MM-DD
+  descripcion: string;
+  firma: string;
+  estado: 'pendiente' | 'atendida';
+  createdAt?: string;
+}
+
 // Precio de respaldo de la canasta si el servidor no responde
 export const PRECIO_CANASTA_COP = 4000;
 

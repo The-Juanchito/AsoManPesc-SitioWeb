@@ -42,12 +42,14 @@ export default function DashboardLayout({ children, currentPage, onNavigate }: D
           { id: 'dashboard', label: 'Mi Panel', icon: 'bi-speedometer2' },
           { id: 'produccion', label: 'Producción', icon: 'bi-pencil-square' },
           { id: 'canastas', label: 'Mis Canastas', icon: 'bi-basket3-fill' },
+          { id: 'pqr', label: 'PQR', icon: 'bi-file-earmark-text-fill' },
         ];
       case 'cliente':
         return [
           { id: 'dashboard', label: 'Inicio', icon: 'bi-house-fill' },
-          { id: 'productos', label: 'Productos', icon: 'bi-fruit-cart' },
+          { id: 'productos', label: 'Productos', icon: 'bi-grid-fill' },
           { id: 'pedidos', label: 'Mis Pedidos', icon: 'bi-bag-fill' },
+          { id: 'pqr', label: 'PQR', icon: 'bi-file-earmark-text-fill' },
         ];
       default:
         return [];

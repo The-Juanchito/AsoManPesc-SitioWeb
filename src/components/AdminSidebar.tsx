@@ -21,6 +21,7 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
     { id: 'usuarios', label: 'Usuarios', icon: 'bi-people-fill', section: 'Gestión' },
     { id: 'pedidos', label: 'Pedidos', icon: 'bi-bag-check-fill', section: 'Gestión' },
     { id: 'resenas', label: 'Reseñas', icon: 'bi-chat-heart-fill', section: 'Gestión' },
+    { id: 'pqr', label: 'PQR', icon: 'bi-file-earmark-text-fill', section: 'Gestión' },
     { id: 'colaboraciones', label: 'Colaboraciones', icon: 'bi-handshake', section: 'Configuración' },
     { id: 'basededatos', label: 'Base de Datos', icon: 'bi-database-fill-gear', section: 'Configuración' },
     { id: 'reportes', label: 'Reportes', icon: 'bi-file-earmark-bar-graph-fill', section: 'Configuración' },
