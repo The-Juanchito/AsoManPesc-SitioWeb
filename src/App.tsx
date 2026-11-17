@@ -83,7 +83,7 @@ function AppContent() {
           {/* Botón flotante para abrir el menú */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className={`fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-br from-green-700 to-green-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110 ${
+            className={`lg:hidden fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-br from-green-700 to-green-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110 ${
               sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
             title="Abrir menú"
@@ -92,8 +92,8 @@ function AppContent() {
           </button>
 
           {/* Contenido principal */}
-          <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+          <div className="min-h-screen bg-gray-50 lg:pl-72">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 lg:pt-8 pb-6">
               <main>
                 {renderAdminContent()}
               </main>
@@ -109,9 +109,9 @@ function AppContent() {
     const renderContent = () => {
       switch (user.role) {
         case 'asociado':
-          return <AsociadoDashboard />;
+          return <AsociadoDashboard vista={currentPage} />;
         case 'cliente':
-          return <ClienteDashboard />;
+          return <ClienteDashboard vista={currentPage} />;
         default:
           return null;
       }

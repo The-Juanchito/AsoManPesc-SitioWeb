@@ -38,7 +38,7 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
     <>
       {/* Overlay oscuro */}
       <div
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -46,7 +46,7 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-green-900 via-green-800 to-green-900 text-white z-[70] transition-transform duration-300 ease-in-out shadow-2xl flex flex-col ${
+        className={`fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-green-900 via-green-800 to-green-900 text-white z-[70] transition-transform duration-300 ease-in-out shadow-2xl flex flex-col lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -64,7 +64,7 @@ export default function AdminSidebar({ currentPage, onNavigate, onGoHome, onLogo
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
             title="Cerrar menú"
           >
             <i className="bi bi-x-lg text-lg"></i>

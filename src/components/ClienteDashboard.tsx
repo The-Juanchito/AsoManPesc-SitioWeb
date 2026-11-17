@@ -4,7 +4,7 @@ import { useData } from '../context/DataContext';
 import { formatCOP, PRECIO_CANASTA_COP } from '../services/database';
 import { VARIEDADES } from '../data/variedades';
 
-export default function ClienteDashboard() {
+export default function ClienteDashboard({ vista = 'dashboard' }: { vista?: string }) {
   const { user } = useAuth();
   const { pedidos, addPedido, precioCanasta } = useData();
   const [showOrderForm, setShowOrderForm] = useState(false);
@@ -65,6 +65,8 @@ export default function ClienteDashboard() {
         </button>
       </div>
 
+      {(vista === 'dashboard') && (
+        <>
       {/* Banner promocional */}
       <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex items-center gap-4">
@@ -76,6 +78,8 @@ export default function ClienteDashboard() {
         </div>
       </div>
 
+        </>
+      )}
       {/* Formulario de pedido */}
       {showOrderForm && (
         <div className="bg-white p-6 rounded-2xl shadow-md border border-green-100">
@@ -160,6 +164,8 @@ export default function ClienteDashboard() {
         </div>
       )}
 
+      {(vista === 'dashboard' || vista === 'pedidos') && (
+        <>
       {/* Mis pedidos */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
@@ -211,6 +217,10 @@ export default function ClienteDashboard() {
         )}
       </div>
 
+        </>
+      )}
+      {(vista === 'dashboard' || vista === 'productos') && (
+        <>
       {/* Productos disponibles */}
       <div>
         <h3 className="text-xl font-bold text-green-800 mb-4">
@@ -240,6 +250,10 @@ export default function ClienteDashboard() {
         </div>
       </div>
 
+        </>
+      )}
+      {(vista === 'dashboard') && (
+        <>
       {/* Info de contacto */}
       <div className="bg-green-50 rounded-2xl p-6 border border-green-100">
         <h3 className="text-lg font-bold text-green-800 mb-3">
@@ -269,6 +283,8 @@ export default function ClienteDashboard() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
