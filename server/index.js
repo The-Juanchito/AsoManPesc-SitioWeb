@@ -8,6 +8,7 @@ import usuariosRoutes from './routes/usuarios.js';
 import canastasRoutes from './routes/canastas.js';
 import registrosRoutes from './routes/registros.js';
 import pedidosRoutes from './routes/pedidos.js';
+import resenasRoutes from './routes/resenas.js';
 
 if (!process.env.JWT_SECRET) {
   console.error('\n❌ Falta JWT_SECRET. Copia ".env.example" como ".env" y complétalo.\n');
@@ -35,7 +36,7 @@ app.get('/api/health', async (_req, res) => {
 
 // Estado de la base de datos y cantidad de filas por tabla (solo admin)
 app.get('/api/estado', auth, requireRole('admin'), async (_req, res) => {
-  const tablas = ['usuarios', 'canastas', 'registros_produccion', 'pedidos', 'precios'];
+  const tablas = ['usuarios', 'canastas', 'registros_produccion', 'pedidos', 'resenas', 'precios'];
   const filas = {};
   for (const t of tablas) {
     const [[r]] = await pool.query(`SELECT COUNT(*) AS n FROM ${t}`);
@@ -60,6 +61,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/canastas', canastasRoutes);
 app.use('/api/registros', registrosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/resenas', resenasRoutes);
 
 app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada' }));
 

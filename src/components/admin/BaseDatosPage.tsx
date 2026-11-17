@@ -14,6 +14,7 @@ export default function BaseDatosPage() {
     { name: 'canastas', icon: 'bi-basket3-fill', color: 'amber', records: filas('canastas'), description: 'Registro de canastas producidas' },
     { name: 'registros_produccion', icon: 'bi-clipboard-data-fill', color: 'green', records: filas('registros_produccion'), description: 'Producción por asociado' },
     { name: 'pedidos', icon: 'bi-bag-fill', color: 'purple', records: filas('pedidos'), description: 'Pedidos de clientes' },
+    { name: 'resenas', icon: 'bi-chat-heart-fill', color: 'rose', records: filas('resenas'), description: 'Reseñas y opiniones del formulario de contacto' },
     { name: 'precios', icon: 'bi-tag-fill', color: 'indigo', records: filas('precios'), description: 'Precios de productos' },
   ];
 

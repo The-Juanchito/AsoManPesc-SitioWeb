@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { VARIEDADES, LOGO_URL } from '../data/variedades';
+import ContactoSection from './ContactoSection';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -23,7 +24,7 @@ function Navbar({ onLogin }: { onLogin: () => void }) {
     { href: '#nosotros', label: 'Nosotros', icon: 'bi-info-circle' },
     { href: '#productos', label: 'Productos', icon: 'bi-basket3' },
     { href: '#beneficios', label: 'Beneficios', icon: 'bi-star' },
-    { href: '#tecnologias', label: 'Tecnología', icon: 'bi-cpu' },
+    { href: '#contacto', label: 'Contacto', icon: 'bi-chat-heart' },
   ];
 
   return (
@@ -211,8 +212,8 @@ function Gallery() {
       color: 'from-amber-400 to-orange-500'
     },
     {
-      title: 'Cultivo Sostenible',
-      description: 'Nuestros cultivos respetan el medio ambiente y las prácticas agrícolas responsables.',
+      title: 'Buenas Prácticas Agrícolas',
+      description: 'Cuidamos el suelo, el agua y el medio ambiente en cada etapa del cultivo.',
       icon: 'bi-tree',
       color: 'from-green-500 to-emerald-600'
     },
@@ -338,7 +339,7 @@ function About() {
             <div className="bg-gradient-to-br from-green-100 to-amber-50 rounded-3xl p-8 shadow-xl">
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: 'bi-tree', title: 'Cultivo Sostenible', color: 'bg-green-500' },
+                  { icon: 'bi-tree', title: 'Buenas Prácticas Agrícolas', color: 'bg-green-500' },
                   { icon: 'bi-handshake', title: 'Comercio Justo', color: 'bg-amber-500' },
                   { icon: 'bi-trophy', title: 'Calidad Premium', color: 'bg-rose-500' },
                   { icon: 'bi-truck', title: 'Entrega Directa', color: 'bg-blue-500' }
@@ -584,111 +585,6 @@ function Benefits() {
   );
 }
 
-function TechStack() {
-  const technologies = [
-    { name: 'React 18', description: 'Framework de interfaces de usuario', icon: 'bi-braces-asterisk', color: 'from-blue-500 to-cyan-500' },
-    { name: 'TypeScript', description: 'Tipado estático para mayor seguridad', icon: 'bi-code-slash', color: 'from-blue-600 to-blue-800' },
-    { name: 'Vite', description: 'Build tool ultrarrápido', icon: 'bi-lightning-charge-fill', color: 'from-purple-500 to-violet-600' },
-    { name: 'Tailwind CSS', description: 'Framework de estilos utilitarios', icon: 'bi-palette-fill', color: 'from-cyan-500 to-teal-500' },
-    { name: 'Bootstrap 5', description: 'Componentes e iconos profesionales', icon: 'bi-bootstrap', color: 'from-indigo-500 to-purple-600' },
-    { name: 'MySQL', description: 'Base de datos relacional principal', icon: 'bi-database-fill', color: 'from-sky-500 to-blue-600' },
-    { name: 'Recharts', description: 'Gráficas interactivas y dinámicas', icon: 'bi-graph-up', color: 'from-green-500 to-emerald-600' },
-    { name: 'WhatsApp API', description: 'Comunicación directa con el admin', icon: 'bi-whatsapp', color: 'from-emerald-500 to-green-600' },
-    { name: 'Chatbot IA', description: 'Asistente virtual inteligente', icon: 'bi-robot', color: 'from-rose-500 to-pink-600' },
-    { name: 'LocalStorage', description: 'Persistencia de datos en navegador', icon: 'bi-hdd-fill', color: 'from-amber-500 to-orange-600' },
-    { name: 'Node.js', description: 'Runtime de JavaScript', icon: 'bi-server', color: 'from-lime-500 to-green-600' },
-    { name: 'Responsive', description: 'Adaptado a todos los dispositivos', icon: 'bi-phone', color: 'from-fuchsia-500 to-pink-600' },
-  ];
-
-  return (
-    <section id="tecnologias" className="py-20 bg-gradient-to-b from-gray-900 to-gray-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 text-amber-400 font-semibold text-sm uppercase tracking-wider bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-500/20">
-            <i className="bi bi-cpu-fill"></i>
-            Tecnología
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4 mb-4">
-            ¿Qué Programas Utilizamos?
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Nuestro sistema está construido con las mejores tecnologías modernas para garantizar rendimiento, seguridad y escalabilidad.
-          </p>
-          <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
-        </div>
-
-        {/* Grid de tecnologías */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-          {technologies.map((tech, i) => (
-            <div
-              key={i}
-              className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-            >
-              <div className={`w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br ${tech.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                <i className={`bi ${tech.icon} text-white text-2xl`}></i>
-              </div>
-              <h4 className="font-bold text-white text-sm mb-1">{tech.name}</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">{tech.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Arquitectura */}
-        <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-white mb-6 text-center flex items-center justify-center gap-2">
-            <i className="bi bi-diagram-3-fill text-amber-400"></i>
-            Arquitectura del Sistema
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-window-desktop text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">Frontend</h4>
-              <p className="text-xs text-gray-400 mt-1">React + TypeScript + Tailwind + Bootstrap 5</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-database-fill text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">MySQL</h4>
-              <p className="text-xs text-gray-400 mt-1">Base de datos principal y persistente</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-whatsapp text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">WhatsApp</h4>
-              <p className="text-xs text-gray-400 mt-1">Chat directo con el administrador</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-robot text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">Chatbot IA</h4>
-              <p className="text-xs text-gray-400 mt-1">Asistente virtual inteligente</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Precio destacado */}
-        <div className="mt-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-          <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span className="text-6xl">🥭</span>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-medium text-amber-100">Canasta de Mangos Frescos</p>
-              <p className="text-3xl sm:text-4xl font-bold">Precio Variable</p>
-              <p className="text-amber-100 mt-1 text-sm">Según el mercado • Consulta por WhatsApp</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Footer({ onLogin }: { onLogin: () => void }) {
   return (
     <footer className="bg-green-900 text-white py-12">
@@ -773,7 +669,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
       <About />
       <Products />
       <Benefits />
-      <TechStack />
+      <ContactoSection />
       <Footer onLogin={onLogin} />
     </div>
   );
