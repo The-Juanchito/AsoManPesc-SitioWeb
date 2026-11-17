@@ -549,7 +549,7 @@ function Products() {
 
 function Benefits() {
   const benefits = [
-    { icon: "bi-patch-check-fill", title: "100% Natural", description: "Sin pesticidas dañinos, respetando la naturaleza y tu salud.", color: "bg-green-500" },
+    { icon: "bi-patch-check-fill", title: "Cultivo Cuidado", description: "Fertilizantes orgánicos, insecticidas y fungicidas aplicados con responsabilidad para proteger la fruta, la naturaleza y tu salud.", color: "bg-green-500" },
     { icon: "bi-truck", title: "Entrega Fresca", description: "Del campo a tu mesa en tiempo récord.", color: "bg-blue-500" },
     { icon: "bi-cash-stack", title: "Precios Justos", description: "Sin intermediarios, los mejores precios del mercado.", color: "bg-amber-500" },
     { icon: "bi-trophy-fill", title: "Calidad Garantizada", description: "Riguroso proceso de selección en cada mango.", color: "bg-rose-500" },

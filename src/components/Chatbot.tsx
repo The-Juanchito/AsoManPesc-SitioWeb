@@ -55,7 +55,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['nosotros', 'historia', 'quienes', 'quiénes', 'asociacion', 'asociación'],
-    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 100% Natural y fresco del campo'
+    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 Fresco del campo, con fertilizantes orgánicos'
   },
   {
     keywords: ['envio', 'envío', 'entrega', 'delivery', 'domicilio'],
@@ -79,7 +79,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['beneficio', 'ventajas', 'por que', 'por qué', 'elegir'],
-    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 100% Natural sin pesticidas\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios competitivos y justos\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
+    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 Cultivo cuidado: fertilizantes orgánicos, insecticidas y fungicidas aplicados con responsabilidad\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios competitivos y justos\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
   }
 ];
 
