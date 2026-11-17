@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LoginPage from './components/LoginPage';
@@ -15,6 +15,9 @@ import BaseDatosPage from './components/admin/BaseDatosPage';
 import ReportesPage from './components/admin/ReportesPage';
 import UsuariosPage from './components/admin/UsuariosPage';
 import ResenasPage from './components/admin/ResenasPage';
+import PedidosPage from './components/admin/PedidosPage';
+import ProduccionPage from './components/admin/ProduccionPage';
+import ColaboracionesPage from './components/admin/ColaboracionesPage';
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -22,6 +25,11 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Al iniciar sesión: el administrador aterriza en Inicio (Accesos Rápidos); los demás en su panel
+  useEffect(() => {
+    setCurrentPage(user?.role === 'admin' ? 'inicio' : 'dashboard');
+  }, [user?.id, user?.role]);
 
   // Si está autenticado, mostrar el dashboard correspondiente
   if (isAuthenticated && user) {
@@ -43,13 +51,13 @@ function AppContent() {
           case 'canastas':
             return <CanastasPage />;
           case 'produccion':
-            return <AdminDashboard />;
+            return <ProduccionPage />;
           case 'usuarios':
             return <UsuariosPage />;
           case 'pedidos':
-            return <AdminDashboard />;
+            return <PedidosPage />;
           case 'colaboraciones':
-            return <AdminDashboard />;
+            return <ColaboracionesPage />;
           case 'resenas':
             return <ResenasPage />;
           case 'basededatos':

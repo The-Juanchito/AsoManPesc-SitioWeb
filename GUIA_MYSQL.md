@@ -80,15 +80,21 @@ DB_NAME=asomanpesc_db
 PORT=4000
 CORS_ORIGIN=http://localhost:3000
 JWT_SECRET=escribe-aqui-una-frase-larga-y-secreta-que-nadie-conozca
+
+# Administrador predeterminado (cuenta REAL que se guarda en MySQL)
+ADMIN_NAME=Tu Nombre
+ADMIN_EMAIL=tucorreo@gmail.com
+ADMIN_CEDULA=1234567890
+ADMIN_PASSWORD=una-contraseña-de-mínimo-8-caracteres
 ```
 
-Luego crea las tablas y carga los datos de ejemplo (solo se hace una vez; si lo repites no duplica nada):
+Luego crea las tablas y el **administrador predeterminado** con los datos de `ADMIN_*` (solo se hace una vez; si lo repites no duplica nada). Si dejas `ADMIN_PASSWORD` vacío, se genera una al azar y se muestra **una sola vez** en la terminal:
 
 ```powershell
 npm run setup
 ```
 
-Debe mostrar `✅ Tablas listas` y `✅ Datos de ejemplo cargados`. Después enciende el servidor:
+Debe mostrar `✅ Tablas listas` y `✅ Administrador creado`. Después enciende el servidor:
 
 ```powershell
 npm start
@@ -107,13 +113,9 @@ npm install        # solo la primera vez
 npm run dev
 ```
 
-Abre **http://localhost:3000**. Cuentas de ejemplo:
+Abre **http://localhost:3000**, pulsa *Iniciar Sesión* y entra con el correo y la contraseña de `ADMIN_*`. El administrador aterriza en **Inicio · Accesos Rápidos** y desde ahí llega a todo el panel. Los asociados y clientes los crea el administrador en **Usuarios → Nuevo usuario** (cada uno con su propio correo y contraseña). No hay cuentas de demostración.
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Administrador | admin@asomanpesc.com | admin123 |
-| Asociado | jose@asomanpesc.com | asociado123 |
-| Cliente | carlos@cliente.com | cliente123 |
+> **¿Ya habías corrido la versión anterior (con datos de ejemplo)?** Pon tus `ADMIN_*` en `.env` y ejecuta una vez `npm run quitar-demo` dentro de `server/`: crea tu administrador real y borra las cuentas y datos de ejemplo.
 
 En el panel de admin, la pantalla **Base de Datos** debe mostrar **Conectado** y el número real de filas de cada tabla.
 
@@ -189,7 +191,8 @@ VALUES ('Canasta de Mangos', 4500, 'canasta', CURDATE());
 | Archivo | Función |
 |---|---|
 | `schema.sql` | Las tablas de la base (también se ve en el panel admin) |
-| `setup.js` | Crea tablas + datos de ejemplo (`npm run setup`) |
+| `setup.js` | Crea tablas + el administrador predeterminado (`npm run setup`) |
+| `quitar-demo.js` | Borra los datos de ejemplo de versiones anteriores (`npm run quitar-demo`) |
 | `index.js` | Enciende el servidor y conecta las rutas |
 | `db.js` | Conexión a MySQL |
 | `middleware.js` | Revisa quién eres (sesión) y qué rol tienes |
@@ -202,5 +205,5 @@ VALUES ('Canasta de Mangos', 4500, 'canasta', CURDATE());
 - Cada persona solo ve lo suyo: el asociado sus canastas y registros, el cliente sus pedidos; solo el admin gestiona usuarios.
 - El formulario de **Contacto** es público (no pide iniciar sesión), por eso tiene protecciones: máximo 5 mensajes por hora por persona, un campo trampa contra robots y límites de longitud. La **ubicación solo se envía si la persona pulsa el botón** y acepta el permiso del navegador.
 - La ubicación en tiempo real del navegador **solo funciona en `localhost` o en una página `https://`**. En GitHub Pages sí funciona (usa https).
-- Antes de usar datos reales: **cambia las contraseñas de ejemplo** (Admin → Usuarios → Editar) y pon un `JWT_SECRET` propio.
+- Antes de usar datos reales: usa una contraseña de administrador fuerte (no la compartas) y pon un `JWT_SECRET` propio.
 - **GitHub Pages solo publica páginas estáticas**, no ejecuta el servidor ni MySQL. Tu sitio `the-juanchito.github.io` no podrá guardar datos hasta que el servidor y la base estén en un hosting (por ejemplo Render o Railway, que ofrecen MySQL). Al publicar, el frontend necesita la variable `VITE_API_URL` con la dirección de ese servidor.
