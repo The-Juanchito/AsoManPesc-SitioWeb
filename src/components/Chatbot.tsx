@@ -39,7 +39,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['login', 'ingresar', 'sesión', 'sesion', 'entrar', 'acceder', 'contraseña', 'password'],
-    response: '🔐 Para iniciar sesión haz clic en "Iniciar Sesión".\n\nCuentas demo:\n• Admin: admin@asomanpesc.com / admin123\n• Asociado: jose@asomanpesc.com / asociado123\n• Cliente: carlos@cliente.com / cliente123'
+    response: '🔐 Para iniciar sesión haz clic en "Iniciar Sesión".\n\nSi aún no tienes cuenta, pídela al administrador de la asociación.'
   },
   {
     keywords: ['horario', 'hora', 'abierto', 'atencion', 'atención'],

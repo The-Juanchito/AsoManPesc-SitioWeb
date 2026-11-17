@@ -18,7 +18,7 @@ export default function InicioPage({ onNavigate }: InicioPageProps) {
     { id: 'canastas', label: 'Gestionar Canastas', icon: 'bi-basket3-fill', color: 'bg-amber-600 hover:bg-amber-700', desc: 'Ver y actualizar estados' },
     { id: 'usuarios', label: 'Ver Usuarios', icon: 'bi-people-fill', color: 'bg-blue-600 hover:bg-blue-700', desc: 'Lista de registrados' },
     { id: 'pedidos', label: 'Ver Pedidos', icon: 'bi-bag-check-fill', color: 'bg-purple-600 hover:bg-purple-700', desc: 'Pedidos de clientes' },
-    { id: 'basededatos', label: 'Base de Datos', icon: 'bi-database-fill-gear', color: 'bg-indigo-600 hover:bg-indigo-700', desc: 'MySQL y SQL Server' },
+    { id: 'basededatos', label: 'Base de Datos', icon: 'bi-database-fill-gear', color: 'bg-indigo-600 hover:bg-indigo-700', desc: 'MySQL' },
     { id: 'reportes', label: 'Reportes', icon: 'bi-file-earmark-bar-graph-fill', color: 'bg-rose-600 hover:bg-rose-700', desc: 'Estadísticas completas' },
   ];
 
