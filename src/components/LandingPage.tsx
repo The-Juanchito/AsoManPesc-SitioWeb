@@ -145,11 +145,14 @@ function Hero({ onLogin }: { onLogin: () => void }) {
               Frescura Natural del Campo a Tu Mesa
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Los Mejores <span className="text-amber-400">Mangos</span> Directo del Productor
+              Aso<span className="text-amber-400">ManPesc</span>
             </h1>
+            <p className="text-xl sm:text-2xl font-semibold text-amber-300 mb-6">
+              Asociación de Productores de Mango de Pescadero
+            </p>
             <p className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed">
-              En AsoManPesc trabajamos unidos para llevar la calidad y frescura de nuestros mangos a cada hogar. 
-              Somos una asociación comprometida con la excelencia y el desarrollo de nuestra comunidad.
+              Trabajamos unidos para llevar la calidad y frescura del mango de Dilasa a cada hogar,
+              con el compromiso y el desarrollo de nuestra comunidad.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a href="#productos" className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl flex items-center justify-center gap-2">
