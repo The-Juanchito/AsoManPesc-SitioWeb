@@ -107,7 +107,7 @@ export default function AsociadoDashboard({ vista = 'dashboard' }: { vista?: str
             <i className="bi bi-cash-stack text-2xl"></i>
           </div>
           <div className="text-xl font-bold">{formatCOP(ingresosGenerados)}</div>
-          <div className="text-blue-100 text-sm">Mis Ingresos</div>
+          <div className="text-blue-100 text-sm">Ingresos estimados</div>
         </div>
         <div className="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-5 rounded-2xl shadow-lg">
           <div className="flex items-center gap-2 mb-1">
@@ -126,8 +126,8 @@ export default function AsociadoDashboard({ vista = 'dashboard' }: { vista?: str
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
         <i className="bi bi-info-circle-fill text-2xl text-amber-600"></i>
         <div>
-          <p className="font-bold text-amber-800">Precio de Canasta: {formatCOP(precioCanasta)} COP</p>
-          <p className="text-sm text-amber-600">Cada canasta que registres se contabiliza a este precio</p>
+          <p className="font-bold text-amber-800">Precio variable según el mercado</p>
+          <p className="text-sm text-amber-600">El precio cambia según la disponibilidad y la temporada. Los valores en pesos son un estimado.</p>
         </div>
       </div>
 
@@ -274,7 +274,7 @@ export default function AsociadoDashboard({ vista = 'dashboard' }: { vista?: str
             </div>
             <div className="sm:col-span-3 flex gap-3">
               <button type="submit" className="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-all flex items-center gap-2">
-                <i className="bi bi-save-fill"></i> Registrar Canasta ({formatCOP(precioCanasta)} c/u)
+                <i className="bi bi-save-fill"></i> Registrar Canasta
               </button>
               <button type="button" onClick={() => setShowCanastaForm(false)} className="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all flex items-center gap-2">
                 <i className="bi bi-x-lg"></i> Cancelar
