@@ -66,6 +66,20 @@ export interface DBPedido {
   createdAt: string;
 }
 
+export interface DBResena {
+  id: string;
+  nombre: string;
+  contacto: string;
+  tipo: 'resena' | 'opinion';
+  calificacion: number | null;
+  mensaje: string;
+  latitud: number | null;
+  longitud: number | null;
+  precisionM: number | null;
+  leida: boolean;
+  createdAt?: string;
+}
+
 // Precio de respaldo de la canasta si el servidor no responde
 export const PRECIO_CANASTA_COP = 4000;
 

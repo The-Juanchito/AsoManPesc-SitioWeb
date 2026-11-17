@@ -66,6 +66,20 @@ export const mapPedido = (r) => ({
   createdAt: isoDateTime(r.fecha_creacion),
 });
 
+export const mapResena = (r) => ({
+  id: String(r.id),
+  nombre: r.nombre,
+  contacto: r.contacto ?? '',
+  tipo: r.tipo,
+  calificacion: r.calificacion ?? null,
+  mensaje: r.mensaje,
+  latitud: r.latitud ?? null,
+  longitud: r.longitud ?? null,
+  precisionM: r.precision_m ?? null,
+  leida: !!r.leida,
+  createdAt: isoDateTime(r.fecha_creacion),
+});
+
 // Precio vigente de la canasta
 export async function getPrecioCanasta() {
   const [rows] = await pool.query(

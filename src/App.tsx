@@ -14,6 +14,7 @@ import CanastasPage from './components/admin/CanastasPage';
 import BaseDatosPage from './components/admin/BaseDatosPage';
 import ReportesPage from './components/admin/ReportesPage';
 import UsuariosPage from './components/admin/UsuariosPage';
+import ResenasPage from './components/admin/ResenasPage';
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -49,6 +50,8 @@ function AppContent() {
             return <AdminDashboard />;
           case 'colaboraciones':
             return <AdminDashboard />;
+          case 'resenas':
+            return <ResenasPage />;
           case 'basededatos':
             return <BaseDatosPage />;
           case 'reportes':
