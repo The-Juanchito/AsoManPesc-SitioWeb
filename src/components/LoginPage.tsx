@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { LOGO_URL } from '../data/variedades';
 
@@ -11,7 +12,37 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [verPass, setVerPass] = useState(false);
+  const { login, loginGoogle } = useAuth();
+  const googleBtn = useRef<HTMLDivElement>(null);
+  const [googleId, setGoogleId] = useState<string | null>(null);
+
+  useEffect(() => { api.getGoogleConfig().then(setGoogleId); }, []);
+
+  // Botón oficial "Continuar con Google"
+  useEffect(() => {
+    if (!googleId) return;
+    const pintar = () => {
+      const g = (window as any).google?.accounts?.id;
+      if (!g || !googleBtn.current) return;
+      g.initialize({
+        client_id: googleId,
+        callback: async (resp: { credential: string }) => {
+          setError(''); setLoading(true);
+          const result = await loginGoogle(resp.credential);
+          setLoading(false);
+          if (!result.ok) setError(result.error);
+        },
+      });
+      g.renderButton(googleBtn.current, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width: 336, locale: 'es' });
+    };
+    if ((window as any).google?.accounts?.id) { pintar(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true;
+    s.onload = pintar;
+    document.head.appendChild(s);
+  }, [googleId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,12 +79,6 @@ export default function LoginPage({ onBack }: LoginPageProps) {
             <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-28 h-28 rounded-full object-cover mx-auto mb-3 shadow-lg ring-4 ring-amber-400" />
             <h1 className="text-2xl font-bold text-green-800">AsoManPesc</h1>
             <p className="text-gray-500 text-sm mt-1">Inicia sesión en tu cuenta</p>
-            <div className="flex justify-center gap-2 mt-3">
-              <span className="db-status connected text-xs">
-                <span className="pulse"></span>
-                <i className="bi bi-database-fill-check"></i> MySQL Conectado
-              </span>
-            </div>
           </div>
 
           {error && (
@@ -87,12 +112,21 @@ export default function LoginPage({ onBack }: LoginPageProps) {
               <div className="relative">
                 <i className="bi bi-key-fill absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input
-                  type="password"
+                  type={verPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setVerPass(v => !v)}
+                  aria-label={verPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  title={verPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-700 p-1"
+                >
+                  <i className={`bi ${verPass ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
+                </button>
               </div>
             </div>
 
@@ -105,6 +139,16 @@ export default function LoginPage({ onBack }: LoginPageProps) {
               {loading ? 'Entrando...' : 'Iniciar Sesión'}
             </button>
           </form>
+
+          {googleId && (
+            <div className="mt-5">
+              <div className="flex items-center gap-3 text-xs text-gray-400 mb-4">
+                <span className="flex-1 h-px bg-gray-200"></span>o<span className="flex-1 h-px bg-gray-200"></span>
+              </div>
+              <div ref={googleBtn} className="flex justify-center"></div>
+              <p className="mt-2 text-center text-[11px] text-gray-400">Solo funciona con el correo con el que el administrador creó tu cuenta.</p>
+            </div>
+          )}
 
           <p className="mt-6 text-center text-xs text-gray-400">
             <i className="bi bi-shield-lock-fill me-1"></i>Acceso con tu cuenta registrada. ¿No tienes una? Pídela al administrador.

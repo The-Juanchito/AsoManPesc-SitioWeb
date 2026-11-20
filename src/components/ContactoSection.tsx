@@ -10,6 +10,7 @@ export default function ContactoSection() {
   const [tipo, setTipo] = useState<'resena' | 'opinion'>('resena');
   const [nombre, setNombre] = useState('');
   const [contacto, setContacto] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [calificacion, setCalificacion] = useState(0);
   const [mensaje, setMensaje] = useState('');
   const [website, setWebsite] = useState(''); // campo trampa anti-robots (oculto)
@@ -88,12 +89,17 @@ export default function ContactoSection() {
     setError('');
     if (!nombre.trim()) return setError('Escribe tu nombre');
     if (mensaje.trim().length < 5) return setError('Cuéntanos un poco más (mínimo 5 caracteres)');
+    if (telefono.trim()) {
+      const d = telefono.replace(/\D/g, '');
+      if (!/^[\d\s+()-]+$/.test(telefono) || d.length < 7 || d.length > 15) return setError('Escribe un teléfono válido (solo números, de 7 a 15 dígitos)');
+    }
 
     setEnviando(true);
     try {
       await api.enviarResena({
         nombre: nombre.trim(),
         contacto: contacto.trim() || undefined,
+        telefono: telefono.trim() || undefined,
         tipo,
         calificacion: calificacion || null,
         mensaje: mensaje.trim(),
@@ -105,7 +111,7 @@ export default function ContactoSection() {
       detenerUbicacion();
       setUbicacion(null);
       setEstadoUbicacion('inactiva');
-      setNombre(''); setContacto(''); setCalificacion(0); setMensaje(''); setTipo('resena');
+      setNombre(''); setContacto(''); setTelefono(''); setCalificacion(0); setMensaje(''); setTipo('resena');
       setEnviado(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo enviar. Inténtalo de nuevo.');
@@ -214,8 +220,15 @@ export default function ContactoSection() {
                       onChange={e => setNombre(e.target.value)} placeholder="Nombre y apellido" />
                   </div>
                   <div>
+                    <label htmlFor="c-telefono" className="block text-sm font-medium text-gray-700 mb-1">
+                      Teléfono / WhatsApp <span className="text-gray-400">(opcional)</span>
+                    </label>
+                    <input id="c-telefono" type="tel" inputMode="tel" autoComplete="tel" className={inputClass} value={telefono} maxLength={20}
+                      onChange={e => setTelefono(e.target.value)} placeholder="Ej: 300 123 4567" />
+                  </div>
+                  <div className="sm:col-span-2">
                     <label htmlFor="c-contacto" className="block text-sm font-medium text-gray-700 mb-1">
-                      Correo o teléfono <span className="text-gray-400">(opcional)</span>
+                      Correo <span className="text-gray-400">(opcional)</span>
                     </label>
                     <input id="c-contacto" className={inputClass} value={contacto} maxLength={150}
                       onChange={e => setContacto(e.target.value)} placeholder="Para responderte" />

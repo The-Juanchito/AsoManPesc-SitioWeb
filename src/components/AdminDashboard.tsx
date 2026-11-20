@@ -48,14 +48,14 @@ export default function AdminDashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-green-900">
             <i className="bi bi-speedometer2 me-2"></i>Panel de Administración
           </h1>
-          <p className="text-gray-500">MySQL • Base de datos en tiempo real</p>
+          <p className="text-gray-500">Datos en tiempo real</p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <span className={`db-status ${conectado || cargando ? 'connected' : 'disconnected'}`}>
+        {!cargando && !conectado && (
+          <span className="db-status disconnected">
             <span className="pulse"></span>
-            <i className="bi bi-database-fill-check"></i> {cargando ? 'MySQL: comprobando...' : conectado ? 'MySQL Conectado' : 'MySQL sin conexión'}
+            <i className="bi bi-exclamation-triangle-fill"></i> Sin conexión con el servidor
           </span>
-        </div>
+        )}
       </div>
 
       {/* Stats Cards */}

@@ -70,6 +70,7 @@ export interface DBResena {
   id: string;
   nombre: string;
   contacto: string;
+  telefono: string;
   tipo: 'resena' | 'opinion';
   calificacion: number | null;
   mensaje: string;
