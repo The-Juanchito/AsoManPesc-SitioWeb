@@ -48,12 +48,6 @@ export default function LoginPage({ onBack }: LoginPageProps) {
             <img src={LOGO_URL} alt="Logo AsoManPesc" className="w-28 h-28 rounded-full object-cover mx-auto mb-3 shadow-lg ring-4 ring-amber-400" />
             <h1 className="text-2xl font-bold text-green-800">AsoManPesc</h1>
             <p className="text-gray-500 text-sm mt-1">Inicia sesión en tu cuenta</p>
-            <div className="flex justify-center gap-2 mt-3">
-              <span className="db-status connected text-xs">
-                <span className="pulse"></span>
-                <i className="bi bi-database-fill-check"></i> MySQL Conectado
-              </span>
-            </div>
           </div>
 
           {error && (
