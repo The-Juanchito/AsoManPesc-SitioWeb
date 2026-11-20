@@ -77,6 +77,17 @@ if (admins === 0) {
   }
 } else {
   console.log('ℹ️  Ya existe un administrador; no se creó otro');
+  // Cambio de contraseña del admin: pon ADMIN_RESET_PASSWORD=1 junto con ADMIN_PASSWORD, despliega y luego quita la variable.
+  if (process.env.ADMIN_RESET_PASSWORD === '1') {
+    const nueva = process.env.ADMIN_PASSWORD || '';
+    const correo = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+    if (nueva.length < 6 || !correo) {
+      console.error('❌ Para cambiar la contraseña define ADMIN_EMAIL y ADMIN_PASSWORD (mínimo 6 caracteres).');
+    } else {
+      const [r] = await conn.query("UPDATE usuarios SET password_hash = ? WHERE email = ? AND rol = 'admin'", [bcrypt.hashSync(nueva, 10), correo]);
+      console.log(r.affectedRows ? `✅ Contraseña del administrador ${correo} actualizada` : `⚠️  No hay un administrador con el correo ${correo}`);
+    }
+  }
 }
 
 await conn.end();
