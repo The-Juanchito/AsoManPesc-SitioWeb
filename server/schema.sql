@@ -20,7 +20,9 @@ CREATE TABLE IF NOT EXISTS usuarios (
   telefono       VARCHAR(20),
   fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
   ultimo_acceso  DATETIME NULL,
-  activo         BOOLEAN DEFAULT TRUE
+  activo         BOOLEAN DEFAULT TRUE,
+  clave_temporal_hash   VARCHAR(255) NULL,        -- contraseña temporal enviada por correo (cifrada)
+  clave_temporal_expira DATETIME NULL
 );
 
 -- Canastas entregadas por cada productor
