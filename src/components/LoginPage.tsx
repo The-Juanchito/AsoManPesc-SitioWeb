@@ -12,6 +12,7 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verPass, setVerPass] = useState(false);
   const { login, loginGoogle } = useAuth();
   const googleBtn = useRef<HTMLDivElement>(null);
   const [googleId, setGoogleId] = useState<string | null>(null);
@@ -111,12 +112,21 @@ export default function LoginPage({ onBack }: LoginPageProps) {
               <div className="relative">
                 <i className="bi bi-key-fill absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input
-                  type="password"
+                  type={verPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setVerPass(v => !v)}
+                  aria-label={verPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  title={verPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-700 p-1"
+                >
+                  <i className={`bi ${verPass ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
+                </button>
               </div>
             </div>
 
