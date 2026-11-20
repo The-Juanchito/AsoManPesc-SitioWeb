@@ -1,5 +1,5 @@
 import { useData } from '../context/DataContext';
-import { MYSQL_CONFIG, MYSQL_SCHEMA, formatCOP } from '../services/database';
+import { formatCOP } from '../services/database';
 import { useEstadoBD } from '../services/useEstadoBD';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import { useState } from 'react';
@@ -8,7 +8,6 @@ const COLORS = ['#16a34a', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#ec4899'
 
 export default function AdminDashboard() {
   const { canastas, registros, usuariosNuevos, pedidos, allUsers, precioCanasta } = useData();
-  const [showMySQL, setShowMySQL] = useState(false);
   const { conectado, cargando } = useEstadoBD();
 
   // Datos para gráfica de canastas por día
@@ -157,106 +156,11 @@ export default function AdminDashboard() {
         </ResponsiveContainer>
       </div>
 
-      {/* Conexión a Bases de Datos */}
-      <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-        <h3 className="text-lg font-bold text-green-800 mb-4">
-          <i className="bi bi-database-fill-gear me-2 text-indigo-600"></i>Conexión a Bases de Datos
-        </h3>
-        
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* MySQL */}
-          <div className="border border-blue-200 rounded-xl p-5 bg-gradient-to-br from-blue-50 to-white">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-                  <i className="bi bi-database-fill text-white text-xl"></i>
-                </div>
-                <div>
-                  <h4 className="font-bold text-blue-800">MySQL</h4>
-                  <p className="text-xs text-blue-600">Base de datos principal</p>
-                </div>
-              </div>
-              <span className={`db-status ${conectado || cargando ? 'connected' : 'disconnected'}`}>
-                <span className="pulse"></span>
-                {cargando ? 'Comprobando...' : conectado ? 'Conectado' : 'Sin conexión'}
-              </span>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Host:</span>
-                <span className="font-mono text-gray-800">{MYSQL_CONFIG.host}:{MYSQL_CONFIG.port}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Usuario:</span>
-                <span className="font-mono text-gray-800">{MYSQL_CONFIG.user}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Base de datos:</span>
-                <span className="font-mono text-gray-800">{MYSQL_CONFIG.database}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Charset:</span>
-                <span className="font-mono text-gray-800">{MYSQL_CONFIG.charset}</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowMySQL(!showMySQL)}
-              className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
-            >
-              <i className={`bi bi-chevron-${showMySQL ? 'up' : 'down'}`}></i>
-              {showMySQL ? 'Ocultar' : 'Ver'} Schema SQL
-            </button>
-            {showMySQL && (
-              <pre className="mt-3 bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto max-h-60 overflow-y-auto">
-                {MYSQL_SCHEMA}
-              </pre>
-            )}
-          </div>
-
-          {/* Información adicional MySQL */}
-          <div className="border border-green-200 rounded-xl p-5 bg-gradient-to-br from-green-50 to-white">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
-                <i className="bi bi-shield-check text-white text-xl"></i>
-              </div>
-              <div>
-                <h4 className="font-bold text-green-800">Seguridad y Respaldo</h4>
-                <p className="text-xs text-green-600">Protección de datos</p>
-              </div>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Respaldo:</span>
-                <span className="font-medium text-green-700 flex items-center gap-1">
-                  <i className="bi bi-check-circle-fill"></i> Automático diario
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Encriptación:</span>
-                <span className="font-medium text-green-700 flex items-center gap-1">
-                  <i className="bi bi-lock-fill"></i> AES-256
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Disponibilidad:</span>
-                <span className="font-medium text-green-700 flex items-center gap-1">
-                  <i className="bi bi-graph-up"></i> 99.9% uptime
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Último respaldo:</span>
-                <span className="font-mono text-gray-800">Hoy 06:00 AM</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Usuarios */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-green-800">
-            <i className="bi bi-people-fill me-2 text-green-600"></i>Usuarios en la Base de Datos
+            <i className="bi bi-people-fill me-2 text-green-600"></i>Usuarios registrados
           </h3>
           <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
             <i className="bi bi-person-check me-1"></i>{allUsers.length} usuarios
