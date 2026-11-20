@@ -53,8 +53,8 @@ if (admins === 0) {
     password = crypto.randomBytes(9).toString('base64url'); // 12 caracteres aleatorios
     generada = true;
   }
-  if (password.length < 8) {
-    console.error('\n❌ ADMIN_PASSWORD debe tener al menos 8 caracteres.\n');
+  if (password.length < 6) {
+    console.error('\n❌ ADMIN_PASSWORD debe tener al menos 6 caracteres.\n');
     await conn.end();
     process.exit(1);
   }
