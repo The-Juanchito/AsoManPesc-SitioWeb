@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { VARIEDADES, LOGO_URL } from '../data/variedades';
+import ContactoSection from './ContactoSection';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -23,7 +24,7 @@ function Navbar({ onLogin }: { onLogin: () => void }) {
     { href: '#nosotros', label: 'Nosotros', icon: 'bi-info-circle' },
     { href: '#productos', label: 'Productos', icon: 'bi-basket3' },
     { href: '#beneficios', label: 'Beneficios', icon: 'bi-star' },
-    { href: '#tecnologias', label: 'Tecnología', icon: 'bi-cpu' },
+    { href: '#contacto', label: 'Contacto', icon: 'bi-chat-heart' },
   ];
 
   return (
@@ -144,11 +145,14 @@ function Hero({ onLogin }: { onLogin: () => void }) {
               Frescura Natural del Campo a Tu Mesa
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Los Mejores <span className="text-amber-400">Mangos</span> Directo del Productor
+              Aso<span className="text-amber-400">ManPesc</span>
             </h1>
+            <p className="text-xl sm:text-2xl font-semibold text-amber-300 mb-6">
+              Asociación de Productores de Mango de Pescadero
+            </p>
             <p className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed">
-              En AsoManPesc trabajamos unidos para llevar la calidad y frescura de nuestros mangos a cada hogar. 
-              Somos una asociación comprometida con la excelencia y el desarrollo de nuestra comunidad.
+              Trabajamos unidos para llevar la calidad y frescura del mango de Dilasa a cada hogar,
+              con el compromiso y el desarrollo de nuestra comunidad.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a href="#productos" className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl flex items-center justify-center gap-2">
@@ -211,8 +215,8 @@ function Gallery() {
       color: 'from-amber-400 to-orange-500'
     },
     {
-      title: 'Cultivo Sostenible',
-      description: 'Nuestros cultivos respetan el medio ambiente y las prácticas agrícolas responsables.',
+      title: 'Buenas Prácticas Agrícolas',
+      description: 'Cuidamos el suelo, el agua y el medio ambiente en cada etapa del cultivo.',
       icon: 'bi-tree',
       color: 'from-green-500 to-emerald-600'
     },
@@ -338,7 +342,7 @@ function About() {
             <div className="bg-gradient-to-br from-green-100 to-amber-50 rounded-3xl p-8 shadow-xl">
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: 'bi-tree', title: 'Cultivo Sostenible', color: 'bg-green-500' },
+                  { icon: 'bi-tree', title: 'Buenas Prácticas Agrícolas', color: 'bg-green-500' },
                   { icon: 'bi-handshake', title: 'Comercio Justo', color: 'bg-amber-500' },
                   { icon: 'bi-trophy', title: 'Calidad Premium', color: 'bg-rose-500' },
                   { icon: 'bi-truck', title: 'Entrega Directa', color: 'bg-blue-500' }
@@ -360,166 +364,62 @@ function About() {
 }
 
 function Products() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  const products = VARIEDADES.map(v => ({ ...v, name: v.name.toLowerCase().startsWith('mango') ? v.name : `Mango ${v.name}` }));
-
-  const itemsPerView = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3 : typeof window !== 'undefined' && window.innerWidth >= 640 ? 2 : 1;
-  const maxIndex = Math.max(0, products.length - itemsPerView);
-
-  // Auto-play del carrusel
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, maxIndex]);
-
-  const nextSlide = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
-    setIsAutoPlaying(false);
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
+  const product = VARIEDADES[0];
 
   return (
     <section id="productos" className="py-20 bg-gradient-to-b from-white to-green-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 text-amber-600 font-semibold text-sm uppercase tracking-wider bg-amber-50 px-4 py-1.5 rounded-full">
             <i className="bi bi-basket3-fill"></i>
-            Nuestros Productos
+            Nuestro Producto
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-green-900 mt-4 mb-4">Variedades de Mango</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-green-900 mt-4 mb-4">Mango de Dilasa</h2>
           <p className="text-gray-600 max-w-2xl mx-auto mb-4">
-            Ofrecemos una amplia selección de variedades de mango, cada una con su sabor y textura única.
+            Nos enfocamos en un solo mango: el de Dilasa, cultivado en Pescadero con el cuidado de nuestros productores asociados.
           </p>
           <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium">
             <i className="bi bi-tag-fill"></i>
-            Precios variables según disponibilidad y temporada
+            Precio variable según disponibilidad y temporada
           </div>
           <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
         </div>
 
-        {/* Carrusel */}
-        <div className="relative">
-          {/* Controles de navegación */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center hover:bg-green-50 hover:scale-110 transition-all group"
-            aria-label="Anterior"
-          >
-            <i className="bi bi-chevron-left text-2xl text-green-700 group-hover:text-green-800"></i>
-          </button>
-          
-          <button
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white shadow-xl rounded-full flex items-center justify-center hover:bg-green-50 hover:scale-110 transition-all group"
-            aria-label="Siguiente"
-          >
-            <i className="bi bi-chevron-right text-2xl text-green-700 group-hover:text-green-800"></i>
-          </button>
-
-          {/* Contenedor del carrusel */}
-          <div className="overflow-hidden mx-8">
-            <div 
-              className="flex transition-transform duration-500 ease-out"
-              style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
-            >
-              {products.map((product, index) => (
-                <div 
-                  key={index} 
-                  className="flex-shrink-0 px-3"
-                  style={{ width: `${100 / itemsPerView}%` }}
-                >
-                  <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-2 h-full">
-                    <div className={`h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
-                      <span className="text-7xl group-hover:scale-125 transition-transform duration-500">{product.emoji}</span>
-                      
-                      {/* Badge de precio variable */}
-                      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg">
-                        <div className="text-xs font-bold text-amber-600 flex items-center gap-1">
-                          <i className="bi bi-arrow-repeat"></i>
-                          Precio Variable
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-green-800 mb-2">{product.name}</h3>
-                      <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
-                      
-                      {/* Características */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {product.characteristics.map((char, i) => (
-                          <span key={i} className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-100">
-                            {char}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      {/* Información de temporada */}
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                          <i className="bi bi-calendar3"></i>
-                          {product.season}
-                        </span>
-                        <a 
-                          href="https://wa.me/573242030867?text=Hola, me interesa conocer el precio actual de los mangos"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-green-700 hover:text-green-800 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all"
-                        >
-                          <i className="bi bi-whatsapp text-green-600"></i>
-                          Consultar
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+        <div className="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 md:grid md:grid-cols-2">
+          <div className={`min-h-[240px] bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
+            <span className="text-9xl group-hover:scale-110 transition-transform duration-500">{product.emoji}</span>
+            <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg text-xs font-bold text-amber-600 flex items-center gap-1">
+              <i className="bi bi-arrow-repeat"></i>
+              Precio Variable
             </div>
           </div>
 
-          {/* Indicadores de posición */}
-          <div className="flex justify-center gap-2 mt-8">
-            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setIsAutoPlaying(false);
-                  setCurrentIndex(index);
-                }}
-                className={`transition-all duration-300 rounded-full ${
-                  currentIndex === index
-                    ? 'w-8 h-3 bg-green-600'
-                    : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
-                }`}
-                aria-label={`Ir a slide ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Control de auto-play */}
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className="text-sm text-gray-500 hover:text-green-700 flex items-center gap-2 transition-colors"
-            >
-              <i className={`bi ${isAutoPlaying ? 'bi-pause-circle' : 'bi-play-circle'}`}></i>
-              {isAutoPlaying ? 'Pausar carrusel' : 'Reproducir carrusel'}
-            </button>
+          <div className="p-8 flex flex-col justify-center">
+            <h3 className="text-2xl font-bold text-green-800 mb-3">{product.name}</h3>
+            <p className="text-gray-600 mb-5 leading-relaxed">{product.description}</p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {product.characteristics.map((char, i) => (
+                <span key={i} className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-100">{char}</span>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-100">
+              <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+                <i className="bi bi-calendar3"></i>
+                {product.season}
+              </span>
+              <a
+                href="https://wa.me/573242030867?text=Hola, me interesa conocer el precio actual del mango de Dilasa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-auto bg-green-700 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-green-800 flex items-center gap-2 transition-all"
+              >
+                <i className="bi bi-whatsapp"></i>
+                Consultar precio
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Nota informativa */}
         <div className="mt-12 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -528,11 +428,10 @@ function Products() {
             <div>
               <h4 className="font-bold text-amber-900 mb-2">Precios Variables Según Disponibilidad</h4>
               <p className="text-sm text-amber-800 leading-relaxed mb-3">
-                Los precios de nuestras canastas de mangos varían diariamente según la disponibilidad, 
-                calidad, temporada y demanda del mercado. No tenemos precios fijos publicados.
+                El precio de nuestras canastas de mango de Dilasa varía según la disponibilidad, calidad, temporada y demanda del mercado. No tenemos precios fijos publicados.
               </p>
               <p className="text-sm text-amber-800 leading-relaxed">
-                <strong>¿Cómo conocer el precio actual?</strong> Contáctanos directamente por WhatsApp al 
+                <strong>¿Cómo conocer el precio actual?</strong> Contáctanos directamente por WhatsApp al
                 <a href="https://wa.me/573242030867" target="_blank" rel="noopener noreferrer" className="text-green-700 font-bold hover:underline mx-1">
                   +57 324 203 0867
                 </a>
@@ -548,7 +447,7 @@ function Products() {
 
 function Benefits() {
   const benefits = [
-    { icon: "bi-patch-check-fill", title: "100% Natural", description: "Sin pesticidas dañinos, respetando la naturaleza y tu salud.", color: "bg-green-500" },
+    { icon: "bi-patch-check-fill", title: "Cultivo Cuidado", description: "Fertilizantes orgánicos, insecticidas y fungicidas, respetando la naturaleza y tu salud.", color: "bg-green-500" },
     { icon: "bi-truck", title: "Entrega Fresca", description: "Del campo a tu mesa en tiempo récord.", color: "bg-blue-500" },
     { icon: "bi-cash-stack", title: "Precios Justos", description: "Sin intermediarios, los mejores precios del mercado.", color: "bg-amber-500" },
     { icon: "bi-trophy-fill", title: "Calidad Garantizada", description: "Riguroso proceso de selección en cada mango.", color: "bg-rose-500" },
@@ -578,111 +477,6 @@ function Benefits() {
               <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TechStack() {
-  const technologies = [
-    { name: 'React 18', description: 'Framework de interfaces de usuario', icon: 'bi-braces-asterisk', color: 'from-blue-500 to-cyan-500' },
-    { name: 'TypeScript', description: 'Tipado estático para mayor seguridad', icon: 'bi-code-slash', color: 'from-blue-600 to-blue-800' },
-    { name: 'Vite', description: 'Build tool ultrarrápido', icon: 'bi-lightning-charge-fill', color: 'from-purple-500 to-violet-600' },
-    { name: 'Tailwind CSS', description: 'Framework de estilos utilitarios', icon: 'bi-palette-fill', color: 'from-cyan-500 to-teal-500' },
-    { name: 'Bootstrap 5', description: 'Componentes e iconos profesionales', icon: 'bi-bootstrap', color: 'from-indigo-500 to-purple-600' },
-    { name: 'MySQL', description: 'Base de datos relacional principal', icon: 'bi-database-fill', color: 'from-sky-500 to-blue-600' },
-    { name: 'Recharts', description: 'Gráficas interactivas y dinámicas', icon: 'bi-graph-up', color: 'from-green-500 to-emerald-600' },
-    { name: 'WhatsApp API', description: 'Comunicación directa con el admin', icon: 'bi-whatsapp', color: 'from-emerald-500 to-green-600' },
-    { name: 'Chatbot IA', description: 'Asistente virtual inteligente', icon: 'bi-robot', color: 'from-rose-500 to-pink-600' },
-    { name: 'LocalStorage', description: 'Persistencia de datos en navegador', icon: 'bi-hdd-fill', color: 'from-amber-500 to-orange-600' },
-    { name: 'Node.js', description: 'Runtime de JavaScript', icon: 'bi-server', color: 'from-lime-500 to-green-600' },
-    { name: 'Responsive', description: 'Adaptado a todos los dispositivos', icon: 'bi-phone', color: 'from-fuchsia-500 to-pink-600' },
-  ];
-
-  return (
-    <section id="tecnologias" className="py-20 bg-gradient-to-b from-gray-900 to-gray-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 text-amber-400 font-semibold text-sm uppercase tracking-wider bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-500/20">
-            <i className="bi bi-cpu-fill"></i>
-            Tecnología
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mt-4 mb-4">
-            ¿Qué Programas Utilizamos?
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Nuestro sistema está construido con las mejores tecnologías modernas para garantizar rendimiento, seguridad y escalabilidad.
-          </p>
-          <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full mt-4"></div>
-        </div>
-
-        {/* Grid de tecnologías */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-          {technologies.map((tech, i) => (
-            <div
-              key={i}
-              className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 text-center hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-            >
-              <div className={`w-14 h-14 mx-auto mb-3 rounded-xl bg-gradient-to-br ${tech.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                <i className={`bi ${tech.icon} text-white text-2xl`}></i>
-              </div>
-              <h4 className="font-bold text-white text-sm mb-1">{tech.name}</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">{tech.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Arquitectura */}
-        <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-white mb-6 text-center flex items-center justify-center gap-2">
-            <i className="bi bi-diagram-3-fill text-amber-400"></i>
-            Arquitectura del Sistema
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-window-desktop text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">Frontend</h4>
-              <p className="text-xs text-gray-400 mt-1">React + TypeScript + Tailwind + Bootstrap 5</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-database-fill text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">MySQL</h4>
-              <p className="text-xs text-gray-400 mt-1">Base de datos principal y persistente</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-whatsapp text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">WhatsApp</h4>
-              <p className="text-xs text-gray-400 mt-1">Chat directo con el administrador</p>
-            </div>
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <i className="bi bi-robot text-white text-3xl"></i>
-              </div>
-              <h4 className="font-bold text-white">Chatbot IA</h4>
-              <p className="text-xs text-gray-400 mt-1">Asistente virtual inteligente</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Precio destacado */}
-        <div className="mt-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-          <div className="relative flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span className="text-6xl">🥭</span>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-medium text-amber-100">Canasta de Mangos Frescos</p>
-              <p className="text-3xl sm:text-4xl font-bold">Precio Variable</p>
-              <p className="text-amber-100 mt-1 text-sm">Según el mercado • Consulta por WhatsApp</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -773,7 +567,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
       <About />
       <Products />
       <Benefits />
-      <TechStack />
+      <ContactoSection />
       <Footer onLogin={onLogin} />
     </div>
   );

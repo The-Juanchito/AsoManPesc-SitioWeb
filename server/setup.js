@@ -1,4 +1,4 @@
-// Crea la base de datos y las tablas (schema.sql) y carga los datos de ejemplo.
+// Crea la base de datos y las tablas (schema.sql) y crea el administrador predeterminado (datos en .env).
 // Uso:  npm run setup
 import 'dotenv/config';
 import fs from 'node:fs';
@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
+import crypto from 'node:crypto';
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const dbName = process.env.DB_NAME || 'asomanpesc_db';
@@ -33,51 +34,39 @@ await conn.query(schema);
 await conn.changeUser({ database: dbName });
 console.log('✅ Tablas listas');
 
-// 2) Datos de ejemplo (solo si no hay usuarios todavía)
-const [[{ total }]] = await conn.query('SELECT COUNT(*) AS total FROM usuarios');
-if (total === 0) {
-  const hash = (p) => bcrypt.hashSync(p, 10);
+// 2) Administrador predeterminado (real, guardado en MySQL; NO es una cuenta demo)
+//    Sus datos salen de server/.env. Solo se crea si todavía no existe ningún administrador.
+const [[{ admins }]] = await conn.query("SELECT COUNT(*) AS admins FROM usuarios WHERE rol = 'admin'");
+if (admins === 0) {
+  const nombre = process.env.ADMIN_NAME || 'Administrador AsoManPesc';
+  const email = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const cedula = (process.env.ADMIN_CEDULA || '').trim();
+  let password = process.env.ADMIN_PASSWORD || '';
+  if (!email || !cedula) {
+    console.error('\n❌ Falta ADMIN_EMAIL o ADMIN_CEDULA en el archivo .env (mira .env.example).\n');
+    await conn.end();
+    process.exit(1);
+  }
+  let generada = false;
+  if (!password) {
+    password = crypto.randomBytes(9).toString('base64url'); // 12 caracteres aleatorios
+    generada = true;
+  }
+  if (password.length < 8) {
+    console.error('\n❌ ADMIN_PASSWORD debe tener al menos 8 caracteres.\n');
+    await conn.end();
+    process.exit(1);
+  }
   await conn.query(
-    `INSERT INTO usuarios (id, nombre, cedula, email, password_hash, rol, telefono, fecha_registro) VALUES ?`,
-    [[
-      [1, 'Admin Principal', '1000000001', 'admin@asomanpesc.com', hash('admin123'), 'admin', '+57 3242030867', '2024-01-01'],
-      [2, 'José Martínez', '1000000002', 'jose@asomanpesc.com', hash('asociado123'), 'asociado', null, '2024-01-05'],
-      [3, 'María López', '1000000003', 'maria@asomanpesc.com', hash('asociado123'), 'asociado', null, '2024-01-05'],
-      [4, 'Carlos Rodríguez', '1000000004', 'carlos@cliente.com', hash('cliente123'), 'cliente', null, '2024-01-10'],
-      [5, 'Ana García', '1000000005', 'ana@cliente.com', hash('cliente123'), 'cliente', null, '2024-01-10'],
-    ]]
+    `INSERT INTO usuarios (nombre, cedula, email, password_hash, rol, telefono, fecha_registro) VALUES (?, ?, ?, ?, 'admin', ?, CURDATE())`,
+    [nombre, cedula, email, bcrypt.hashSync(password, 10), process.env.ADMIN_PHONE || null]
   );
-  await conn.query(
-    `INSERT INTO canastas (fecha, productor_id, productor_nombre, cantidad, tipo_mango, precio_unitario, estado) VALUES ?`,
-    [[
-      ['2024-01-15', 2, 'José Martínez', 25, 'Tommy Atkins', 4000, 'entregada'],
-      ['2024-01-15', 3, 'María López', 18, 'Ataulfo', 4000, 'entregada'],
-      ['2024-01-16', 2, 'José Martínez', 30, 'Kent', 4000, 'entregada'],
-      ['2024-01-16', 2, 'José Martínez', 22, 'Haden', 4000, 'recogida'],
-      ['2024-01-17', 3, 'María López', 15, 'Manila', 4000, 'pendiente'],
-      ['2024-01-17', 2, 'José Martínez', 28, 'Tommy Atkins', 4000, 'recogida'],
-      ['2024-01-18', 3, 'María López', 20, 'Keitt', 4000, 'pendiente'],
-      ['2024-01-18', 3, 'María López', 35, 'Ataulfo', 4000, 'recogida'],
-    ]]
-  );
-  await conn.query(
-    `INSERT INTO registros_produccion (asociado_id, asociado_nombre, fecha, producto, cantidad_cajas, cantidad_canastas, notas) VALUES ?`,
-    [[
-      [2, 'José Martínez', '2024-01-15', 'Tommy Atkins', 50, 25, 'Cosecha excelente'],
-      [3, 'María López', '2024-01-15', 'Ataulfo', 36, 18, 'Fruta madura lista'],
-      [2, 'José Martínez', '2024-01-16', 'Kent', 60, 30, 'Gran producción'],
-    ]]
-  );
-  await conn.query(
-    `INSERT INTO pedidos (cliente_id, cliente_nombre, producto, cantidad, precio_total, notas, estado) VALUES ?`,
-    [[
-      [4, 'Carlos Rodríguez', 'Mango Ataulfo', 10, 40000, 'Para mi restaurante', 'confirmado'],
-      [5, 'Ana García', 'Mango Tommy Atkins', 5, 20000, '', 'pendiente'],
-    ]]
-  );
-  console.log('✅ Datos de ejemplo cargados (5 usuarios, canastas, registros y pedidos)');
+  console.log(`✅ Administrador creado: ${email}`);
+  if (generada) {
+    console.log(`   Contraseña generada (anótala, no se vuelve a mostrar): ${password}`);
+  }
 } else {
-  console.log('ℹ️  La base ya tiene usuarios; no se cargaron datos de ejemplo');
+  console.log('ℹ️  Ya existe un administrador; no se creó otro');
 }
 
 await conn.end();

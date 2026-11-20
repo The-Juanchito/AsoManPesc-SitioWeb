@@ -36,6 +36,8 @@ export default function UsuariosPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [formError, setFormError] = useState('');
   const [toDelete, setToDelete] = useState<DBUser | null>(null);
+  const [claveNueva, setClaveNueva] = useState<{ user: DBUser; clave: string } | null>(null);
+  const [copiado, setCopiado] = useState(false);
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
 
   const flash = (type: 'ok' | 'error', text: string) => {
@@ -115,6 +117,23 @@ export default function UsuariosPage() {
     const result = await updateUser(u.id, { role });
     if (result.ok) flash('ok', `Rol de ${u.name} cambiado a ${ROLES.find(r => r.value === role)?.label}`);
     else flash('error', result.error);
+  };
+
+  // La contraseña se guarda cifrada y nadie puede verla (ni el admin). Si el usuario la olvida,
+  // se genera una temporal que el admin le entrega; el usuario la cambia después.
+  const restablecerClave = async (u: DBUser) => {
+    const letras = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(8));
+    const clave = Array.from(bytes, b => letras[b % letras.length]).join('');
+    const result = await updateUser(u.id, { password: clave });
+    if (!result.ok) { flash('error', result.error); return; }
+    setCopiado(false);
+    setClaveNueva({ user: u, clave });
+  };
+
+  const copiarClave = async () => {
+    if (!claveNueva) return;
+    try { await navigator.clipboard.writeText(claveNueva.clave); setCopiado(true); } catch { /* sin permiso: se puede copiar a mano */ }
   };
 
   const confirmDelete = async () => {
@@ -253,11 +272,13 @@ export default function UsuariosPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100 text-left text-sm font-medium text-gray-500">
-                <th className="py-3 px-2">ID (cédula)</th>
-                <th className="py-3 px-2">Nombre</th>
-                <th className="py-3 px-2">Correo</th>
-                <th className="py-3 px-2">Rol</th>
-                <th className="py-3 px-2 text-right">Acciones</th>
+                <th className="py-3 px-1.5">ID (cédula)</th>
+                <th className="py-3 px-1.5">Nombre</th>
+                <th className="py-3 px-1.5">Correo</th>
+                <th className="py-3 px-1.5">Teléfono</th>
+                <th className="py-3 px-1.5">Contraseña</th>
+                <th className="py-3 px-1.5">Rol</th>
+                <th className="py-3 px-1.5 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -265,8 +286,8 @@ export default function UsuariosPage() {
                 const isSelf = u.id === currentUser?.id;
                 return (
                   <tr key={u.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
-                    <td className="py-3 px-2 text-sm font-mono text-gray-700">{u.cedula || <span className="text-gray-300">—</span>}</td>
-                    <td className="py-3 px-2">
+                    <td className="py-3 px-1.5 text-sm font-mono text-gray-700">{u.cedula || <span className="text-gray-300">—</span>}</td>
+                    <td className="py-3 px-1.5">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-bold text-green-700">
                           {u.name.charAt(0)}
@@ -277,8 +298,18 @@ export default function UsuariosPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-2 text-sm text-gray-600">{u.email}</td>
-                    <td className="py-3 px-2">
+                    <td className="py-3 px-1.5 text-sm text-gray-600">{u.email}</td>
+                    <td className="py-3 px-1.5 text-sm text-gray-600 whitespace-nowrap">
+                      {u.phone ? <><i className="bi bi-telephone-fill me-1 text-green-600"></i>{u.phone}</> : <span className="text-gray-300">—</span>}
+                    </td>
+                    <td className="py-3 px-1.5 whitespace-nowrap">
+                      <span className="hidden 2xl:inline text-gray-400 tracking-widest text-sm" title="Se guarda cifrada: nadie puede verla">••••••••</span>
+                      <button onClick={() => restablecerClave(u)} title="Generar una contraseña temporal para este usuario"
+                        className="2xl:ml-2 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-medium">
+                        <i className="bi bi-key-fill me-1"></i>Restablecer
+                      </button>
+                    </td>
+                    <td className="py-3 px-1.5">
                       <select
                         value={u.role}
                         disabled={isSelf}
@@ -289,21 +320,22 @@ export default function UsuariosPage() {
                         {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                       </select>
                     </td>
-                    <td className="py-3 px-2">
-                      <div className="flex justify-end gap-2">
+                    <td className="py-3 px-1.5">
+                      <div className="flex justify-end gap-1.5">
                         <button
                           onClick={() => openEdit(u)}
-                          className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm font-medium flex items-center gap-1 transition-colors"
+                          title="Editar" aria-label="Editar"
+                          className="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm font-medium flex items-center gap-1 transition-colors"
                         >
-                          <i className="bi bi-pencil-fill"></i> Editar
+                          <i className="bi bi-pencil-fill"></i><span className="hidden 2xl:inline"> Editar</span>
                         </button>
                         <button
                           onClick={() => setToDelete(u)}
                           disabled={isSelf}
                           title={isSelf ? 'No puedes eliminarte a ti mismo' : 'Eliminar'}
-                          className="px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 text-sm font-medium flex items-center gap-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 text-sm font-medium flex items-center gap-1 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <i className="bi bi-trash-fill"></i> Eliminar
+                          <i className="bi bi-trash-fill"></i><span className="hidden 2xl:inline"> Eliminar</span>
                         </button>
                       </div>
                     </td>
@@ -311,12 +343,42 @@ export default function UsuariosPage() {
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="py-8 text-center text-gray-400">No se encontraron usuarios</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-gray-400">No se encontraron usuarios</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Contraseña temporal */}
+      {claveNueva && (
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4" onClick={() => setClaveNueva(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <i className="bi bi-key-fill text-amber-600 text-xl"></i>
+            </div>
+            <h3 className="text-lg font-bold text-center text-gray-800">Contraseña temporal</h3>
+            <p className="text-sm text-gray-600 text-center mt-2">
+              Para <strong>{claveNueva.user.name}</strong>. Anótala o envíasela ahora: <strong>no se vuelve a mostrar</strong>.
+            </p>
+            <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-3 text-center font-mono text-xl tracking-wider select-all">{claveNueva.clave}</div>
+            <p className="text-xs text-gray-500 text-center mt-2">Correo: {claveNueva.user.email}</p>
+            <div className="flex flex-col gap-2 mt-5">
+              <button onClick={copiarClave} className="w-full bg-green-700 text-white py-2.5 rounded-xl font-medium hover:bg-green-800">
+                <i className={`bi ${copiado ? 'bi-check-lg' : 'bi-clipboard'} me-2`}></i>{copiado ? 'Copiada' : 'Copiar contraseña'}
+              </button>
+              {claveNueva.user.phone && (
+                <a target="_blank" rel="noopener noreferrer"
+                  href={`https://wa.me/${(() => { const d = (claveNueva.user.phone || '').replace(/\D/g, ''); return d.length === 10 ? '57' + d : d; })()}?text=${encodeURIComponent(`Hola ${claveNueva.user.name}, tu contraseña temporal de AsoManPesc es: ${claveNueva.clave}`)}`}
+                  className="w-full text-center bg-emerald-50 text-emerald-700 py-2.5 rounded-xl font-medium hover:bg-emerald-100">
+                  <i className="bi bi-whatsapp me-2"></i>Enviar por WhatsApp
+                </a>
+              )}
+              <button onClick={() => setClaveNueva(null)} className="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium hover:bg-gray-200">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmación de eliminación */}
       {toDelete && (

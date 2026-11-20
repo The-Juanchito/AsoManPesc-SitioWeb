@@ -66,6 +66,21 @@ CREATE TABLE IF NOT EXISTS pedidos (
   FOREIGN KEY (cliente_id) REFERENCES usuarios(id) ON DELETE SET NULL
 );
 
+-- Reseñas y opiniones enviadas desde el formulario de contacto de la página
+CREATE TABLE IF NOT EXISTS resenas (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  nombre         VARCHAR(100) NOT NULL,
+  contacto       VARCHAR(150),                    -- correo o teléfono (opcional)
+  tipo           ENUM('resena', 'opinion') NOT NULL DEFAULT 'resena',
+  calificacion   TINYINT NULL,                    -- 1 a 5 estrellas (opcional)
+  mensaje        TEXT NOT NULL,
+  latitud        DECIMAL(9,6) NULL,               -- ubicación compartida por la persona (opcional)
+  longitud       DECIMAL(9,6) NULL,
+  precision_m    INT NULL,                        -- margen de error del GPS en metros
+  leida          BOOLEAN DEFAULT FALSE,
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Precio de la canasta (el vigente es la última fila)
 CREATE TABLE IF NOT EXISTS precios (
   id            INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,3 +94,17 @@ CREATE TABLE IF NOT EXISTS precios (
 INSERT INTO precios (producto, precio_cop, unidad, vigente_desde)
 SELECT 'Canasta de Mangos', 4000.00, 'canasta', CURDATE() FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM precios);
+
+-- Formato de PQR (Peticiones, Quejas y Reclamos): lo llenan asociados y clientes
+CREATE TABLE IF NOT EXISTS pqr (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id     INT NULL,
+  tipo           ENUM('sugerencia', 'queja', 'reclamo', 'peticion') NOT NULL,
+  nombre         VARCHAR(100) NOT NULL,           -- nombre del asociado o usuario
+  fecha          DATE NOT NULL,
+  descripcion    TEXT NOT NULL,
+  firma          VARCHAR(100) NOT NULL,           -- nombre escrito como firma
+  estado         ENUM('pendiente', 'atendida') DEFAULT 'pendiente',
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);

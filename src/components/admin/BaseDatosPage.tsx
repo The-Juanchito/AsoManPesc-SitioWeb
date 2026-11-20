@@ -9,11 +9,23 @@ export default function BaseDatosPage() {
 
   // Cantidad real de filas, leída desde MySQL
   const filas = (t: string) => estado?.tablas[t] ?? 0;
+  // Clases escritas completas para que Tailwind las incluya (no se pueden armar con ${color})
+  const tono: Record<string, { bg: string; text: string }> = {
+    blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+    amber: { bg: 'bg-amber-100', text: 'text-amber-600' },
+    green: { bg: 'bg-green-100', text: 'text-green-600' },
+    purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+    rose: { bg: 'bg-rose-100', text: 'text-rose-600' },
+    orange: { bg: 'bg-orange-100', text: 'text-orange-600' },
+    indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600' },
+  };
   const tables = [
     { name: 'usuarios', icon: 'bi-people-fill', color: 'blue', records: filas('usuarios'), description: 'Admins, asociados y clientes' },
     { name: 'canastas', icon: 'bi-basket3-fill', color: 'amber', records: filas('canastas'), description: 'Registro de canastas producidas' },
     { name: 'registros_produccion', icon: 'bi-clipboard-data-fill', color: 'green', records: filas('registros_produccion'), description: 'Producción por asociado' },
     { name: 'pedidos', icon: 'bi-bag-fill', color: 'purple', records: filas('pedidos'), description: 'Pedidos de clientes' },
+    { name: 'resenas', icon: 'bi-chat-heart-fill', color: 'rose', records: filas('resenas'), description: 'Reseñas y opiniones del formulario de contacto' },
+    { name: 'pqr', icon: 'bi-file-earmark-text-fill', color: 'orange', records: filas('pqr'), description: 'Peticiones, quejas y reclamos (formato PQR)' },
     { name: 'precios', icon: 'bi-tag-fill', color: 'indigo', records: filas('precios'), description: 'Precios de productos' },
   ];
 
@@ -189,8 +201,8 @@ export default function BaseDatosPage() {
             {tables.map((table, i) => (
               <div key={i} className="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all">
                 <div className="flex items-start gap-3">
-                  <div className={`w-12 h-12 bg-${table.color}-100 rounded-xl flex items-center justify-center flex-shrink-0`}>
-                    <i className={`bi ${table.icon} text-${table.color}-600 text-xl`}></i>
+                  <div className={`w-12 h-12 ${tono[table.color].bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                    <i className={`bi ${table.icon} ${tono[table.color].text} text-xl`}></i>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-gray-800 text-sm truncate">{table.name}</p>

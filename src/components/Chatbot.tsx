@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { NOMBRES_VARIEDADES } from '../data/variedades';
 
 // Número del administrador para WhatsApp
 const ADMIN_WHATSAPP = '573242030867';
@@ -19,7 +18,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['mango', 'mangos', 'fruta', 'variedad', 'producto', 'productos'],
-    response: `🥭 ¡Tenemos ${NOMBRES_VARIEDADES.length} variedades de mango!\n\n${NOMBRES_VARIEDADES.map(n => '• ' + n).join('\n')}\n\n💰 Los precios varían según el mercado. ¡Consulta el precio actual por WhatsApp!`
+    response: '🥭 Nos enfocamos en el Mango de Dilasa, de la zona de Pescadero: fresco, jugoso y recién cosechado.\n\n💰 El precio varía según el mercado. ¡Consulta el precio actual por WhatsApp!'
   },
   {
     keywords: ['precio', 'costo', 'cuanto', 'cuánto', 'vale', 'cuesta', 'canasta'],
@@ -39,7 +38,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['login', 'ingresar', 'sesión', 'sesion', 'entrar', 'acceder', 'contraseña', 'password'],
-    response: '🔐 Para iniciar sesión haz clic en "Iniciar Sesión".\n\nCuentas demo:\n• Admin: admin@asomanpesc.com / admin123\n• Asociado: jose@asomanpesc.com / asociado123\n• Cliente: carlos@cliente.com / cliente123'
+    response: '🔐 Para iniciar sesión haz clic en "Iniciar Sesión".\n\nSi aún no tienes cuenta, pídela al administrador de la asociación.'
   },
   {
     keywords: ['horario', 'hora', 'abierto', 'atencion', 'atención'],
@@ -55,7 +54,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['nosotros', 'historia', 'quienes', 'quiénes', 'asociacion', 'asociación'],
-    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 100% Natural y fresco del campo'
+    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 Fresco del campo, con fertilizantes orgánicos'
   },
   {
     keywords: ['envio', 'envío', 'entrega', 'delivery', 'domicilio'],
@@ -79,7 +78,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['beneficio', 'ventajas', 'por que', 'por qué', 'elegir'],
-    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 100% Natural sin pesticidas\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios competitivos y justos\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
+    response: '✅ ¿Por qué elegir AsoManPesc?\n\n🌿 Cultivo cuidado: fertilizantes orgánicos, insecticidas y fungicidas aplicados con responsabilidad\n🚚 Entrega fresca del campo a tu mesa\n💰 Precios competitivos y justos\n🏅 Calidad garantizada\n🌍 Comercio responsable\n📦 Pedidos al mayor y detal'
   }
 ];
 
@@ -94,7 +93,7 @@ function getBotResponse(message: string): string {
     if (hasKeyword) return item.response;
   }
   
-  return '🤔 No estoy seguro de entender tu pregunta. Puedo ayudarte con:\n\n• 🥭 Variedades de mangos\n• 💰 Precios actuales (variables)\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp (+57 324 203 0867)\n• 🔐 Uso del sistema\n• 💾 Base de datos (MySQL)\n\n¿Sobre qué tema necesitas info?';
+  return '🤔 No estoy seguro de entender tu pregunta. Puedo ayudarte con:\n\n• 🥭 Mango de Dilasa\n• 💰 Precios actuales (variables)\n• 🛒 Cómo hacer pedidos\n• 📱 Contactar al admin por WhatsApp (+57 324 203 0867)\n• 🔐 Uso del sistema\n• 💾 Base de datos (MySQL)\n\n¿Sobre qué tema necesitas info?';
 }
 
 export default function Chatbot() {
@@ -102,7 +101,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc.\n\n¿En qué puedo ayudarte?\n\n💬 Pregúntame sobre:\n• Variedades de mangos\n• Precios actuales (variables)\n• Cómo hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma',
+      text: '¡Hola! 👋 Soy el asistente virtual de AsoManPesc.\n\n¿En qué puedo ayudarte?\n\n💬 Pregúntame sobre:\n• Mango de Dilasa\n• Precios actuales (variables)\n• Cómo hacer pedidos\n• Contactar al admin por WhatsApp\n• Uso de la plataforma',
       sender: 'bot',
       timestamp: new Date()
     }

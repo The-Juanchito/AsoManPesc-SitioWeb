@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import LoginPage from './components/LoginPage';
@@ -14,6 +14,12 @@ import CanastasPage from './components/admin/CanastasPage';
 import BaseDatosPage from './components/admin/BaseDatosPage';
 import ReportesPage from './components/admin/ReportesPage';
 import UsuariosPage from './components/admin/UsuariosPage';
+import ResenasPage from './components/admin/ResenasPage';
+import PedidosPage from './components/admin/PedidosPage';
+import ProduccionPage from './components/admin/ProduccionPage';
+import ColaboracionesPage from './components/admin/ColaboracionesPage';
+import PqrAdminPage from './components/admin/PqrAdminPage';
+import PqrPage from './components/PqrPage';
 
 function AppContent() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -21,6 +27,11 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Al iniciar sesión: el administrador aterriza en Inicio (Accesos Rápidos); los demás en su panel
+  useEffect(() => {
+    setCurrentPage(user?.role === 'admin' ? 'inicio' : 'dashboard');
+  }, [user?.id, user?.role]);
 
   // Si está autenticado, mostrar el dashboard correspondiente
   if (isAuthenticated && user) {
@@ -42,13 +53,17 @@ function AppContent() {
           case 'canastas':
             return <CanastasPage />;
           case 'produccion':
-            return <AdminDashboard />;
+            return <ProduccionPage />;
           case 'usuarios':
             return <UsuariosPage />;
           case 'pedidos':
-            return <AdminDashboard />;
+            return <PedidosPage />;
           case 'colaboraciones':
-            return <AdminDashboard />;
+            return <ColaboracionesPage />;
+          case 'resenas':
+            return <ResenasPage />;
+          case 'pqr':
+            return <PqrAdminPage />;
           case 'basededatos':
             return <BaseDatosPage />;
           case 'reportes':
@@ -72,7 +87,7 @@ function AppContent() {
           {/* Botón flotante para abrir el menú */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className={`fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-br from-green-700 to-green-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110 ${
+            className={`lg:hidden fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-br from-green-700 to-green-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110 ${
               sidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
             title="Abrir menú"
@@ -81,8 +96,8 @@ function AppContent() {
           </button>
 
           {/* Contenido principal */}
-          <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6">
+          <div className="min-h-screen bg-gray-50 lg:pl-72">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 lg:pt-8 pb-6">
               <main>
                 {renderAdminContent()}
               </main>
@@ -96,11 +111,12 @@ function AppContent() {
 
     // Para asociado y cliente: mantener layout con tabs
     const renderContent = () => {
+      if (currentPage === 'pqr') return <PqrPage />;
       switch (user.role) {
         case 'asociado':
-          return <AsociadoDashboard />;
+          return <AsociadoDashboard vista={currentPage} />;
         case 'cliente':
-          return <ClienteDashboard />;
+          return <ClienteDashboard vista={currentPage} />;
         default:
           return null;
       }
