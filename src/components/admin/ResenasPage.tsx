@@ -186,6 +186,16 @@ export default function ResenasPage() {
                         : r.contacto}
                     </span>
                   )}
+                  {r.telefono && (
+                    <span className="text-gray-600 flex items-center gap-2">
+                      <i className="bi bi-telephone-fill text-green-600"></i>
+                      <a href={`tel:${r.telefono.replace(/[^\d+]/g, '')}`} className="text-green-700 underline">{r.telefono}</a>
+                      <a href={`https://wa.me/${(() => { const d = r.telefono.replace(/\D/g, ''); return d.length === 10 ? '57' + d : d; })()}`}
+                        target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-700" title="Escribir por WhatsApp">
+                        <i className="bi bi-whatsapp"></i>
+                      </a>
+                    </span>
+                  )}
                   {tieneUbicacion && (
                     <a href={`https://www.google.com/maps?q=${r.latitud},${r.longitud}`} target="_blank" rel="noopener noreferrer"
                       className="text-rose-600 hover:text-rose-700 flex items-center gap-1 font-medium">

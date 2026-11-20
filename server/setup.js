@@ -33,6 +33,15 @@ let schema = fs.readFileSync(path.join(dir, 'schema.sql'), 'utf8');
 schema = schema.replaceAll('asomanpesc_db', dbName); // por si usas otro nombre de base
 await conn.query(schema);
 await conn.changeUser({ database: dbName });
+// Migración: bases creadas antes de existir la columna telefono en resenas
+const [[{ tieneTelefono }]] = await conn.query(
+  "SELECT COUNT(*) AS tieneTelefono FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'resenas' AND COLUMN_NAME = 'telefono'",
+  [dbName]
+);
+if (!tieneTelefono) {
+  await conn.query('ALTER TABLE resenas ADD COLUMN telefono VARCHAR(20) NULL AFTER contacto');
+  console.log('✅ Columna resenas.telefono agregada');
+}
 console.log('✅ Tablas listas');
 
 // 2) Administrador predeterminado (real, guardado en MySQL; NO es una cuenta demo)

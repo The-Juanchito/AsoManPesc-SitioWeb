@@ -75,7 +75,7 @@ export const api = {
 
   // Reseñas: enviar es público (formulario de contacto); verlas y gestionarlas es solo del admin
   enviarResena: (r: {
-    nombre: string; contacto?: string; tipo: 'resena' | 'opinion'; calificacion?: number | null;
+    nombre: string; contacto?: string; telefono?: string; tipo: 'resena' | 'opinion'; calificacion?: number | null;
     mensaje: string; latitud?: number; longitud?: number; precisionM?: number; website?: string;
   }) => request<{ ok: true }>('/resenas', 'POST', r),
   getResenas: () => request<DBResena[]>('/resenas'),
