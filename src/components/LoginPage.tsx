@@ -10,7 +10,6 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showCredentials, setShowCredentials] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
@@ -30,12 +29,6 @@ export default function LoginPage({ onBack }: LoginPageProps) {
       setError(result.error);
     }
   };
-
-  const demoAccounts = [
-    { role: 'Administrador', email: 'admin@asomanpesc.com', password: 'admin123', icon: 'bi-shield-fill-check', color: 'bg-red-50 text-red-700 border-red-200' },
-    { role: 'Asociado', email: 'jose@asomanpesc.com', password: 'asociado123', icon: 'bi-person-badge-fill', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-    { role: 'Cliente', email: 'carlos@cliente.com', password: 'cliente123', icon: 'bi-person-fill', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  ];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-amber-600 p-4">
@@ -113,41 +106,9 @@ export default function LoginPage({ onBack }: LoginPageProps) {
             </button>
           </form>
 
-          <div className="mt-6">
-            <button
-              onClick={() => setShowCredentials(!showCredentials)}
-              className="w-full text-center text-sm text-green-700 hover:text-green-800 font-medium flex items-center justify-center gap-1"
-            >
-              <i className={`bi bi-chevron-${showCredentials ? 'up' : 'down'}`}></i>
-              {showCredentials ? 'Ocultar cuentas demo' : 'Ver cuentas de demostración'}
-            </button>
-
-            {showCredentials && (
-              <div className="mt-4 space-y-2">
-                {demoAccounts.map((account, i) => (
-                  <div key={i} className={`p-3 rounded-xl border ${account.color}`}>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="font-bold text-xs uppercase flex items-center gap-1">
-                          <i className={`bi ${account.icon}`}></i>
-                          {account.role}
-                        </span>
-                        <p className="text-xs mt-0.5 opacity-80">{account.email}</p>
-                        <p className="text-xs opacity-80">Contraseña: {account.password}</p>
-                      </div>
-                      <button
-                        onClick={() => { setEmail(account.email); setPassword(account.password); }}
-                        className="text-xs bg-white/50 hover:bg-white px-3 py-1 rounded-lg font-medium transition-colors flex items-center gap-1"
-                      >
-                        <i className="bi bi-arrow-right-circle"></i>
-                        Usar
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <p className="mt-6 text-center text-xs text-gray-400">
+            <i className="bi bi-shield-lock-fill me-1"></i>Acceso con tu cuenta registrada. ¿No tienes una? Pídela al administrador.
+          </p>
         </div>
       </div>
     </div>

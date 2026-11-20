@@ -5,7 +5,7 @@ import { formatCOP } from '../services/database';
 import { NOMBRES_VARIEDADES } from '../data/variedades';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-export default function AsociadoDashboard() {
+export default function AsociadoDashboard({ vista = 'dashboard' }: { vista?: string }) {
   const { user } = useAuth();
   const { registros, addRegistro, canastas, addCanasta, precioCanasta } = useData();
   
@@ -84,6 +84,8 @@ export default function AsociadoDashboard() {
         </div>
       </div>
 
+      {(vista === 'dashboard') && (
+        <>
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-green-500 to-green-700 text-white p-5 rounded-2xl shadow-lg">
@@ -105,7 +107,7 @@ export default function AsociadoDashboard() {
             <i className="bi bi-cash-stack text-2xl"></i>
           </div>
           <div className="text-xl font-bold">{formatCOP(ingresosGenerados)}</div>
-          <div className="text-blue-100 text-sm">Mis Ingresos</div>
+          <div className="text-blue-100 text-sm">Ingresos estimados</div>
         </div>
         <div className="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-5 rounded-2xl shadow-lg">
           <div className="flex items-center gap-2 mb-1">
@@ -116,15 +118,21 @@ export default function AsociadoDashboard() {
         </div>
       </div>
 
+        </>
+      )}
+      {(vista === 'dashboard' || vista === 'canastas') && (
+        <>
       {/* Precio info */}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
         <i className="bi bi-info-circle-fill text-2xl text-amber-600"></i>
         <div>
-          <p className="font-bold text-amber-800">Precio de Canasta: {formatCOP(precioCanasta)} COP</p>
-          <p className="text-sm text-amber-600">Cada canasta que registres se contabiliza a este precio</p>
+          <p className="font-bold text-amber-800">Precio variable según el mercado</p>
+          <p className="text-sm text-amber-600">El precio cambia según la disponibilidad y la temporada. Los valores en pesos son un estimado.</p>
         </div>
       </div>
 
+        </>
+      )}
       {/* Botones de acción */}
       <div className="flex flex-wrap gap-3">
         <button
@@ -141,6 +149,8 @@ export default function AsociadoDashboard() {
         </button>
       </div>
 
+      {(vista === 'dashboard' || vista === 'produccion') && (
+        <>
       {/* Formulario de registro de producción */}
       {showForm && (
         <div className="bg-white p-6 rounded-2xl shadow-md border border-green-100">
@@ -211,6 +221,10 @@ export default function AsociadoDashboard() {
         </div>
       )}
 
+        </>
+      )}
+      {(vista === 'dashboard' || vista === 'canastas') && (
+        <>
       {/* Formulario de registro de canasta */}
       {showCanastaForm && (
         <div className="bg-white p-6 rounded-2xl shadow-md border border-amber-100">
@@ -260,7 +274,7 @@ export default function AsociadoDashboard() {
             </div>
             <div className="sm:col-span-3 flex gap-3">
               <button type="submit" className="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-all flex items-center gap-2">
-                <i className="bi bi-save-fill"></i> Registrar Canasta ({formatCOP(precioCanasta)} c/u)
+                <i className="bi bi-save-fill"></i> Registrar Canasta
               </button>
               <button type="button" onClick={() => setShowCanastaForm(false)} className="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all flex items-center gap-2">
                 <i className="bi bi-x-lg"></i> Cancelar
@@ -270,6 +284,10 @@ export default function AsociadoDashboard() {
         </div>
       )}
 
+        </>
+      )}
+      {(vista === 'dashboard') && (
+        <>
       {/* Gráfica de producción */}
       {datosGrafica.length > 0 && (
         <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
@@ -290,6 +308,10 @@ export default function AsociadoDashboard() {
         </div>
       )}
 
+        </>
+      )}
+      {(vista === 'produccion') && (
+        <>
       {/* Historial de registros */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <h3 className="text-lg font-bold text-green-800 mb-4">
@@ -326,6 +348,10 @@ export default function AsociadoDashboard() {
         )}
       </div>
 
+        </>
+      )}
+      {(vista === 'canastas') && (
+        <>
       {/* Mis canastas */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <h3 className="text-lg font-bold text-amber-800 mb-4">
@@ -382,6 +408,8 @@ export default function AsociadoDashboard() {
           </div>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }

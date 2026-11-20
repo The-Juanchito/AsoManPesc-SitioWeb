@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
-import { formatCOP, PRECIO_CANASTA_COP } from '../services/database';
 import { VARIEDADES } from '../data/variedades';
 
-export default function ClienteDashboard() {
+export default function ClienteDashboard({ vista = 'dashboard' }: { vista?: string }) {
   const { user } = useAuth();
-  const { pedidos, addPedido, precioCanasta } = useData();
+  const { pedidos, addPedido } = useData();
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
   const [order, setOrder] = useState({
@@ -20,7 +19,7 @@ export default function ClienteDashboard() {
   const productos = VARIEDADES.map((v, i) => ({
     name: v.name.toLowerCase().startsWith('mango') ? v.name : `Mango ${v.name}`,
     description: v.description,
-    stock: v.name === 'Haden' ? 'Limitado' : 'Disponible',
+    stock: 'Disponible',
     emoji: v.emoji,
   }));
 
@@ -45,7 +44,6 @@ export default function ClienteDashboard() {
     }, 3000);
   };
 
-  const totalEstimado = order.cantidad ? Number(order.cantidad) * PRECIO_CANASTA_COP : 0;
 
   return (
     <div className="space-y-6">
@@ -65,17 +63,21 @@ export default function ClienteDashboard() {
         </button>
       </div>
 
+      {(vista === 'dashboard') && (
+        <>
       {/* Banner promocional */}
       <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex items-center gap-4">
           <i className="bi bi-gift-fill text-5xl"></i>
           <div>
-            <h3 className="text-xl font-bold">¡Oferta Especial!</h3>
-            <p className="text-amber-100">Canasta de mangos a solo {formatCOP(PRECIO_CANASTA_COP)} COP. ¡Compra más de 10 canastas y obtén descuento!</p>
+            <h3 className="text-xl font-bold">Mango de Dilasa fresco</h3>
+            <p className="text-amber-100">Precio variable según el mercado. Haz tu pedido y te confirmamos el valor del día por WhatsApp.</p>
           </div>
         </div>
       </div>
 
+        </>
+      )}
       {/* Formulario de pedido */}
       {showOrderForm && (
         <div className="bg-white p-6 rounded-2xl shadow-md border border-green-100">
@@ -103,13 +105,13 @@ export default function ClienteDashboard() {
                   >
                     <option value="">Seleccionar mango...</option>
                     {productos.map((p, i) => (
-                      <option key={i} value={p.name}>{p.name} - {formatCOP(precioCanasta)}/canasta</option>
+                      <option key={i} value={p.name}>{p.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    <i className="bi bi-basket3 me-1"></i>Cantidad (canastas)
+                    <i className="bi bi-basket3 me-1"></i>Cantidad
                   </label>
                   <input
                     type="number"
@@ -133,19 +135,9 @@ export default function ClienteDashboard() {
                     placeholder="¿Alguna indicación especial?"
                   />
                 </div>
-                {totalEstimado > 0 && (
-                  <div className="sm:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-700">
-                        <i className="bi bi-calculator me-1"></i>Total estimado:
-                      </span>
-                      <span className="text-xl font-bold text-green-700">{formatCOP(totalEstimado)} COP</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {order.cantidad} canastas × {formatCOP(precioCanasta)} = {formatCOP(totalEstimado)}
-                    </p>
-                  </div>
-                )}
+                <div className="sm:col-span-2 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+                  <i className="bi bi-info-circle-fill me-2"></i>El precio es variable según el mercado; te lo confirmamos al recibir tu pedido.
+                </div>
                 <div className="sm:col-span-2 flex gap-3">
                   <button type="submit" className="bg-green-700 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-800 transition-all flex items-center gap-2">
                     <i className="bi bi-database-fill-add"></i> Guardar Pedido en DB
@@ -160,6 +152,8 @@ export default function ClienteDashboard() {
         </div>
       )}
 
+      {(vista === 'dashboard' || vista === 'pedidos') && (
+        <>
       {/* Mis pedidos */}
       <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
@@ -191,8 +185,7 @@ export default function ClienteDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-green-700">{p.cantidad} canastas</p>
-                  <p className="text-sm text-amber-600 font-bold">{formatCOP(p.precioTotal)}</p>
+                  <p className="font-bold text-green-700">Cantidad: {p.cantidad}</p>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     p.estado === 'entregado' ? 'bg-green-100 text-green-700' :
                     p.estado === 'confirmado' ? 'bg-blue-100 text-blue-700' :
@@ -211,6 +204,10 @@ export default function ClienteDashboard() {
         )}
       </div>
 
+        </>
+      )}
+      {(vista === 'dashboard' || vista === 'productos') && (
+        <>
       {/* Productos disponibles */}
       <div>
         <h3 className="text-xl font-bold text-green-800 mb-4">
@@ -226,7 +223,7 @@ export default function ClienteDashboard() {
                 <h4 className="font-bold text-green-800">{p.name}</h4>
                 <p className="text-sm text-gray-500 mt-1">{p.description}</p>
                 <div className="flex justify-between items-center mt-3">
-                  <span className="text-lg font-bold text-amber-600">{formatCOP(precioCanasta)}</span>
+                  <span className="text-sm font-medium text-amber-600"><i className="bi bi-arrow-repeat me-1"></i>Precio variable</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     p.stock === 'Disponible' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                   }`}>
@@ -240,6 +237,10 @@ export default function ClienteDashboard() {
         </div>
       </div>
 
+        </>
+      )}
+      {(vista === 'dashboard') && (
+        <>
       {/* Info de contacto */}
       <div className="bg-green-50 rounded-2xl p-6 border border-green-100">
         <h3 className="text-lg font-bold text-green-800 mb-3">
@@ -269,6 +270,8 @@ export default function ClienteDashboard() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
