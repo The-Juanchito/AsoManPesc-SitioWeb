@@ -57,6 +57,10 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: Omit<DBUser, 'password'> }>('/auth/login', 'POST', { email, password }),
 
+  getGoogleConfig: () => request<{ clientId: string | null }>('/auth/google-config').then(r => r.clientId).catch(() => null),
+  loginGoogle: (credential: string) =>
+    request<{ token: string; user: Omit<DBUser, 'password'> }>('/auth/google', 'POST', { credential }),
+
   getPrecio: () => request<{ precio: number }>('/precio').then(r => r.precio),
   getEstadoBD: () => request<EstadoBD>('/estado'),
 

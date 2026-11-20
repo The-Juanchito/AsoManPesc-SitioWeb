@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { LOGO_URL } from '../data/variedades';
 
@@ -11,7 +12,36 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loginGoogle } = useAuth();
+  const googleBtn = useRef<HTMLDivElement>(null);
+  const [googleId, setGoogleId] = useState<string | null>(null);
+
+  useEffect(() => { api.getGoogleConfig().then(setGoogleId); }, []);
+
+  // Botón oficial "Continuar con Google"
+  useEffect(() => {
+    if (!googleId) return;
+    const pintar = () => {
+      const g = (window as any).google?.accounts?.id;
+      if (!g || !googleBtn.current) return;
+      g.initialize({
+        client_id: googleId,
+        callback: async (resp: { credential: string }) => {
+          setError(''); setLoading(true);
+          const result = await loginGoogle(resp.credential);
+          setLoading(false);
+          if (!result.ok) setError(result.error);
+        },
+      });
+      g.renderButton(googleBtn.current, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', width: 336, locale: 'es' });
+    };
+    if ((window as any).google?.accounts?.id) { pintar(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true;
+    s.onload = pintar;
+    document.head.appendChild(s);
+  }, [googleId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,6 +129,16 @@ export default function LoginPage({ onBack }: LoginPageProps) {
               {loading ? 'Entrando...' : 'Iniciar Sesión'}
             </button>
           </form>
+
+          {googleId && (
+            <div className="mt-5">
+              <div className="flex items-center gap-3 text-xs text-gray-400 mb-4">
+                <span className="flex-1 h-px bg-gray-200"></span>o<span className="flex-1 h-px bg-gray-200"></span>
+              </div>
+              <div ref={googleBtn} className="flex justify-center"></div>
+              <p className="mt-2 text-center text-[11px] text-gray-400">Solo funciona con el correo con el que el administrador creó tu cuenta.</p>
+            </div>
+          )}
 
           <p className="mt-6 text-center text-xs text-gray-400">
             <i className="bi bi-shield-lock-fill me-1"></i>Acceso con tu cuenta registrada. ¿No tienes una? Pídela al administrador.
