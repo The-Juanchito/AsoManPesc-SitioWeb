@@ -1,0 +1,660 @@
+{
+  "info": {
+    "name": "AsoManPesc API",
+    "description": "API de AsoManPesc (Express + MySQL en Railway).\n\n1) Ejecuta *Auth → Login* con tu correo y contraseña: el token se guarda solo.\n2) Las demás peticiones usan ese token automáticamente (Bearer).\n\nLos asociados ven solo lo suyo; los clientes solo sus pedidos; el administrador ve todo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://asomanpesc-sitioweb-production.up.railway.app/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": "danilopuerta16@gmail.com"
+    },
+    {
+      "key": "password",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Estado",
+      "item": [
+        {
+          "name": "Health (público)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Comprueba que el servidor y MySQL responden."
+          }
+        },
+        {
+          "name": "Estado de la base (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "estado"
+              ]
+            },
+            "description": "Conteo de filas por tabla. Solo administrador."
+          }
+        },
+        {
+          "name": "Precio de referencia",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/precio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "precio"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Devuelve { token, user }. El token se guarda en la variable de colección `token`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.token) {",
+                  "  pm.collectionVariables.set('token', data.token);",
+                  "  console.log('Token guardado para', data.user.email, '(' + data.user.role + ')');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usuarios (solo admin)",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carla Ruiz\",\n  \"cedula\": \"1234567890\",\n  \"email\": \"carla@correo.com\",\n  \"password\": \"clave123\",\n  \"role\": \"cliente\",\n  \"phone\": \"3001234567\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "role: admin | asociado | cliente"
+          }
+        },
+        {
+          "name": "Editar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carla Ruiz\",\n  \"phone\": \"3009998888\",\n  \"role\": \"cliente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Cambia :id por el id del usuario. Para restablecer contraseña envía `password`."
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                ":id"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Canastas",
+      "item": [
+        {
+          "name": "Listar canastas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/canastas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "canastas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar canasta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/canastas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "canastas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"Mango de Dilasa\",\n  \"cantidad\": 5,\n  \"estado\": \"pendiente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Admin o asociado. estado: recogida | pendiente | entregada. El admin puede enviar `productorId`."
+          }
+        },
+        {
+          "name": "Cambiar estado de canasta (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/canastas/:id/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "canastas",
+                ":id",
+                "estado"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"entregada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Producción",
+      "item": [
+        {
+          "name": "Listar registros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/registros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registros"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar producción",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registros"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": \"Mango de Dilasa\",\n  \"cantidadCajas\": 10,\n  \"cantidadCanastas\": 20,\n  \"notas\": \"Cosecha de la mañana\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Admin o asociado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Listar pedidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hacer pedido (cliente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": \"Mango de Dilasa\",\n  \"cantidad\": 4,\n  \"notas\": \"Entrega el viernes\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado de pedido (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/:id/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pedidos",
+                ":id",
+                "estado"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"confirmado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "estado: pendiente | confirmado | entregado"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PQR",
+      "item": [
+        {
+          "name": "Listar PQR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pqr",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pqr"
+              ]
+            },
+            "description": "El admin ve todas; cada usuario, las suyas."
+          }
+        },
+        {
+          "name": "Enviar PQR",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pqr",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pqr"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"queja\",\n  \"nombre\": \"Carla Ruiz\",\n  \"fecha\": \"2026-11-19\",\n  \"descripcion\": \"Mi pedido llegó incompleto, quisiera que lo revisen.\",\n  \"firma\": \"Carla Ruiz\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "tipo: sugerencia | queja | reclamo | peticion. Descripción de 10 a 600 caracteres."
+          }
+        },
+        {
+          "name": "Cambiar estado de PQR (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pqr/:id/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pqr",
+                ":id",
+                "estado"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"atendida\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reseñas y opiniones",
+      "item": [
+        {
+          "name": "Enviar reseña (público)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/resenas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resenas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana García\",\n  \"telefono\": \"300 123 4567\",\n  \"contacto\": \"ana@correo.com\",\n  \"tipo\": \"resena\",\n  \"calificacion\": 5,\n  \"mensaje\": \"Excelente mango, muy fresco y dulce.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No requiere login. Máximo 5 envíos por hora por IP. `telefono`, `contacto`, `calificacion`, `latitud`, `longitud`, `precisionM` son opcionales."
+          }
+        },
+        {
+          "name": "Listar reseñas (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resenas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resenas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Marcar leída (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/resenas/:id/leida",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resenas",
+                ":id",
+                "leida"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leida\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar reseña (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resenas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resenas",
+                ":id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

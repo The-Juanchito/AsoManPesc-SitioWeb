@@ -22,7 +22,7 @@ function demasiadosEnvios(ip) {
 }
 
 // POST /api/resenas  (público: no requiere iniciar sesión)
-// { nombre, contacto?, tipo, calificacion?, mensaje, latitud?, longitud?, precisionM? }
+// { nombre, contacto?, telefono?, tipo, calificacion?, mensaje, latitud?, longitud?, precisionM? }
 router.post('/', async (req, res) => {
   const b = req.body || {};
 
@@ -32,6 +32,7 @@ router.post('/', async (req, res) => {
   const nombre = String(b.nombre ?? '').trim();
   const mensaje = String(b.mensaje ?? '').trim();
   const contacto = String(b.contacto ?? '').trim();
+  const telefono = String(b.telefono ?? '').trim();
   const tipo = b.tipo === 'opinion' ? 'opinion' : 'resena';
 
   if (!nombre) return bad(res, 'Escribe tu nombre');
@@ -39,6 +40,12 @@ router.post('/', async (req, res) => {
   if (mensaje.length < 5) return bad(res, 'Cuéntanos un poco más (mínimo 5 caracteres)');
   if (mensaje.length > 1000) return bad(res, 'El mensaje es demasiado largo (máximo 1000 caracteres)');
   if (contacto.length > 150) return bad(res, 'El dato de contacto es demasiado largo');
+  if (telefono) {
+    const digitos = telefono.replace(/\D/g, '');
+    if (!/^[\d\s+()-]+$/.test(telefono) || digitos.length < 7 || digitos.length > 15 || telefono.length > 20) {
+      return bad(res, 'El teléfono no es válido (solo números, de 7 a 15 dígitos)');
+    }
+  }
 
   let calificacion = null;
   if (b.calificacion !== undefined && b.calificacion !== null && b.calificacion !== '') {
@@ -65,9 +72,9 @@ router.post('/', async (req, res) => {
   }
 
   await pool.query(
-    `INSERT INTO resenas (nombre, contacto, tipo, calificacion, mensaje, latitud, longitud, precision_m)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [nombre, contacto || null, tipo, calificacion, mensaje, latitud, longitud, precisionM]
+    `INSERT INTO resenas (nombre, contacto, telefono, tipo, calificacion, mensaje, latitud, longitud, precision_m)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [nombre, contacto || null, telefono || null, tipo, calificacion, mensaje, latitud, longitud, precisionM]
   );
   res.status(201).json({ ok: true });
 });

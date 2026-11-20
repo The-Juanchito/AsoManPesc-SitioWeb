@@ -71,6 +71,7 @@ export const mapResena = (r) => ({
   id: String(r.id),
   nombre: r.nombre,
   contacto: r.contacto ?? '',
+  telefono: r.telefono ?? '',
   tipo: r.tipo,
   calificacion: r.calificacion ?? null,
   mensaje: r.mensaje,
