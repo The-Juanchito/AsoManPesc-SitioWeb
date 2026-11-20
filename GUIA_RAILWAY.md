@@ -51,7 +51,7 @@ Hasta ahora Netlify solo tenía el comedor. Con Railway le ponemos mesero y desp
 | `ADMIN_NAME` | tu nombre |
 | `ADMIN_EMAIL` | tu correo de administrador |
 | `ADMIN_CEDULA` | tu cédula |
-| `ADMIN_PASSWORD` | una contraseña fuerte (mín. 8). Si la dejas fuera, se genera una y aparece **una sola vez** en *Deployments → Logs* |
+| `ADMIN_PASSWORD` | una contraseña fuerte (mín. 6). Si la dejas fuera, se genera una y aparece **una sola vez** en *Deployments → Logs* |
 
    Si tu servicio de base se llama distinto de `MySQL`, cambia ese nombre en las referencias.
 

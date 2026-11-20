@@ -10,8 +10,8 @@ const email = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
 const cedula = (process.env.ADMIN_CEDULA || '').trim();
 const password = process.env.ADMIN_PASSWORD || '';
 
-if (!email || !cedula || password.length < 8 || DEMO.includes(email)) {
-  console.error('\n❌ Define en .env un ADMIN_EMAIL (que no sea de demo), ADMIN_CEDULA y ADMIN_PASSWORD (mín. 8 caracteres) antes de quitar la demo.\n');
+if (!email || !cedula || password.length < 6 || DEMO.includes(email)) {
+  console.error('\n❌ Define en .env un ADMIN_EMAIL (que no sea de demo), ADMIN_CEDULA y ADMIN_PASSWORD (mín. 6 caracteres) antes de quitar la demo.\n');
   process.exit(1);
 }
 

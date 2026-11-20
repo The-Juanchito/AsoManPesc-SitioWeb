@@ -18,6 +18,7 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+app.set('trust proxy', 1); // detrás del proxy de Railway, para ver la IP real de cada visitante
 // CORS_ORIGIN admite varias direcciones separadas por coma (p. ej. Netlify y localhost)
 const origenes = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean);
 app.use(cors({ origin: origenes }));
