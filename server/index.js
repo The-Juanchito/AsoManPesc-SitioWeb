@@ -10,6 +10,7 @@ import registrosRoutes from './routes/registros.js';
 import pedidosRoutes from './routes/pedidos.js';
 import resenasRoutes from './routes/resenas.js';
 import pqrRoutes from './routes/pqr.js';
+import { DB_HOST, DB_NAME, DB_PORT, DB_USER } from './dbconfig.js';
 
 if (!process.env.JWT_SECRET) {
   console.error('\n❌ Falta JWT_SECRET. Copia ".env.example" como ".env" y complétalo.\n');
@@ -17,7 +18,9 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }));
+// CORS_ORIGIN admite varias direcciones separadas por coma (p. ej. Netlify y localhost)
+const origenes = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean);
+app.use(cors({ origin: origenes }));
 app.use(express.json());
 
 // Comprueba que el servidor y MySQL responden
@@ -26,9 +29,9 @@ app.get('/api/health', async (_req, res) => {
     await pool.query('SELECT 1');
     res.json({
       ok: true,
-      host: process.env.DB_HOST || 'localhost',
-      port: Number(process.env.DB_PORT || 3306),
-      database: process.env.DB_NAME || 'asomanpesc_db',
+      host: DB_HOST,
+      port: DB_PORT,
+      database: DB_NAME,
     });
   } catch (err) {
     res.status(503).json({ ok: false, error: err.code || err.message });
@@ -45,10 +48,10 @@ app.get('/api/estado', auth, requireRole('admin'), async (_req, res) => {
   }
   res.json({
     ok: true,
-    host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    database: process.env.DB_NAME || 'asomanpesc_db',
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    database: DB_NAME,
     tablas: filas,
   });
 });
@@ -78,7 +81,7 @@ app.listen(port, async () => {
   console.log(`\n🥭 API de AsoManPesc escuchando en http://localhost:${port}`);
   try {
     await pool.query('SELECT 1');
-    console.log(`✅ Conectado a MySQL (${process.env.DB_NAME || 'asomanpesc_db'})\n`);
+    console.log(`✅ Conectado a MySQL (${DB_NAME})\n`);
   } catch (err) {
     console.error(`❌ No se pudo conectar a MySQL: ${err.code || err.message}`);
     console.error('   Revisa DB_USER / DB_PASSWORD en .env y que MySQL esté encendido.\n');
