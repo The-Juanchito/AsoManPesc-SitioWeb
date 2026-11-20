@@ -7,17 +7,18 @@ import { fileURLToPath } from 'node:url';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './dbconfig.js';
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
-const dbName = process.env.DB_NAME || 'asomanpesc_db';
+const dbName = DB_NAME;
 
 let conn;
 try {
   conn = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    password: DB_PASSWORD,
     multipleStatements: true,
     charset: 'utf8mb4',
   });

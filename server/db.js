@@ -1,13 +1,14 @@
 import 'dotenv/config';
 import mysql from 'mysql2/promise';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './dbconfig.js';
 
 // Conexión (pool) a MySQL. Los datos vienen del archivo .env
 export const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'asomanpesc_db',
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
   charset: 'utf8mb4',
   waitForConnections: true,
   connectionLimit: 10,
