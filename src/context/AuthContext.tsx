@@ -16,6 +16,7 @@ export type LoginResult = { ok: true } | { ok: false; error: string };
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<LoginResult>;
+  loginGoogle: (credential: string) => Promise<LoginResult>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -36,13 +37,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loginGoogle = async (credential: string): Promise<LoginResult> => {
+    try {
+      const { token, user: found } = await api.loginGoogle(credential);
+      setToken(token);
+      setUser(found);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : 'No se pudo iniciar sesión con Google' };
+    }
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, loginGoogle, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

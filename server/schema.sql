@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS pedidos (
 CREATE TABLE IF NOT EXISTS resenas (
   id             INT AUTO_INCREMENT PRIMARY KEY,
   nombre         VARCHAR(100) NOT NULL,
-  contacto       VARCHAR(150),                    -- correo o teléfono (opcional)
+  contacto       VARCHAR(150),                    -- correo u otro dato de contacto (opcional)
+  telefono       VARCHAR(20) NULL,                -- número de teléfono / WhatsApp (opcional)
   tipo           ENUM('resena', 'opinion') NOT NULL DEFAULT 'resena',
   calificacion   TINYINT NULL,                    -- 1 a 5 estrellas (opcional)
   mensaje        TEXT NOT NULL,

@@ -3,23 +3,24 @@
 import 'dotenv/config';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './dbconfig.js';
 
 const DEMO = ['admin@asomanpesc.com', 'jose@asomanpesc.com', 'maria@asomanpesc.com', 'carlos@cliente.com', 'ana@cliente.com'];
 const email = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
 const cedula = (process.env.ADMIN_CEDULA || '').trim();
 const password = process.env.ADMIN_PASSWORD || '';
 
-if (!email || !cedula || password.length < 8 || DEMO.includes(email)) {
-  console.error('\n❌ Define en .env un ADMIN_EMAIL (que no sea de demo), ADMIN_CEDULA y ADMIN_PASSWORD (mín. 8 caracteres) antes de quitar la demo.\n');
+if (!email || !cedula || password.length < 6 || DEMO.includes(email)) {
+  console.error('\n❌ Define en .env un ADMIN_EMAIL (que no sea de demo), ADMIN_CEDULA y ADMIN_PASSWORD (mín. 6 caracteres) antes de quitar la demo.\n');
   process.exit(1);
 }
 
 const conn = await mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'asomanpesc_db',
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
   charset: 'utf8mb4',
 });
 

@@ -1,0 +1,2 @@
+# Netlify reenvia /api al servidor de Railway (asi la pagina y la API comparten direccion)
+/api/*  https://asomanpesc-sitioweb-production.up.railway.app/api/:splat  200
