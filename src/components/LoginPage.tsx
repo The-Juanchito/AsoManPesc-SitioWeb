@@ -13,6 +13,21 @@ export default function LoginPage({ onBack }: LoginPageProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [verPass, setVerPass] = useState(false);
+  const [olvido, setOlvido] = useState(false);
+  const [olvidoMsg, setOlvidoMsg] = useState('');
+
+  const enviarTemporal = async () => {
+    setError(''); setOlvidoMsg('');
+    if (!email) { setError('Escribe tu correo arriba y vuelve a pulsar el enlace'); return; }
+    setLoading(true);
+    try {
+      const r = await api.forgotPassword(email.trim());
+      setOlvidoMsg(r.mensaje);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo enviar el correo');
+    }
+    setLoading(false);
+  };
   const { login, loginGoogle } = useAuth();
   const googleBtn = useRef<HTMLDivElement>(null);
   const [googleId, setGoogleId] = useState<string | null>(null);
@@ -129,6 +144,23 @@ export default function LoginPage({ onBack }: LoginPageProps) {
                 </button>
               </div>
             </div>
+
+            <div className="text-right -mt-2">
+              <button type="button" onClick={() => setOlvido(o => !o)} className="text-sm text-green-700 hover:underline font-medium">
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+
+            {olvido && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-900 space-y-3">
+                <p><i className="bi bi-envelope-paper-fill me-1"></i>Te enviamos una <b>contraseña temporal</b> al correo escrito arriba (vale 1 hora).</p>
+                <button type="button" onClick={enviarTemporal} disabled={loading}
+                  className="w-full bg-white border border-green-600 text-green-700 py-2 rounded-lg font-semibold hover:bg-green-100 disabled:opacity-60">
+                  {loading ? 'Enviando...' : 'Enviar contraseña temporal'}
+                </button>
+                {olvidoMsg && <p className="text-green-800 font-medium"><i className="bi bi-check-circle-fill me-1"></i>{olvidoMsg}</p>}
+              </div>
+            )}
 
             <button
               type="submit"
