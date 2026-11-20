@@ -57,6 +57,7 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: Omit<DBUser, 'password'> }>('/auth/login', 'POST', { email, password }),
 
+  forgotPassword: (email: string) => request<{ ok: true; mensaje: string }>('/auth/forgot-password', 'POST', { email }),
   getGoogleConfig: () => request<{ clientId: string | null }>('/auth/google-config').then(r => r.clientId).catch(() => null),
   loginGoogle: (credential: string) =>
     request<{ token: string; user: Omit<DBUser, 'password'> }>('/auth/google', 'POST', { credential }),

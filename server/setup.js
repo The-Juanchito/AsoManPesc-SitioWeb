@@ -42,6 +42,14 @@ if (!tieneTelefono) {
   await conn.query('ALTER TABLE resenas ADD COLUMN telefono VARCHAR(20) NULL AFTER contacto');
   console.log('✅ Columna resenas.telefono agregada');
 }
+// Migración: columnas para la contraseña temporal ("Olvidé mi contraseña")
+for (const [col, def] of [['clave_temporal_hash', 'VARCHAR(255) NULL'], ['clave_temporal_expira', 'DATETIME NULL']]) {
+  const [[{ n }]] = await conn.query(
+    "SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'usuarios' AND COLUMN_NAME = ?",
+    [dbName, col]
+  );
+  if (!n) { await conn.query(`ALTER TABLE usuarios ADD COLUMN ${col} ${def}`); console.log(`✅ Columna usuarios.${col} agregada`); }
+}
 console.log('✅ Tablas listas');
 
 // 2) Administrador predeterminado (real, guardado en MySQL; NO es una cuenta demo)
