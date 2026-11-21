@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS pqr (
   fecha          DATE NOT NULL,
   descripcion    TEXT NOT NULL,
   firma          VARCHAR(100) NOT NULL,           -- nombre escrito como firma
+  firma_imagen   MEDIUMTEXT NULL,                 -- imagen de la firma (PNG en base64), opcional
   estado         ENUM('pendiente', 'atendida') DEFAULT 'pendiente',
   fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { DBPqr, PqrTipo } from '../services/database';
 import { PQR_TIPOS, PQR_MAX_DESCRIPCION, fechaLarga } from '../pqr/PqrFormato';
+import FirmaPad from '../pqr/FirmaPad';
 import { descargarPqrPdf, nombreArchivoPqr } from '../pqr/descargarPqrPdf';
 
 const hoy = () => {
@@ -20,6 +21,7 @@ export default function PqrPage() {
   const [fecha, setFecha] = useState(hoy());
   const [descripcion, setDescripcion] = useState('');
   const [firma, setFirma] = useState(user?.name ?? '');
+  const [firmaImg, setFirmaImg] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [ok, setOk] = useState<DBPqr | null>(null);
@@ -32,7 +34,7 @@ export default function PqrPage() {
   useEffect(() => { cargar(); }, [cargar]);
   useEffect(() => { setError(''); }, [tipo, nombre, fecha, descripcion, firma]);
 
-  const pdf = async (p: Pick<DBPqr, 'tipo' | 'nombre' | 'fecha' | 'descripcion' | 'firma'> & { id?: string }) => {
+  const pdf = async (p: Pick<DBPqr, 'tipo' | 'nombre' | 'fecha' | 'descripcion' | 'firma' | 'firmaImagen'> & { id?: string }) => {
     setGenerando(p.id ?? 'nuevo');
     try { await descargarPqrPdf(p, nombreArchivoPqr(p.nombre, p.fecha)); }
     catch { setError('No se pudo generar el PDF. Intenta de nuevo.'); }
@@ -45,9 +47,9 @@ export default function PqrPage() {
     if (descripcion.trim().length < 10) { setError('Describe tu solicitud (mínimo 10 caracteres)'); return; }
     setEnviando(true);
     try {
-      const guardada = await api.addPqr({ tipo, nombre: nombre.trim(), fecha, descripcion: descripcion.trim(), firma: firma.trim() });
+      const guardada = await api.addPqr({ tipo, nombre: nombre.trim(), fecha, descripcion: descripcion.trim(), firma: firma.trim(), firmaImagen: firmaImg });
       setOk(guardada);
-      setTipo(''); setDescripcion('');
+      setTipo(''); setDescripcion(''); setFirmaImg(null);
       await cargar();
       await pdf(guardada);
     } catch (err) {
@@ -119,6 +121,11 @@ export default function PqrPage() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="pqr-firma">Firma (escribe tu nombre)</label>
           <input id="pqr-firma" className={input} value={firma} onChange={e => setFirma(e.target.value)} maxLength={100} required />
+        </div>
+
+        <div>
+          <p className="block text-sm font-medium text-gray-700 mb-2">Firma manuscrita <span className="text-gray-400 font-normal">(opcional)</span></p>
+          <FirmaPad valor={firmaImg} onChange={setFirmaImg} />
         </div>
 
         {error && (

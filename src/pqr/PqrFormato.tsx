@@ -10,6 +10,7 @@ export interface PqrDatos {
   fecha: string; // AAAA-MM-DD
   descripcion: string;
   firma: string;
+  firmaImagen?: string | null;
 }
 
 export const PQR_TIPOS: { id: PqrTipo; label: string }[] = [
@@ -107,8 +108,17 @@ export default function PqrFormato({ datos }: { datos: PqrDatos }) {
       {/* Firma */}
       <div style={{ position: 'absolute', left: 66, right: 66, top: 982, display: 'flex', alignItems: 'flex-end' }}>
         <span style={etiqueta}>Firma:</span>
-        <div style={{ ...texto, flex: 1, marginLeft: 14, height: 30, borderBottom: `2px solid ${LINEA}`, fontStyle: 'italic', fontFamily: '"Brush Script MT", "Segoe Script", cursive', fontSize: 24, lineHeight: '22px' }}>{datos.firma}</div>
+        {datos.firmaImagen ? (
+          <div style={{ flex: 1, marginLeft: 14, height: 30, borderBottom: `2px solid ${LINEA}`, position: 'relative' }}>
+            <img src={datos.firmaImagen} alt="" style={{ position: 'absolute', left: 10, bottom: 2, height: 52, maxWidth: 260, objectFit: 'contain' }} />
+          </div>
+        ) : (
+          <div style={{ ...texto, flex: 1, marginLeft: 14, height: 30, borderBottom: `2px solid ${LINEA}`, fontStyle: 'italic', fontFamily: '"Brush Script MT", "Segoe Script", cursive', fontSize: 24, lineHeight: '22px' }}>{datos.firma}</div>
+        )}
       </div>
+      {datos.firmaImagen && (
+        <div style={{ position: 'absolute', left: 130, right: 66, top: 1016, fontSize: 13, color: VERDE }}>{datos.firma}</div>
+      )}
 
       <div style={{ position: 'absolute', left: 0, right: 0, top: 1078, textAlign: 'center', color: '#fff', fontSize: 19, fontWeight: 700 }}>
         Trabajamos juntos por el desarrollo del campo

@@ -90,7 +90,7 @@ export const api = {
 
   // PQR: asociados y clientes las envían; el admin las ve todas y cambia su estado
   getPqr: () => request<DBPqr[]>('/pqr'),
-  addPqr: (p: Pick<DBPqr, 'tipo' | 'nombre' | 'fecha' | 'descripcion' | 'firma'>) => request<DBPqr>('/pqr', 'POST', p),
+  addPqr: (p: Pick<DBPqr, 'tipo' | 'nombre' | 'fecha' | 'descripcion' | 'firma' | 'firmaImagen'>) => request<DBPqr>('/pqr', 'POST', p),
   updatePqrEstado: (id: string, estado: DBPqr['estado']) =>
     request<{ ok: true }>(`/pqr/${id}/estado`, 'PATCH', { estado }),
 

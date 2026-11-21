@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
   res.json(rows.map(mapPqr));
 });
 
-// POST /api/pqr  { tipo, nombre, fecha, descripcion, firma }  (asociado o cliente)
+// POST /api/pqr  { tipo, nombre, fecha, descripcion, firma, firmaImagen? }  (asociado o cliente)
 router.post('/', async (req, res) => {
   const b = req.body || {};
   const nombre = String(b.nombre ?? '').trim();
@@ -30,9 +30,18 @@ router.post('/', async (req, res) => {
   if (descripcion.length > 1500) return bad(res, 'La descripción es demasiado larga (máximo 1500 caracteres)');
   if (!firma || firma.length > 100) return bad(res, 'Escribe tu nombre como firma');
 
+  // Imagen de la firma (opcional): PNG/JPG/WEBP en base64, máximo ~400 KB
+  let firmaImagen = null;
+  if (b.firmaImagen) {
+    const img = String(b.firmaImagen);
+    if (!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(img)) return bad(res, 'La imagen de la firma no es válida');
+    if (img.length > 400_000) return bad(res, 'La imagen de la firma es muy pesada');
+    firmaImagen = img;
+  }
+
   const [result] = await pool.query(
-    'INSERT INTO pqr (usuario_id, tipo, nombre, fecha, descripcion, firma) VALUES (?, ?, ?, ?, ?, ?)',
-    [req.user.id, b.tipo, nombre, fecha, descripcion, firma]
+    'INSERT INTO pqr (usuario_id, tipo, nombre, fecha, descripcion, firma, firma_imagen) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [req.user.id, b.tipo, nombre, fecha, descripcion, firma, firmaImagen]
   );
   const [rows] = await pool.query('SELECT * FROM pqr WHERE id = ?', [result.insertId]);
   res.status(201).json(mapPqr(rows[0]));
