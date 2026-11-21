@@ -53,6 +53,10 @@ const botResponses: { keywords: string[]; response: string }[] = [
     response: '🤝 Nuestros aliados estratégicos:\n\n🔴 Hit Social - Marketing digital y redes sociales\n🔵 Postobón - Distribución y logística nacional\n\nEstas alianzas nos ayudan a crecer y llegar a más clientes.'
   },
   {
+    keywords: ['mision', 'misión', 'vision', 'visión', 'valores', 'proposito', 'propósito'],
+    response: '🎯 Misión: producir y comercializar mangos Dilasa frescos y de calidad, con prácticas sostenibles y precio justo, del productor directo al cliente.\n\n👁️ Visión: ser la asociación de productores de mango más confiable de la región.\n\nPuedes leerlas completas en la sección "Misión y Visión" de la página principal.'
+  },
+  {
     keywords: ['nosotros', 'historia', 'quienes', 'quiénes', 'asociacion', 'asociación'],
     response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 Fresco del campo, con fertilizantes orgánicos'
   },
