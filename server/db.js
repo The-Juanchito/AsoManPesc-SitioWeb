@@ -90,6 +90,7 @@ export const mapPqr = (r) => ({
   fecha: String(r.fecha).slice(0, 10),
   descripcion: r.descripcion,
   firma: r.firma,
+  firmaImagen: r.firma_imagen ?? null,
   estado: r.estado,
   createdAt: isoDateTime(r.fecha_creacion),
 });

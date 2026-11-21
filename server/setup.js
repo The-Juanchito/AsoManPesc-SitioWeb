@@ -50,6 +50,13 @@ for (const [col, def] of [['clave_temporal_hash', 'VARCHAR(255) NULL'], ['clave_
   );
   if (!n) { await conn.query(`ALTER TABLE usuarios ADD COLUMN ${col} ${def}`); console.log(`✅ Columna usuarios.${col} agregada`); }
 }
+{
+  const [[{ n }]] = await conn.query(
+    "SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'pqr' AND COLUMN_NAME = 'firma_imagen'",
+    [dbName]
+  );
+  if (!n) { await conn.query('ALTER TABLE pqr ADD COLUMN firma_imagen MEDIUMTEXT NULL AFTER firma'); console.log('✅ Columna pqr.firma_imagen agregada'); }
+}
 console.log('✅ Tablas listas');
 
 // 2) Administrador predeterminado (real, guardado en MySQL; NO es una cuenta demo)

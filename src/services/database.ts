@@ -91,6 +91,7 @@ export interface DBPqr {
   fecha: string; // AAAA-MM-DD
   descripcion: string;
   firma: string;
+  firmaImagen?: string | null;
   estado: 'pendiente' | 'atendida';
   createdAt?: string;
 }

@@ -22,7 +22,7 @@ app.set('trust proxy', 1); // detrás del proxy de Railway, para ver la IP real 
 // CORS_ORIGIN admite varias direcciones separadas por coma (p. ej. Netlify y localhost)
 const origenes = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean);
 app.use(cors({ origin: origenes }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 // Comprueba que el servidor y MySQL responden
 app.get('/api/health', async (_req, res) => {
