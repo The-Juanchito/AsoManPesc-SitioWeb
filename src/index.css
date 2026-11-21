@@ -192,3 +192,13 @@ aside[style*="translate-x-0"] nav button:nth-child(3) { animation-delay: 0.15s; 
 aside[style*="translate-x-0"] nav button:nth-child(4) { animation-delay: 0.2s; }
 aside[style*="translate-x-0"] nav button:nth-child(5) { animation-delay: 0.25s; }
 aside[style*="translate-x-0"] nav button:nth-child(6) { animation-delay: 0.3s; }
+
+/* Imprimir solo el reporte (sin menús ni botones) */
+.print-only { display: none; }
+@media print {
+  body * { visibility: hidden; }
+  #reporte-imprimible, #reporte-imprimible * { visibility: visible; }
+  #reporte-imprimible { position: absolute; left: 0; top: 0; width: 100%; }
+  #reporte-imprimible .print-only { display: flex !important; }
+  .no-print { display: none !important; }
+}
