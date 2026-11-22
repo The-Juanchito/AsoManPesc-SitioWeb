@@ -45,6 +45,7 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
 }
 
 export interface Estadisticas {
+  usuarios: number;
   productores: number;
   clientes: number;
   resenas: number;
