@@ -58,7 +58,7 @@ const botResponses: { keywords: string[]; response: string }[] = [
   },
   {
     keywords: ['nosotros', 'historia', 'quienes', 'quiénes', 'asociacion', 'asociación'],
-    response: '🌿 AsoManPesc es una asociación con más de 15 años de experiencia, 50+ productores asociados y 1000+ clientes satisfechos.\n\n💰 Precios variables según el mercado\n🌱 Fresco del campo, con fertilizantes orgánicos'
+    response: '🌿 AsoManPesc es una asociación de productores de mango de Pescadero. Las cifras de productores, clientes y reseñas se actualizan en vivo en el inicio de la página.\n\n💰 Precios variables según el mercado\n🌱 Fresco del campo, con fertilizantes orgánicos'
   },
   {
     keywords: ['envio', 'envío', 'entrega', 'delivery', 'domicilio'],
