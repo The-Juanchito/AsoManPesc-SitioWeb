@@ -57,6 +57,21 @@ app.get('/api/estado', auth, requireRole('admin'), async (_req, res) => {
   });
 });
 
+// Cifras públicas del inicio (solo conteos, sin datos personales)
+app.get('/api/estadisticas', async (_req, res) => {
+  const [[u]] = await pool.query(
+    "SELECT SUM(rol = 'asociado') AS productores, SUM(rol = 'cliente') AS clientes FROM usuarios WHERE activo = 1"
+  );
+  const [[r]] = await pool.query('SELECT COUNT(*) AS resenas, AVG(calificacion) AS promedio FROM resenas WHERE leida = 1');
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    productores: Number(u.productores || 0),
+    clientes: Number(u.clientes || 0),
+    resenas: Number(r.resenas || 0),
+    promedio: r.promedio == null ? null : Math.round(Number(r.promedio) * 10) / 10,
+  });
+});
+
 app.get('/api/precio', auth, async (_req, res) => {
   res.json({ precio: await getPrecioCanasta() });
 });

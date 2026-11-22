@@ -44,6 +44,13 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
   return data as T;
 }
 
+export interface Estadisticas {
+  productores: number;
+  clientes: number;
+  resenas: number;
+  promedio: number | null;
+}
+
 export interface EstadoBD {
   ok: boolean;
   host: string;
@@ -62,6 +69,7 @@ export const api = {
   loginGoogle: (credential: string) =>
     request<{ token: string; user: Omit<DBUser, 'password'> }>('/auth/google', 'POST', { credential }),
 
+  getEstadisticas: () => request<Estadisticas>('/estadisticas'),
   getPrecio: () => request<{ precio: number }>('/precio').then(r => r.precio),
   getEstadoBD: () => request<EstadoBD>('/estado'),
 

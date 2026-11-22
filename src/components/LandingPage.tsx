@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { api, type Estadisticas } from '../services/api';
 import { VARIEDADES, LOGO_URL } from '../data/variedades';
 import ContactoSection from './ContactoSection';
 import PoliticaPrivacidad, { abrirPrivacidad } from './PoliticaPrivacidad';
@@ -129,7 +130,42 @@ function Navbar({ onLogin }: { onLogin: () => void }) {
   );
 }
 
+// Cifras reales que se actualizan solas (al cargar, cada 30 s y al volver a la pestaña)
+function useEstadisticas() {
+  const [est, setEst] = useState<Estadisticas | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    const cargar = () => api.getEstadisticas().then(d => { if (vivo) setEst(d); }).catch(() => { /* sin conexión: se mantiene lo último */ });
+    cargar();
+    const t = setInterval(cargar, 30000);
+    const alVolver = () => { if (!document.hidden) cargar(); };
+    document.addEventListener('visibilitychange', alVolver);
+    return () => { vivo = false; clearInterval(t); document.removeEventListener('visibilitychange', alVolver); };
+  }, []);
+  return est;
+}
+
+// Número que sube con animación cuando cambia
+function Contador({ valor }: { valor: number | undefined }) {
+  const [mostrado, setMostrado] = useState(0);
+  useEffect(() => {
+    if (valor === undefined) return;
+    const desde = mostrado, pasos = 20;
+    if (desde === valor) return;
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      setMostrado(Math.round(desde + (valor - desde) * (i / pasos)));
+      if (i >= pasos) clearInterval(t);
+    }, 30);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valor]);
+  return <>{valor === undefined ? '–' : mostrado.toLocaleString('es-CO')}</>;
+}
+
 function Hero({ onLogin }: { onLogin: () => void }) {
+  const est = useEstadisticas();
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
@@ -165,6 +201,18 @@ function Hero({ onLogin }: { onLogin: () => void }) {
                 Iniciar Sesión
               </button>
             </div>
+            <div className="lg:hidden grid grid-cols-3 gap-3 mt-8 text-white">
+              {[
+                { v: est?.productores, l: 'Productores' },
+                { v: est?.clientes, l: 'Clientes' },
+                { v: est?.resenas, l: 'Reseñas' },
+              ].map(c => (
+                <div key={c.l} className="bg-white/10 border border-white/20 rounded-xl py-3">
+                  <p className="text-2xl font-bold"><Contador valor={c.v} /></p>
+                  <p className="text-xs text-white/70">{c.l}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="hidden lg:flex flex-col items-center gap-6">
@@ -173,24 +221,26 @@ function Hero({ onLogin }: { onLogin: () => void }) {
               alt="Logo de la Asociación de Productores de Mango de Pescadero"
               className="w-64 h-64 rounded-full object-cover shadow-2xl ring-4 ring-amber-400/80"
             />
-          {/* Stats cards */}
+          {/* Cifras en vivo */}
           <div className="grid grid-cols-2 gap-4 w-full">
+            {[
+              { icon: 'bi-people-fill', v: est?.productores, label: 'Productores asociados' },
+              { icon: 'bi-emoji-smile-fill', v: est?.clientes, label: 'Clientes registrados' },
+            ].map(c => (
+              <div key={c.label} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
+                <i className={`bi ${c.icon} text-3xl text-amber-400 mb-2`}></i>
+                <p className="text-3xl font-bold"><Contador valor={c.v} /></p>
+                <p className="text-sm text-white/70">{c.label}</p>
+              </div>
+            ))}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
-              <i className="bi bi-basket3-fill text-3xl text-amber-400 mb-2"></i>
-              <p className="text-3xl font-bold">15+</p>
-              <p className="text-sm text-white/70">Años de experiencia</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white mt-8">
-              <i className="bi bi-people-fill text-3xl text-amber-400 mb-2"></i>
-              <p className="text-3xl font-bold">50+</p>
-              <p className="text-sm text-white/70">Productores asociados</p>
+              <i className="bi bi-chat-heart-fill text-3xl text-amber-400 mb-2"></i>
+              <p className="text-3xl font-bold"><Contador valor={est?.resenas} /></p>
+              <p className="text-sm text-white/70">
+                Reseñas{est?.promedio != null && <span className="text-amber-300"> · {est.promedio.toLocaleString('es-CO')} <i className="bi bi-star-fill text-xs"></i></span>}
+              </p>
             </div>
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
-              <i className="bi bi-emoji-smile-fill text-3xl text-amber-400 mb-2"></i>
-              <p className="text-3xl font-bold">1000+</p>
-              <p className="text-sm text-white/70">Clientes satisfechos</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white mt-8">
               <i className="bi bi-arrow-repeat text-3xl text-amber-400 mb-2"></i>
               <p className="text-2xl font-bold">Precio</p>
               <p className="text-sm text-white/70">Variable diario</p>
@@ -241,7 +291,7 @@ function Gallery() {
     },
     {
       title: 'Comunidad Unida',
-      description: 'Más de 50 familias trabajando juntas por la excelencia.',
+      description: 'Familias campesinas trabajando juntas por la excelencia.',
       icon: 'bi-people',
       color: 'from-teal-400 to-cyan-500'
     }
@@ -349,6 +399,7 @@ function MisionVision() {
 }
 
 function About() {
+  const est = useEstadisticas();
   return (
     <section id="nosotros" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -380,9 +431,9 @@ function About() {
             
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: '15+', label: 'Años de experiencia', icon: 'bi-calendar-check' },
-                { value: '50+', label: 'Productores asociados', icon: 'bi-people' },
-                { value: '1000+', label: 'Clientes satisfechos', icon: 'bi-emoji-smile' },
+                { value: <Contador valor={est?.productores} />, label: 'Productores asociados', icon: 'bi-people' },
+                { value: <Contador valor={est?.clientes} />, label: 'Clientes registrados', icon: 'bi-emoji-smile' },
+                { value: <Contador valor={est?.resenas} />, label: 'Reseñas de clientes', icon: 'bi-chat-heart' },
                 { value: '100%', label: 'Mangos naturales', icon: 'bi-patch-check' }
               ].map((stat, i) => (
                 <div key={i} className="bg-gradient-to-br from-green-50 to-amber-50 p-4 rounded-xl border border-green-100">
