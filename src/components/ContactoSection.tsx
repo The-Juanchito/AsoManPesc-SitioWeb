@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../services/api';
+import { abrirPrivacidad } from './PoliticaPrivacidad';
 
 type Ubicacion = { lat: number; lng: number; precision: number };
 type EstadoUbicacion = 'inactiva' | 'buscando' | 'activa' | 'error';
@@ -8,6 +9,7 @@ const WHATSAPP = 'https://wa.me/573242030867';
 
 export default function ContactoSection() {
   const [tipo, setTipo] = useState<'resena' | 'opinion'>('resena');
+  const [acepto, setAcepto] = useState(false);
   const [nombre, setNombre] = useState('');
   const [contacto, setContacto] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -88,6 +90,7 @@ export default function ContactoSection() {
     e.preventDefault();
     setError('');
     if (!nombre.trim()) return setError('Escribe tu nombre');
+    if (!acepto) return setError('Debes aceptar la política de privacidad para enviar');
     if (mensaje.trim().length < 5) return setError('Cuéntanos un poco más (mínimo 5 caracteres)');
     if (telefono.trim()) {
       const d = telefono.replace(/\D/g, '');
@@ -111,7 +114,7 @@ export default function ContactoSection() {
       detenerUbicacion();
       setUbicacion(null);
       setEstadoUbicacion('inactiva');
-      setNombre(''); setContacto(''); setTelefono(''); setCalificacion(0); setMensaje(''); setTipo('resena');
+      setNombre(''); setContacto(''); setTelefono(''); setCalificacion(0); setMensaje(''); setTipo('resena'); setAcepto(false);
       setEnviado(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo enviar. Inténtalo de nuevo.');
@@ -319,6 +322,13 @@ export default function ContactoSection() {
                     </div>
                   )}
                 </div>
+
+                <label className="flex items-start gap-3 text-sm text-gray-600 cursor-pointer">
+                  <input type="checkbox" checked={acepto} onChange={e => setAcepto(e.target.checked)} className="mt-1 w-4 h-4 accent-green-700 shrink-0" />
+                  <span>Autorizo el tratamiento de mis datos según la{' '}
+                    <button type="button" onClick={abrirPrivacidad} className="text-green-700 font-semibold underline">política de privacidad</button>.
+                  </span>
+                </label>
 
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-sm flex items-center gap-2" role="alert">

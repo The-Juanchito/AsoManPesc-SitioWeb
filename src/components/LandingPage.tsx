@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { VARIEDADES, LOGO_URL } from '../data/variedades';
 import ContactoSection from './ContactoSection';
+import PoliticaPrivacidad, { abrirPrivacidad } from './PoliticaPrivacidad';
 
 interface LandingPageProps {
   onLogin: () => void;
@@ -603,6 +604,11 @@ function Footer({ onLogin }: { onLogin: () => void }) {
           <p className="text-gray-400 text-sm">
             © 2026 AsoManPesc - Asociación de Productores de Mango de Pescadero. Todos los derechos reservados.
           </p>
+          <p className="mt-2">
+            <button onClick={abrirPrivacidad} className="text-gray-300 hover:text-white text-sm underline underline-offset-2">
+              <i className="bi bi-shield-check me-1"></i>Política de privacidad
+            </button>
+          </p>
           <p className="text-gray-500 text-xs mt-2 flex items-center justify-center gap-2">
             <i className="bi bi-heart-fill text-rose-500"></i>
             Hecho con amor por nuestros asociados
@@ -624,6 +630,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
       <Products />
       <Benefits />
       <ContactoSection />
+      <PoliticaPrivacidad />
       <Footer onLogin={onLogin} />
     </div>
   );
