@@ -60,11 +60,12 @@ app.get('/api/estado', auth, requireRole('admin'), async (_req, res) => {
 // Cifras públicas del inicio (solo conteos, sin datos personales)
 app.get('/api/estadisticas', async (_req, res) => {
   const [[u]] = await pool.query(
-    "SELECT SUM(rol = 'asociado') AS productores, SUM(rol = 'cliente') AS clientes FROM usuarios WHERE activo = 1"
+    "SELECT COUNT(*) AS usuarios, SUM(rol = 'asociado') AS productores, SUM(rol = 'cliente') AS clientes FROM usuarios WHERE activo = 1"
   );
   const [[r]] = await pool.query('SELECT COUNT(*) AS resenas, AVG(calificacion) AS promedio FROM resenas WHERE leida = 1');
   res.set('Cache-Control', 'no-store');
   res.json({
+    usuarios: Number(u.usuarios || 0),
     productores: Number(u.productores || 0),
     clientes: Number(u.clientes || 0),
     resenas: Number(r.resenas || 0),
