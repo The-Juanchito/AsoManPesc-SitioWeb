@@ -203,8 +203,8 @@ function Hero({ onLogin }: { onLogin: () => void }) {
             </div>
             <div className="lg:hidden grid grid-cols-3 gap-3 mt-8 text-white">
               {[
+                { v: est?.usuarios, l: 'Usuarios' },
                 { v: est?.productores, l: 'Productores' },
-                { v: est?.clientes, l: 'Clientes' },
                 { v: est?.resenas, l: 'Reseñas' },
               ].map(c => (
                 <div key={c.l} className="bg-white/10 border border-white/20 rounded-xl py-3">
@@ -224,8 +224,8 @@ function Hero({ onLogin }: { onLogin: () => void }) {
           {/* Cifras en vivo */}
           <div className="grid grid-cols-2 gap-4 w-full">
             {[
+              { icon: 'bi-person-check-fill', v: est?.usuarios, label: 'Usuarios registrados' },
               { icon: 'bi-people-fill', v: est?.productores, label: 'Productores asociados' },
-              { icon: 'bi-emoji-smile-fill', v: est?.clientes, label: 'Clientes registrados' },
             ].map(c => (
               <div key={c.label} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
                 <i className={`bi ${c.icon} text-3xl text-amber-400 mb-2`}></i>
@@ -431,8 +431,8 @@ function About() {
             
             <div className="grid grid-cols-2 gap-4">
               {[
+                { value: <Contador valor={est?.usuarios} />, label: 'Usuarios registrados', icon: 'bi-person-check' },
                 { value: <Contador valor={est?.productores} />, label: 'Productores asociados', icon: 'bi-people' },
-                { value: <Contador valor={est?.clientes} />, label: 'Clientes registrados', icon: 'bi-emoji-smile' },
                 { value: <Contador valor={est?.resenas} />, label: 'Reseñas de clientes', icon: 'bi-chat-heart' },
                 { value: '100%', label: 'Mangos naturales', icon: 'bi-patch-check' }
               ].map((stat, i) => (
