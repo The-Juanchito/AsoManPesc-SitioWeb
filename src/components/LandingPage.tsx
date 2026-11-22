@@ -292,6 +292,61 @@ function Gallery() {
   );
 }
 
+// Texto de la Misión y la Visión (edítalo aquí cuando quieras)
+const MISION = 'Producir y comercializar mangos Dilasa frescos y de excelente calidad, cultivados con prácticas sostenibles y fertilizantes orgánicos, llevando el fruto directo del productor al cliente a un precio justo y fortaleciendo el bienestar de las familias campesinas asociadas de Pescadero.';
+const VISION = 'Ser reconocidos como la asociación de productores de mango más confiable y organizada de la región, referente en calidad, comercio justo y cuidado del campo, con una producción que crece cada temporada y llega a más hogares y mercados del país.';
+const VALORES = [
+  { icon: 'bi-people-fill', t: 'Unión', d: 'Crecemos juntos como familias productoras.' },
+  { icon: 'bi-hand-thumbs-up-fill', t: 'Honestidad', d: 'Precios claros y trato justo con cada cliente.' },
+  { icon: 'bi-flower1', t: 'Cuidado del campo', d: 'Cultivo sostenible y respeto por la tierra.' },
+  { icon: 'bi-award-fill', t: 'Calidad', d: 'Solo mango fresco y bien seleccionado.' },
+];
+
+function MisionVision() {
+  return (
+    <section id="mision-vision" className="py-20 bg-gradient-to-b from-green-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <span className="inline-flex items-center gap-2 text-amber-600 font-semibold text-sm uppercase tracking-wider bg-amber-50 px-4 py-1.5 rounded-full">
+            <i className="bi bi-compass-fill"></i>
+            Nuestro Norte
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-green-900 mt-4 mb-4">Misión y Visión</h2>
+          <div className="w-20 h-1 bg-amber-500 mx-auto rounded-full"></div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <article className="bg-white rounded-3xl p-8 shadow-lg border-t-4 border-green-600 hover:shadow-xl transition-shadow">
+            <div className="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center mb-3 shadow-md">
+              <i className="bi bi-bullseye text-white text-2xl"></i>
+            </div>
+            <h3 className="text-2xl font-bold text-green-800 mb-3">Misión</h3>
+            <p className="text-gray-600 leading-relaxed">{MISION}</p>
+          </article>
+
+          <article className="bg-white rounded-3xl p-8 shadow-lg border-t-4 border-amber-500 hover:shadow-xl transition-shadow">
+            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center mb-3 shadow-md">
+              <i className="bi bi-eye-fill text-white text-2xl"></i>
+            </div>
+            <h3 className="text-2xl font-bold text-green-800 mb-3">Visión</h3>
+            <p className="text-gray-600 leading-relaxed">{VISION}</p>
+          </article>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+          {VALORES.map(v => (
+            <div key={v.t} className="bg-white/80 rounded-2xl p-5 text-center border border-green-100">
+              <i className={`bi ${v.icon} text-amber-500 text-2xl`}></i>
+              <h4 className="font-bold text-green-800 mt-2">{v.t}</h4>
+              <p className="text-xs text-gray-500 mt-1">{v.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function About() {
   return (
     <section id="nosotros" className="py-20 bg-white">
@@ -565,6 +620,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
       <Hero onLogin={onLogin} />
       <Gallery />
       <About />
+      <MisionVision />
       <Products />
       <Benefits />
       <ContactoSection />
